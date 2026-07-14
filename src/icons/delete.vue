@@ -1,0 +1,48 @@
+<template>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M3 5.625H15L13.875 16.5H4.125L3 5.625Z"
+      stroke="#6B789B"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M7.50098 9.37585V13.1259"
+      stroke="#6B789B"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M10.501 9.37476V13.1239"
+      stroke="#6B789B"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M4.5 5.62496L10.6216 1.125L13.5 5.625"
+      stroke="#6B789B"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Delete',
+})
+</script>

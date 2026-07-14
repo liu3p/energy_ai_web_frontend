@@ -1,0 +1,41 @@
+<template>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8.5 4.25L7.75 2.5L2.5 2.5L2.5 16.5L7.75 16.5L8.5 14.75"
+      stroke="#00A56D"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M17.5 9.5L7.5 9.5"
+      stroke="#00A56D"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M13.5 5.5L17.5 9.5L13.5 13.5"
+      stroke="#00A56D"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Kickout',
+})
+</script>

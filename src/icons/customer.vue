@@ -1,0 +1,57 @@
+<template>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+  >
+    <g clip-path="url(#clip0_39140_9449)" fill="currentColor">
+      <path
+        d="M7.99999 8.95C9.98822 8.95 11.6 7.33822 11.6 5.35C11.6 3.36177 9.98822 1.75 7.99999 1.75C6.01177 1.75 4.39999 3.36177 4.39999 5.35C4.39999 7.33822 6.01177 8.95 7.99999 8.95Z"
+        stroke="#4F535C"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="currentColor"
+      ></path>
+      <path
+        d="M12.5 14.4502C12.5 11.9649 10.4853 9.9502 8 9.9502C5.51472 9.9502 3.5 11.9649 3.5 14.4502"
+        stroke="#4F535C"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="currentColor"
+      ></path>
+      <path
+        d="M7.29741 15.3714C7.65771 15.8218 8.34268 15.8218 8.70298 15.3714L9.50275 14.3717C9.68883 14.1391 9.74777 13.8295 9.66017 13.5448L8.4303 9.54773C8.29997 9.12418 7.70042 9.12418 7.57009 9.54773L6.34022 13.5448C6.25262 13.8295 6.31156 14.1391 6.49764 14.3717L7.29741 15.3714Z"
+        fill="url(#paint0_linear_39140_9449)"
+      ></path>
+    </g>
+    <defs fill="currentColor">
+      <linearGradient
+        id="paint0_linear_39140_9449"
+        x1="10.4444"
+        y1="4.20891"
+        x2="0.390818"
+        y2="8.35916"
+        gradientUnits="userSpaceOnUse"
+        fill="currentColor"
+      >
+        <stop stop-color="#F2F5FF" fill="currentColor"></stop>
+        <stop offset="0.425" stop-color="#444444" fill="currentColor"></stop>
+        <stop offset="1" stop-color="white" fill="currentColor"></stop>
+      </linearGradient>
+      <clipPath id="clip0_39140_9449" fill="currentColor">
+        <rect width="16" height="16" fill="white"></rect>
+      </clipPath>
+    </defs>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Customer',
+})
+</script>

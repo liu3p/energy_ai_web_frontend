@@ -1,0 +1,41 @@
+<template>
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 14 14"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3 2.5C3 2.22386 3.25583 2 3.57143 2H10.4286C10.7442 2 11 2.22386 11 2.5V12L9 10.75L7 12L5 10.75L3 12V2.5Z"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M5 7H9"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M5 4.5H9"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'NickName',
+})
+</script>

@@ -1,0 +1,60 @@
+<template>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M17.5 3.33301V9.99967"
+      stroke="#00A56D"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M17.5 10C17.5 5.85787 14.1421 2.5 10 2.5C7.88104 2.5 5.96733 3.37873 4.60338 4.79167C3.08608 6.225 2.5 8.20036 2.5 10C2.5 14 5.85787 17.5 10 17.5C12.0232 17.5 13.8592 16.6989 15.2083 15.3966"
+      stroke="#00A56D"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <g clip-path="url(#clip0_17739_16463)" fill="currentColor">
+      <path
+        d="M12.6667 10H7.33333C7.14924 10 7 10.1221 7 10.2727V12.7273C7 12.8779 7.14924 13 7.33333 13H12.6667C12.8508 13 13 12.8779 13 12.7273V10.2727C13 10.1221 12.8508 10 12.6667 10Z"
+        stroke="#00A56D"
+        stroke-width="1.25"
+        stroke-linejoin="round"
+        fill="currentColor"
+      ></path>
+      <path
+        d="M8 10V8.66667C8 7.74619 8.89544 7 10 7C11.1046 7 12 7.74619 12 8.66667V10"
+        stroke="#00A56D"
+        stroke-width="1.25"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="currentColor"
+      ></path>
+    </g>
+    <defs fill="currentColor">
+      <clipPath id="clip0_17739_16463" fill="currentColor">
+        <rect
+          width="8"
+          height="8"
+          fill="white"
+          transform="translate(6 6)"
+        ></rect>
+      </clipPath>
+    </defs>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Resetpwd',
+})
+</script>

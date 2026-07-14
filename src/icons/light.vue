@@ -1,0 +1,21 @@
+<template>
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12.5 6C12.802 6 12.8541 6.45149 12.601 6.61628C11.5551 7.29737 10.8637 8.47702 10.8637 9.81819C10.8637 11.9269 12.5731 13.6364 14.6818 13.6364C16.023 13.6364 17.2026 12.9449 17.8837 11.899C18.0485 11.6459 18.5 11.698 18.5 12C18.5 15.3137 15.8137 18 12.5 18C9.18629 18 6.5 15.3137 6.5 12C6.5 8.68629 9.18629 6 12.5 6Z"
+      fill="#676767"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Light',
+})
+</script>

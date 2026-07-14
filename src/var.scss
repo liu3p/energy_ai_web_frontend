@@ -1,0 +1,12 @@
+@use './theme.scss';
+@forward "cloudview.ui-next/theme-chalk/src/common/var.scss" with (
+    $colors: (
+        'primary': (
+            'base': #3162E1,
+        )
+    ),
+    $tree: (
+        'current-bg-color': rgba(63, 63, 74, 0.10),
+        'current-font-color': #3162E1,
+    ),
+);

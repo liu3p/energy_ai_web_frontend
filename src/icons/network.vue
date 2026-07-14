@@ -1,0 +1,62 @@
+<template>
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 22 22"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12.5844 13.606H9.41528V16.4581H12.5844V13.606Z"
+      stroke="#333333"
+      stroke-width="0.864298"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M12.0867 6H5.61258C5.26253 6 4.97876 6.28377 4.97876 6.63382V12.972C4.97876 13.3221 5.26253 13.6058 5.61258 13.6058H11H13.7165"
+      stroke="#333333"
+      stroke-width="0.864298"
+      stroke-linecap="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M16.3875 6.00049H14.305C13.9549 6.00049 13.6711 6.28426 13.6711 6.63431V10.7994C13.6711 11.1494 13.9549 11.4332 14.305 11.4332H16.3875C16.7376 11.4332 17.0213 11.1494 17.0213 10.7994V6.63431C17.0213 6.28426 16.7376 6.00049 16.3875 6.00049Z"
+      stroke="#333333"
+      stroke-width="0.864298"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M10.3662 12.0215H11.6338"
+      stroke="#333333"
+      stroke-width="0.864298"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M15.3462 12.1572L15.3462 15.4169"
+      stroke="#333333"
+      stroke-width="0.864298"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M7.83105 16.458H14.1692"
+      stroke="#333333"
+      stroke-width="0.864298"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Network',
+})
+</script>

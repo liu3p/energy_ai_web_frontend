@@ -1,0 +1,45 @@
+<template>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M6.75 2.25H3C2.58579 2.25 2.25 2.58579 2.25 3V6.75C2.25 7.16422 2.58579 7.5 3 7.5H6.75C7.16422 7.5 7.5 7.16422 7.5 6.75V3C7.5 2.58579 7.16422 2.25 6.75 2.25Z"
+      stroke="#8F9292"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M6.75 10.5H3C2.58579 10.5 2.25 10.8358 2.25 11.25V15C2.25 15.4142 2.58579 15.75 3 15.75H6.75C7.16422 15.75 7.5 15.4142 7.5 15V11.25C7.5 10.8358 7.16422 10.5 6.75 10.5Z"
+      stroke="#8F9292"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M13.125 7.5C14.5747 7.5 15.75 6.32475 15.75 4.875C15.75 3.42525 14.5747 2.25 13.125 2.25C11.6753 2.25 10.5 3.42525 10.5 4.875C10.5 6.32475 11.6753 7.5 13.125 7.5Z"
+      stroke="#8F9292"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M15 10.5H11.25C10.8358 10.5 10.5 10.8358 10.5 11.25V15C10.5 15.4142 10.8358 15.75 11.25 15.75H15C15.4142 15.75 15.75 15.4142 15.75 15V11.25C15.75 10.8358 15.4142 10.5 15 10.5Z"
+      stroke="#8F9292"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'System',
+})
+</script>

@@ -1,0 +1,117 @@
+@use 'cloudview.ui-next/theme-chalk/src/index';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    --fw-gap: 16px;
+    --fw-border-raduis: 8px;
+
+    height: 100%;
+    font-size: 70px;
+}
+
+@media (width >= 1366px) {
+    html {
+        font-size: calc(100vw / 19.2);
+    }
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    font-size: 14px;
+    background: #f2f4fa;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flex-colum {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.flex-grow {
+    flex: 1;
+}
+
+.main-body {
+    padding: var(--fw-gap);
+    border-radius: var(--fw-border-raduis);
+    background: #fff;
+    flex: 1;
+    overflow: hidden;
+}
+
+.el-form-item__label {
+    font-weight: bold;
+}
+
+.el-input-number .el-input__inner {
+    text-align: left !important;
+}
+
+.el-input-number {
+    width: 100% !important;
+}
+
+.el-tree-node__content {
+    padding-right: 8px;
+}
+
+.is-current > .el-tree-node__content {
+    color: #35353e !important;
+    font-weight: 700 !important;
+}
+
+.cv-dialog__body {
+    min-height: 0;
+}
+
+.cv-sidebar__arrow {
+    background-image: none !important;
+    top: 7% !important;
+    background-color: #fff !important;
+    border-top-right-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+
+    .el-icon {
+        color: #000 !important;
+    }
+}
+
+.cv-sidebar > div:first-child {
+    height: 100%;
+    overflow: hidden;
+}
+
+.el-drawer__title {
+    font-weight: bold;
+    color: #35353e;
+}
+
+.el-button.is-disabled {
+    color: #ffffff !important;
+    background-color: #bccfff !important;
+    &.el-button--danger {
+        background-color: rgb(247, 160.5, 165.5) !important;
+    }
+}
+
+.divider {
+    border-bottom: 1px dashed #e5e6ea;
+    margin: 12px 0;
+}
+
+.cv-dialog__body {
+    min-height: 100px !important;
+    max-height: none !important;
+}

@@ -1,0 +1,21 @@
+<template>
+  <svg
+    data-name="图层 1"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 14 14"
+  >
+    <path
+      opacity=".6"
+      d="M7 1a6 6 0 1 1-6 6 6 6 0 0 1 6-6m0-1a7 7 0 1 0 7 7 7 7 0 0 0-7-7Z"
+      fill="currentColor"
+    ></path>
+    <circle cx="7" cy="7" r="4" fill="currentColor"></circle>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'MapSign',
+})
+</script>

@@ -1,0 +1,42 @@
+<template>
+  <svg
+    width="14"
+    height="15"
+    viewBox="0 0 14 15"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M6.66989 7.58688C7.4114 8.31467 7.70402 9.38191 7.43665 10.3834C7.16931 11.3849 6.38295 12.1671 5.37615 12.4331C4.36934 12.699 3.29647 12.408 2.56484 11.6703C1.46477 10.5373 1.48051 8.73639 2.6002 7.62258C3.71992 6.50879 5.53038 6.49313 6.66937 7.5874L6.66989 7.58688Z"
+      stroke="currentColor"
+      stroke-opacity="0.65"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M6.70837 7.50008L11.6667 2.54175"
+      stroke="currentColor"
+      stroke-opacity="0.65"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M8.83899 5.4293L10.4223 7.0043L12.2695 5.1668L10.6862 3.5918L8.83899 5.4293Z"
+      stroke="currentColor"
+      stroke-opacity="0.65"
+      stroke-width="1.25"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Key',
+})
+</script>

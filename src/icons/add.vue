@@ -1,0 +1,50 @@
+<template>
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M10 5.75V3.5L7.75 1H2.5C2.22386 1 2 1.22386 2 1.5V10.5C2 10.7761 2.22386 11 2.5 11H5.5"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M8.25 7.25V10.75"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M6.5 9H8.25H10"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+    <path d="M7.5 1V3.5H10" fill="#35353E"></path>
+    <path
+      d="M7.5 1V3.5H10"
+      stroke="#35353E"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="currentColor"
+    ></path>
+  </svg>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Add',
+})
+</script>
