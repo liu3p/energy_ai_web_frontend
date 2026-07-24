@@ -1,0 +1,42 @@
+@use 'sass:map';
+@use 'common/var';
+
+.vis-primitive {
+    &.is-editable {
+        cursor: move;
+    }
+
+    &.no-cursor {
+        cursor: inherit !important;
+    }
+
+    * {
+        outline: none !important;
+    }
+
+    &-text {
+        &__foreign {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &__foreign-object {
+            overflow: visible;
+        }
+
+        &__text-box {
+            display: inline-block;
+            white-space: nowrap;
+            user-select: none;
+
+
+            &.is-edit {
+                cursor: text;
+                min-width: 50px;
+                border: 1px solid map.get(var.$colors, 'primary', 'base');
+            }
+        }
+    }
+}
+

@@ -1,0 +1,62 @@
+.vis-obj-definition-dialog {
+    &__container {
+        display: flex;
+        column-gap: 20px;
+        overflow: hidden;
+    }
+
+    &__upload {
+        flex: 0 0 200px;
+        text-align: center;
+
+        .cv-button.is-link {
+            text-decoration: none !important;
+        }
+    }
+
+    &__upload-box {
+        width: 200px !important;
+        height: 180px;
+        border: 1px solid #ededf1;
+
+        .el-upload {
+            width: 200px;
+            height: 180px;
+        }
+    }
+
+    &__thumb-img {
+        padding: 2px;
+        max-width: 198px;
+        max-height: 168px;
+        border: none;
+        box-sizing: inherit;
+    }
+
+    &__upload-button {
+        position: relative;
+        bottom: 0;
+    }
+
+    &__info-box {
+        flex: 1 0 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__info-line {
+        display: flex;
+        column-gap: 20px;
+
+        .cv-form-item {
+            flex-grow: 1;
+            flex-basis: 0;
+        }
+    }
+
+    .el-form-item__label {
+        margin-bottom: 0 !important;
+        height: 32px !important;
+    }
+}

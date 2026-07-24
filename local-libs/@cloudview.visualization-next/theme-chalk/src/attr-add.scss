@@ -1,0 +1,71 @@
+@use "sass:map";
+@use "common/var";
+
+.vis-attr-add {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+    }
+
+    &__body {
+        flex: 1 0 0;
+        overflow: hidden;
+    }
+
+    &__title {
+        font-size: 14px;
+    }
+
+    &__sub-title {
+        margin-top: 1px;
+        font-size: 12px;
+        color: map.get(var.$text-color, 'secondary');
+    }
+
+    &__close {
+        cursor: pointer;
+    }
+
+    &__prop-title {
+        font-size: 12px;
+        color: map.get(var.$text-color, 'secondary');
+        line-height: 28px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    &__operation-box {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    &__button {
+        flex: 1;
+    }
+
+    &__form-item {
+        margin-bottom: 10px;
+    }
+
+    .el-checkbox.el-checkbox--large .el-checkbox__label {
+        font-size: 12px;
+        color: map.get(var.$text-color, 'secondary');
+    }
+
+    .cv-form-item.el-form-item--large {
+        margin-bottom: 16px;
+    }
+
+    .cv-form-item.el-form-item--large .el-form-item__error {
+        font-size: 12px;
+    }
+}

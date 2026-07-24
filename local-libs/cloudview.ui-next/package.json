@@ -1,0 +1,151 @@
+{
+  "name": "cloudview.ui-next",
+  "version": "2.9.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "sass": {
+    "includePaths": [
+      "node_modules"
+    ]
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/lib/index.js",
+      "import": "./dist/es/index.mjs"
+    },
+    "./utils": {
+      "require": "./dist/lib/utils/index.js",
+      "import": "./dist/es/utils/index.mjs"
+    },
+    "./locale/lang/*": {
+      "require": "./dist/lib/locale/lang/*",
+      "import": "./dist/es/locale/lang/*"
+    },
+    "./theme-chalk/*": "./dist/theme-chalk/*",
+    "./es": "./dist/es/index.mjs",
+    "./es/*": "./dist/es/*.mjs",
+    "./es/*.mjs": "./dist/es/*.mjs",
+    "./lib": "./dist/lib/index.js",
+    "./lib/*": "./dist/lib/*.js",
+    "./lib/*.js": "./dist/lib/*.js"
+  },
+  "sideEffects": [
+    "dist/*",
+    "dist/es/*/style/*"
+  ],
+  "main": "dist/lib/index.js",
+  "module": "dist/es/index.mjs",
+  "vetur": {
+    "tags": "dist/tags.json",
+    "attributes": "dist/attributes.json"
+  },
+  "web-types": "dist/web-types.json",
+  "dependencies": {
+    "@element-plus/icons-vue": "^1.1.4",
+    "@popperjs/core": "^2.8.6",
+    "async-validator": "^3.5.1",
+    "cloudview.ui-next-icon":  "file:../cloudview.ui-next-icon",
+    "cronstrue": "^2.50.0",
+    "dayjs": "^1.10.4",
+    "element-plus": "2.9.7",
+    "lodash": "^4.17.21",
+    "mitt": "^2.1.0",
+    "normalize-wheel": "^1.0.1",
+    "resize-observer-polyfill": "^1.5.1",
+    "sortablejs": "^1.15.0"
+  },
+  "peerDependencies": {
+    "axios": "^1.4.0",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@antfu/utils": "^0.7.3",
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.22.1",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-transform-runtime": "^7.13.9",
+    "@babel/preset-env": "^7.13.9",
+    "@babel/preset-typescript": "^7.13.0",
+    "@rollup/plugin-alias": "^3.1.9",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^11.2.0",
+    "@types/gulp-sass": "^5.0.0",
+    "@types/jest": "^26.0.20",
+    "@types/markdown-it": "^12.2.3",
+    "@types/sortablejs": "^1.10.7",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue-jsx": "^4.1.2",
+    "@vue/babel-plugin-jsx": "^1.0.3",
+    "@vue/compiler-sfc": "^3.3.4",
+    "@vue/component-compiler-utils": "^3.3.0",
+    "@vue/shared": "^3.3.4",
+    "@vue/test-utils": "^2.4.0",
+    "@vue/tsconfig": "^0.1.3",
+    "axios": "^1.4.0",
+    "babel-loader": "^9.1.2",
+    "babel-plugin-lodash": "^3.3.4",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "chalk": "^4.1.0",
+    "components-helper": "^2.0.0",
+    "cp-cli": "^2.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.15.1",
+    "fast-glob": "3.2.11",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-dart-sass": "^1.0.2",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^5.1.0",
+    "nprogress": "^0.2.0",
+    "ora": "^5.3.0",
+    "postcss": "^8.4.31",
+    "postcss-html": "^1.5.0",
+    "prettier": "^3.0.0",
+    "rimraf": "^5.0.1",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-dts": "^2.0.1",
+    "rollup-plugin-esbuild": "^4.8.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "rollup-plugin-vue": "^6.0.0",
+    "sass": "^1.86.3",
+    "stylelint": "^15.10.0",
+    "stylelint-config-recommended-vue": "^1.4.0",
+    "stylelint-config-standard": "^33.0.0",
+    "stylelint-config-standard-scss": "^9.0.0",
+    "sucrase": "^3.20.3",
+    "ts-morph": "^13.0.3",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.9.5",
+    "unplugin-auto-import": "^0.16.6",
+    "unplugin-vue-components": "^0.25.1",
+    "unplugin-vue-define-options": "^1.3.12",
+    "vite": "^4.4.7",
+    "vitepress": "1.0.0-beta.6",
+    "vitepress-theme-demoblock": "^3.0.3",
+    "vue": "^3.3.4",
+    "vue-loader": "^17.2.2"
+  },
+  "scripts": {
+    "build": "gulp --require sucrase/register/ts -f ./build/gulpfile.ts",
+    "clean": "rimraf dist",
+    "dev": "vite dev",
+    "gen": "bash ./build/gc.sh",
+    "lint": "eslint --fix ./packages --ext .vue,.js,.ts",
+    "lint:style": "stylelint ./packages/**/*.{css,scss,vue} --fix",
+    "dev-docs": "vitepress dev docs",
+    "build-docs": "node --max_old_space_size=4096 ./node_modules/vitepress/bin/vitepress.js build docs",
+    "preview-docs": "vitepress preview docs"
+  }
+}

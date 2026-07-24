@@ -1,109 +1,121 @@
-import {createRouter, RouterOptions, createWebHistory, RouteRecordRaw} from 'vue-router';
+import { createRouter, RouterOptions, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Page403 from './modules/error-page/403.page.vue';
 import Page404 from './modules/error-page/404.page.vue';
 import Main from './modules/main/main.page.vue';
 import Login from './modules/login/login.page.vue';
-import {Token} from './common/token';
-import {IconCollect, IconAgc, IconSystem, IconAccount} from '@/icons';
+import { Token } from './common/token';
+import { IconCollect, IconAgc, IconSystem, IconAccount } from '@/icons';
 
 const skipPath = ['/login', '/403', '/404'];
-import {clearUserInfo, initUserInfo, userInfo, userMenuList} from './common/user';
+import { clearUserInfo, initUserInfo, userInfo, userMenuList } from './common/user';
 import authService from '@/common/auth.service';
 
 export const constantRoutes = [
-    {path: '', redirect: '/main/capture/point'},
-    {path: '/login', component: Login},
-    {path: '/403', component: Page403},
-    {path: '/404', component: Page404},
+    { path: '', redirect: '/main/capture/point' },
+    { path: '/login', component: Login },
+    { path: '/403', component: Page403 },
+    { path: '/404', component: Page404 },
 ];
 // 动态路由
 export const asyncRoutes = [
     {
         path: '/main',
         component: Main,
-        meta: {label: 'fw.common.home'},
-        redirect: '/main/capture/point',
+        meta: { label: 'fw.common.home' },
+        redirect: '/main/dashboard/index',
         children: [
             {
+                path: 'dashboard',
+                meta: { title: '首页' },
+                icon: IconCollect,
+                children: [
+                    {
+                        path: 'index',
+                        component: () => import('./modules/main/dashboard/index.vue'),
+                        meta: { title: '看板' },
+                    },
+                ],
+            },
+            {
                 path: 'capture',
-                meta: {title: '采集'},
+                meta: { title: '采集' },
                 icon: IconCollect,
                 children: [
                     {
                         path: 'monitor',
                         component: () => import('./modules/main/capture/monitor/monitor.page.vue'),
-                        meta: {title: '数据监控'},
+                        meta: { title: '数据监控' },
                     },
                     {
                         path: 'point',
                         component: () => import('./modules/main/capture/point/point.page.vue'),
-                        meta: {title: '点表配置'},
+                        meta: { title: '点表配置' },
                     },
                     {
                         path: 'channel',
                         component: () => import('./modules/main/capture/channel/channel.page.vue'),
-                        meta: {title: '通道配置'},
+                        meta: { title: '通道配置' },
                     },
                 ],
             },
             {
                 path: 'agc',
-                meta: {title: 'AGC'},
+                meta: { title: 'AGC' },
                 icon: IconAgc,
                 children: [
                     {
                         path: 'strategy',
                         component: () => import('./modules/main/agc/strategy/strategic-management.page.vue'),
-                        meta: {title: '策略配置'},
+                        meta: { title: '策略配置' },
                     },
                     {
                         path: 'model',
                         component: () => import('./modules/main/agc/model-management/model-management.page.vue'),
-                        meta: {title: '模型配置'},
+                        meta: { title: '模型配置' },
                     },
                 ],
             },
             {
                 path: 'system',
-                meta: {title: '系统'},
+                meta: { title: '系统' },
                 icon: IconSystem,
                 children: [
                     {
                         path: 'monitor',
                         component: () => import('./modules/main/system/monitor/monitor.page.vue'),
-                        meta: {title: '性能监控'},
+                        meta: { title: '性能监控' },
                     },
                     {
                         path: 'system',
                         component: () => import('./modules/main/system/system/system.page.vue'),
-                        meta: {title: '系统配置'},
+                        meta: { title: '系统配置' },
                     },
                     {
                         path: 'network',
                         component: () => import('./modules/main/system/network/network.page.vue'),
-                        meta: {title: '网络配置'},
+                        meta: { title: '网络配置' },
                     },
                     {
                         path: 'log',
                         component: () => import('./modules/main/system/log/log.page.vue'),
-                        meta: {title: '日志管理'},
+                        meta: { title: '日志管理' },
                     },
                     {
                         path: 'process',
                         component: () => import('./modules/main/system/process/process.page.vue'),
-                        meta: {title: '进程管理'},
+                        meta: { title: '进程管理' },
                     },
                 ],
             },
             {
                 path: 'account',
-                meta: {title: '账号', permission: 'admin'},
+                meta: { title: '账号', permission: 'admin' },
                 icon: IconAccount,
                 children: [
                     {
                         path: 'account',
                         component: () => import('./modules/main/account/account-manage.page.vue'),
-                        meta: {title: '账号管理', permission: 'admin'},
+                        meta: { title: '账号管理', permission: 'admin' },
                     },
                 ],
             },
@@ -113,17 +125,17 @@ export const asyncRoutes = [
 
 const filterRoutes = (routes: RouteRecordRaw[], permissions: string) => {
     return routes.filter(route => {
-            if (route.meta && route.meta.permission) {
-                return permissions === route.meta.permission;
-            }
-            return true;
+        if (route.meta && route.meta.permission) {
+            return permissions === route.meta.permission;
+        }
+        return true;
     }).map(route => {
-            // 如果路由有子路由，递归过滤
-            if (route.children) {
-                route.children = filterRoutes(route.children, permissions);
-            }
-            return route;
-        });
+        // 如果路由有子路由，递归过滤
+        if (route.children) {
+            route.children = filterRoutes(route.children, permissions);
+        }
+        return route;
+    });
 };
 
 const router = createRouter({
@@ -153,8 +165,8 @@ router.beforeEach(async (to, from, next) => {
             accessedRoutes.forEach((route: RouteRecordRaw) => {
                 router.addRoute(route);
             });
-            router.addRoute({path: '/:patchMatch(.*)*', component: Page404});
-            next({...to, replace: true});
+            router.addRoute({ path: '/:patchMatch(.*)*', component: Page404 });
+            next({ ...to, replace: true });
         } catch (error) {
             await authService.logout();
             clearUserInfo();

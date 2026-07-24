@@ -1,0 +1,342 @@
+@use 'sass:map';
+@use 'common/var';
+
+.vis-board-editor {
+    width: 310px;
+    flex-shrink: 0;
+    display: flex;
+    height: 100%;
+    position: absolute;
+    font-size: map.get(var.$font-size, 'base');
+    transition: width .3s;
+    right: 0;
+
+    &__handle {
+        position: absolute;
+        width: 20px;
+        height: 40px;
+        top: 50%;
+        right: 310px;
+        transform: translateY(-50%);
+        border: var.$border-base;
+        border-right-style: none;
+        border-top-left-radius: map.get(var.$border-radius, 'big');
+        border-bottom-left-radius: map.get(var.$border-radius, 'big');
+        cursor: pointer;
+        z-index: 1;
+        transition: .3s;
+        background-color: map.get(var.$colors, 'white');
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .cv-icon:hover {
+            opacity: 0.7;
+        }
+
+        &.is-hidden {
+            right: 290px;
+            opacity: 0;
+        }
+    }
+
+    &__container {
+        flex: 1 0 0;
+        border-left: var.$border-base;
+        z-index: 2;
+        display: flex;
+        background: rgba(255, 255, 255, 0.95);
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &__panel {
+        &-enter-active, &-leave-active {
+            transition: opacity .3s ease-in-out;
+        }
+
+        &-enter-from, &-leave-to {
+            opacity: 0;
+        }
+    }
+
+    &__menu {
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        flex-direction: column;
+        border-left: var.$border-base;
+        row-gap: 20px;
+        padding: 5px;
+        flex-basis: 50px;
+        flex-shrink: 0;
+    }
+
+    &__menu-item {
+        width: 40px;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: map.get(var.$text-color, 'secondary');
+        font-size: map.get(var.$font-size, 'small');
+        row-gap: 5px;
+        font-weight: map.get(var.$font-weight, 'bold');
+
+        span {
+            padding: 0 4px;
+        }
+
+        .cv-icon {
+            transition: background-color .4s ease-in-out;
+        }
+
+        &.is-selected {
+            .cv-icon {
+                background-color: map.get(var.$background-color, 'selected-dark') !important;
+                color: map.get(var.$colors, 'white');
+                border-radius: map.get(var.$border-radius, 'base');
+            }
+        }
+
+        &:hover {
+            .cv-icon {
+                background-color: map.get(var.$background-color, 'selected');
+            }
+        }
+    }
+
+    &.is-binding-active {
+        width: 570px;
+
+        .vis-board-editor__handle {
+            right: 570px;
+
+            &.is-hidden {
+                right: 550px;
+            }
+        }
+    }
+
+    &.is-hidden {
+        width: 0 !important;
+
+        .vis-board-editor__handle {
+            right: 0 !important;
+        }
+    }
+
+}
+
+.vis-board-attr {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 20px;
+
+    &__title {
+        font-size: map.get(var.$font-size, 'base');
+        color: map.get(var.$text-color, 'primary');
+        flex-basis: 20px;
+    }
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 20px;
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+}
+
+.vis-primitive-attr {
+    height: 100%;
+    display: flex;
+
+    &__binding {
+        width: 0;
+        transition: width .3s;
+        background-color: map.get(var.$colors, 'white');
+        z-index: 2;
+        overflow: hidden;
+    }
+
+    &__attr-panel {
+        width: 260px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+        row-gap: 16px;
+    }
+
+    &__title {
+        font-size: map.get(var.$font-size, 'base');
+        color: map.get(var.$text-color, 'regular');
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 20px;
+    }
+
+    &__bind-device {
+        margin: 0 20px;
+    }
+
+    &__bind-device-num {
+        font-size: 12px;
+        min-width: 16px;
+        background: map.get(var.$colors, 'primary', 'base');
+        border-radius: 16px;
+        margin-left: 6px;
+        color: white;
+        padding: 2px;
+    }
+
+    &__just-show-binding {
+        margin: 0 20px;
+    }
+}
+
+.vis-layer-panel {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    row-gap: 8px;
+
+    &__title {
+        padding: 0 20px;
+        color: map.get(var.$text-color, 'regular');
+        font-size: map.get(var.$font-size, 'base');
+    }
+
+    &__content {
+        flex-grow: 1;
+        flex-basis: 0;
+        overflow: hidden;
+    }
+
+    &__container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__item {
+        padding: 4px 20px;
+        display: flex;
+        align-items: center;
+
+        &.is-selected {
+            background-color: map.get(var.$background-color, 'selected');
+        }
+
+        label {
+            padding-left: 8px;
+            cursor: pointer;
+            flex-grow: 1;
+            flex-basis: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &.is-primitive {
+            padding: 4px 20px 4px 50px;
+            &.is-locked {
+                label {
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+
+    &__expand {
+        transition: transform .3s ease;
+
+        &.is-collapse {
+            transform: rotate(-90deg);
+        }
+    }
+
+    &__primitives {
+        transition: opacity .3s;
+        opacity: 1;
+
+
+        &-enter-from, &-leave-to {
+            opacity: 0;
+        }
+
+    }
+
+    &__list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        li {
+            color: map.get(var.$text-color, 'regular');
+            font-size: map.get(var.$font-size, 'base');
+        }
+
+        .cv-icon {
+            color: map.get(var.$colors, 'primary', 'base');
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.7;
+            }
+
+            &.is-locked{
+                color: red;
+            }
+
+            &.is-disabled {
+                color: map.get(var.$disabled, 'text-color') !important;
+                cursor: not-allowed;
+
+                &:hover {
+                    opacity: 1 !important;
+                }
+            }
+        }
+
+        .el-button + .el-button {
+            margin-left: 0;
+        }
+    }
+
+    & > .cv-button {
+        margin: 0 20px;
+    }
+
+    .cv-checkbox.el-checkbox {
+        margin-right: 2px;
+        height: 14px !important;
+        flex-grow: 0;
+        flex-basis: 14px;
+        padding-left: 0;
+    }
+
+    .cv-button {
+        --cv-button-icon-space: 2px;
+    }
+
+
+    .cv-icon {
+        margin-right: 2px;
+    }
+}

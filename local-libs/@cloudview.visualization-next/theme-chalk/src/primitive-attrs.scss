@@ -1,0 +1,138 @@
+@use "sass:map";
+@use "common/var";
+
+.vis-primitive-attrs {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0;
+    overflow: hidden;
+    flex-direction: column;
+    align-items: center;
+
+    &__tab {
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    &__search {
+        display: flex;
+        flex-basis: 30px;
+        border: var.$border-base;
+        margin: 0 20px 16px;
+        opacity: 1;
+        transition: opacity .3s;
+        border-radius: map.get(var.$border-radius, 'base');
+
+        .cv-select {
+            flex-basis: 160px;
+        }
+
+        .cv-input {
+            flex-grow: 1;
+        }
+
+        .el-input__wrapper {
+            box-shadow: none !important;
+        }
+
+        .el-select {
+            .el-input__wrapper {
+                box-shadow: none !important;
+
+                &.is-focus {
+                    box-shadow: none !important;
+                }
+            }
+        }
+
+        .el-select .el-input.is-focus .el-input__wrapper {
+            box-shadow: none !important;
+        }
+
+        &.is-hidden {
+            opacity: 0;
+        }
+
+    }
+
+    &__split {
+        height: 100%;
+        width: 1px;
+        margin: 0 2px;
+        background-color: map.get(var.$border-color, 'base');
+    }
+
+    &__container {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+        row-gap: 20px;
+        padding: 0 20px;
+
+        &.is-hidden {
+            opacity: 0;
+        }
+
+        &.is-active {
+            opacity: 1;
+        }
+    }
+
+    &__no-data {
+        text-align: center;
+        color: map.get(var.$text-color, 'secondary')
+    }
+
+    &__status {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        text-align: center;
+        flex-wrap: wrap;
+        overflow: hidden;
+
+        &-relationship {
+            flex-basis: 100%;
+            flex-shrink: 0;
+            text-align: left;
+        }
+
+        &-img {
+            width: 100px;
+            height: 100px;
+            padding: 1px;
+            border: var.$border-base;
+            border-radius: map.get(var.$border-radius, 'base');
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        &-binding {
+            &.el-button.is-text {
+                text-decoration: none;
+                color: map.get(var.$text-color, 'secondary');
+
+                &.is-binding {
+                    color: map.get(var.$colors, 'primary', 'base');
+                }
+            }
+        }
+    }
+
+    .cv-scrollbar {
+        width: 100%;
+    }
+
+    &__add-button {
+        width: 100%;
+        padding: 20px 20px 0;
+
+        .cv-button {
+            width: 100%;
+        }
+    }
+
+}

@@ -8,7 +8,10 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     CvButton: typeof import('cloudview.ui-next')['CvButton']
+    CvCheckbox: typeof import('cloudview.ui-next')['CvCheckbox']
+    CvCheckboxGroup: typeof import('cloudview.ui-next')['CvCheckboxGroup']
     CvConfigProvider: typeof import('cloudview.ui-next')['CvConfigProvider']
+    CvDatePicker: typeof import('cloudview.ui-next')['CvDatePicker']
     CvDialog: typeof import('cloudview.ui-next')['CvDialog']
     CvDialogForm: typeof import('cloudview.ui-next')['CvDialogForm']
     CvDrawer: typeof import('cloudview.ui-next')['CvDrawer']
@@ -19,12 +22,15 @@ declare module '@vue/runtime-core' {
     CvFormItem: typeof import('cloudview.ui-next')['CvFormItem']
     CvIcon: typeof import('cloudview.ui-next')['CvIcon']
     CvIconArrowDown: typeof import('cloudview.ui-next-icon')['CvIconArrowDown']
+    CvIconDelete: typeof import('cloudview.ui-next-icon')['CvIconDelete']
     CvIconDMore: typeof import('cloudview.ui-next-icon')['CvIconDMore']
+    CvIconSetting: typeof import('cloudview.ui-next-icon')['CvIconSetting']
     CvInput: typeof import('cloudview.ui-next')['CvInput']
     CvInputNumber: typeof import('cloudview.ui-next')['CvInputNumber']
     CvOption: typeof import('cloudview.ui-next')['CvOption']
     CvPagination: typeof import('cloudview.ui-next')['CvPagination']
     CvPopover: typeof import('cloudview.ui-next')['CvPopover']
+    CvProgress: typeof import('cloudview.ui-next')['CvProgress']
     CvScrollbar: typeof import('cloudview.ui-next')['CvScrollbar']
     CvSelect: typeof import('cloudview.ui-next')['CvSelect']
     CvSelectTree: typeof import('cloudview.ui-next')['CvSelectTree']
@@ -33,10 +39,14 @@ declare module '@vue/runtime-core' {
     CvTable: typeof import('cloudview.ui-next')['CvTable']
     CvTableColumn: typeof import('cloudview.ui-next')['CvTableColumn']
     CvTabs: typeof import('cloudview.ui-next')['CvTabs']
+    CvTag: typeof import('cloudview.ui-next')['CvTag']
     CvTooltip: typeof import('cloudview.ui-next')['CvTooltip']
     CvTree: typeof import('cloudview.ui-next')['CvTree']
     CvUpload: typeof import('cloudview.ui-next')['CvUpload']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('cloudview.ui-next')['CvLoadingDirective']
   }
 }

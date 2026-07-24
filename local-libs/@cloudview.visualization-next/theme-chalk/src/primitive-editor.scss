@@ -1,0 +1,76 @@
+@use 'sass:map';
+@use 'common/var';
+
+.vis-primitive-editor {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    flex: 1 0 0;
+    height: 100%;
+    overflow: hidden;
+
+    &__body {
+        display: flex;
+        overflow: hidden;
+        flex: 1 0 0;
+    }
+
+    &__primitive {
+        flex: 1 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    &__attrs {
+        width: 260px;
+        overflow: hidden;
+        border-left: var.$border-base;
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__add-panel {
+        width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.3s;
+
+        &--show {
+            opacity: 1;
+            width: 260px;
+            border-left: var.$border-base;
+        }
+    }
+}
+
+.vis-primitive-editor-header {
+    height: 50px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    border-bottom: var.$border-base;
+
+    &__title {
+        padding: 0 20px;
+        line-height: 50px;
+    }
+
+    &__ops {
+        display: flex;
+        align-items: stretch;
+    }
+
+    &__ops-item {
+        border-left: var.$border-base;
+        width: 120px;
+
+        .cv-button {
+            height: 100%;
+            width: 100%;
+            text-decoration: none;
+        }
+    }
+}

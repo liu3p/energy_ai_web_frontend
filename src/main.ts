@@ -6,7 +6,11 @@ import './style.scss';
 import 'animate.css';
 import {setDefInfo} from './common/custom-info';
 
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
 const app = createApp(App);
+app.use(ElementPlus)
 
 Locale.getLocale().then(() => {
     setDefInfo();

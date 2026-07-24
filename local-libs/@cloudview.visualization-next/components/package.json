@@ -1,0 +1,50 @@
+{
+  "name": "@cloudview.visualization-next/components",
+  "version": "1.0.25",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "main": "dist/lib/index.js",
+  "module": "dist/es/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/lib/index.js",
+      "import": "./dist/es/index.mjs"
+    },
+    "./es": "./dist/es/index.mjs",
+    "./es/*": "./dist/es/*.mjs",
+    "./es/*.mjs": "./dist/es/*.mjs",
+    "./lib": "./dist/lib/index.js",
+    "./lib/*": "./dist/lib/*.js",
+    "./lib/*.js": "./dist/lib/*.js",
+    "./*": {
+      "require": "./dist/lib/*",
+      "import": "./dist/es/*"
+    }
+  },
+  "sideEffects": [
+    "dist/es/*/style/*"
+  ],
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@svgdotjs/svg.js": "^3.1.2",
+    "@svgdotjs/svg.panzoom.js": "^2.1.2",
+    "ace-builds": "^1.8.1",
+    "html-to-image": "^1.10.8",
+    "mqtt": "^4.3.7",
+    "@cloudview.visualization-next/theme-chalk": "file:../theme-chalk",
+    "@cloudview.visualization-next/services": "file:../services",
+    "@cloudview.visualization-next/locale": "file:../locale",
+    "@cloudview.visualization-next/utils": "file:../utils"
+  },
+  "peerDependencies": {
+    "cloudview.ui-next": "^2.2.17",
+    "cloudview.ui-next-icon": "^0.0.11",
+    "vue": "^3.3.4",
+    "vue-router": "^4.0.14"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

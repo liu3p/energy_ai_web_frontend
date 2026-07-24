@@ -1,0 +1,12 @@
+@use "common/var";
+@use "sass:map";
+
+.vis-configuration-browser, .vis-mgt-framework, .vis-configuration-editor, .vis-primitive-editor{
+    font-family: "Microsoft YaHei", PingFangSC-Regular, sans-serif;
+    color: map.get(var.$text-color, 'regular');
+    box-sizing: border-box;
+
+    .cv-icon.el-icon {
+        --color: #{map.get(var.$text-color, 'secondary')};
+    }
+}

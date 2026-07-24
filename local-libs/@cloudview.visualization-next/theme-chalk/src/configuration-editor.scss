@@ -1,0 +1,583 @@
+@use 'sass:map';
+@use 'common/var';
+@use 'board-editor' as *;
+
+.vis-configuration-editor {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    background-color: map.get(var.$colors, 'white');
+    flex-direction: column;
+    color: map.get(var.$text-color, 'regular');
+    outline: none !important;
+
+    &-top {
+        flex-basis: 50px;
+        border-bottom: var.$border-base;
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        outline: none !important;
+
+        &__title {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-size: map.get(var.$font-size, 'base');
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__icons {
+            flex-basis: 580px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        &__icon-group {
+            display: flex;
+            align-items: center;
+            flex-basis: 0;
+            border-left: var.$border-base;
+            padding: 0 15px;
+            column-gap: 15px;
+
+            .cv-icon {
+                cursor: pointer;
+
+                &.is-activated {
+                    color: map.get(var.$colors, 'primary', 'base');
+                }
+            }
+        }
+
+        &__ops-item {
+            height: 100%;
+            justify-content: center;
+            flex-basis: 120px;
+            display: flex;
+            border-left: var.$border-base;
+
+            .el-button {
+                width: 100%;
+            }
+        }
+    }
+
+    &__container {
+        flex-grow: 1;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &__board {
+        flex-grow: 1;
+        height: 100%;
+        display: flex;
+        background: url('./assets/bg.png');
+
+        &-enter-active,
+        &-leave-active {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        &-enter-from,
+        &-leave-to {
+            opacity: 0;
+        }
+    }
+
+    &__board-container {
+        flex-grow: 1;
+        height: 100%;
+        display: flex;
+        transition: flex-grow 0.3s;
+        flex-basis: 0;
+
+        &.is-hidden {
+            flex-grow: 0;
+        }
+    }
+}
+
+.vis-board-tab {
+    border-bottom: var.$border-base;
+    flex-basis: 30px;
+    display: flex;
+    flex-shrink: 0;
+    overflow: hidden;
+
+    &__item {
+        flex-basis: 160px;
+        flex-shrink: 1;
+        height: 100%;
+        font-size: map.get(var.$font-size, 'base');
+        align-items: center;
+        display: flex;
+        padding: 0 8px;
+        border-right: var.$border-base;
+        cursor: pointer;
+        background-color: map.get(var.$background-color, 'base');
+        overflow: hidden;
+        transition: flex-shrink 0.3s;
+
+        &:hover {
+            background-color: map.get(var.$background-color, 'selected');
+        }
+
+        &:hover,
+        &.is-active {
+            flex-shrink: 0;
+
+            .vis-board-tab__ops {
+                display: flex;
+            }
+
+            .cv-icon {
+                animation: vis-show-board-ops 0.5s ease-in-out forwards;
+            }
+        }
+
+        &.is-active {
+            color: map.get(var.$colors, 'primary', 'base');
+            background-color: map.get(var.$colors, 'white');
+        }
+    }
+
+    &__name {
+        overflow: hidden;
+        flex-grow: 1;
+        flex-basis: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__ops {
+        display: none;
+        flex-basis: 50px;
+        column-gap: 4px;
+        margin-left: 16px;
+        overflow: hidden;
+
+        .cv-icon:hover {
+            color: map.get(var.$colors, 'primary', 'base');
+        }
+    }
+
+    &__add-op {
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        flex-shrink: 0;
+
+        .el-button.is-link {
+            text-decoration: none;
+        }
+    }
+
+    @keyframes vis-show-board-ops {
+        0% {
+            opacity: 0;
+            transform: scale(0.4);
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+.vis-primitive-set {
+    width: 261px;
+    flex-shrink: 0;
+    display: flex;
+    height: 100%;
+    position: absolute;
+    font-size: map.get(var.$font-size, 'base');
+    transition: width 0.3s;
+
+    &__title {
+        padding: 0 20px;
+    }
+
+    &__container {
+        border-right: var.$border-base;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.95);
+        transition: transform 0.3s;
+        transform: translateX(0);
+        padding: 20px 0;
+        row-gap: 10px;
+    }
+
+    &.is-hidden {
+        width: 0;
+
+        .vis-primitive-set__container {
+            transform: translateX(-100%);
+        }
+
+        .vis-primitive-set__handle {
+            transform: translateX(-261px) translateY(-50%);
+        }
+    }
+
+    &__search {
+        display: flex;
+        flex-basis: 30px;
+        border: var.$border-base;
+        border-radius: map.get(var.$border-radius, 'base');
+        margin: 0 20px;
+
+        .cv-select {
+            flex-basis: 160px;
+        }
+
+        .cv-input {
+            flex-grow: 1;
+        }
+
+        .el-input__wrapper {
+            box-shadow: none !important;
+        }
+
+        .el-select {
+            .el-input__wrapper {
+                box-shadow: none !important;
+
+                &.is-focus {
+                    box-shadow: none !important;
+                }
+            }
+        }
+
+        .el-select .el-input.is-focus .el-input__wrapper {
+            box-shadow: none !important;
+        }
+    }
+
+    &__split {
+        height: 100%;
+        width: 1px;
+        margin: 0 2px;
+        background-color: map.get(var.$border-color, 'base');
+    }
+
+    &__handle {
+        width: 20px;
+        height: 40px;
+        position: absolute;
+        left: 261px;
+        top: 50%;
+        transform: translateX(0) translateY(-50%);
+        border: var.$border-base;
+        border-left-style: none;
+        border-top-right-radius: map.get(var.$border-radius, 'big');
+        border-bottom-right-radius: map.get(var.$border-radius, 'big');
+        cursor: pointer;
+        z-index: 1;
+        transition: 0.3s;
+        background-color: map.get(var.$colors, 'white');
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .cv-icon:hover {
+            opacity: 0.7;
+        }
+
+        &.is-hidden {
+            transform: translateX(-100%) translateY(-50%);
+            opacity: 0;
+        }
+    }
+
+    &__card-box {
+        flex-grow: 1;
+        flex-basis: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        padding: 0 20px;
+        margin-top: 20px;
+    }
+
+    &__card{
+        background-color: transparent !important;
+    }
+
+    &__loading-text {
+        width: 100%;
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: map.get(var.$font-size, 'base');
+        line-height: 1;
+    }
+
+    @supports (display: grid) {
+        .vis-primitive-set__card-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            grid-template-rows: repeat(auto-fill, 80px);
+            grid-gap: 20px;
+        }
+    }
+}
+
+.vis-board-dialog {
+    .el-dialog__body {
+        min-height: 100px !important;
+    }
+}
+
+.vis-select-equipment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+
+    &__select-board {
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &__board-title {
+        font-size: 14px;
+        color: #333;
+        line-height: 14px;
+        padding: 20px 0;
+    }
+
+    &__equipment-board {
+        flex: 1 0 0;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        width: 100%;
+    }
+
+    &__equipment-list-origin {
+        border: 1px solid #ededf1;
+        width: 600px;
+        display: flex;
+        flex: 2 0 0;
+    }
+
+    &__site-board {
+        border-right: 1px solid #ededf1;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__card-item {
+        margin-left: 10%;
+    }
+
+    &__search-box {
+        display: flex;
+        align-items: center;
+        box-sizing: inherit;
+        border-bottom: 1px solid #ededf1;
+        height: 50px;
+        border-radius: 2px;
+        padding-right: 10px;
+    }
+
+    &__search-space {
+        margin: 0 6.5px 0 20px;
+    }
+
+    &__site-tree {
+        padding: 0 10px 15px;
+        flex: 1 0 0;
+        overflow: auto;
+
+        .el-tree .el-tree-node > .el-tree-node__children {
+            overflow: visible !important;
+        }
+    }
+
+    &__equipment-list-site {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: auto;
+    }
+
+    &__equipment-list-selected {
+        border: 1px solid #ededf1;
+        border-left: none;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 0;
+    }
+
+    &__selected-equipment-title {
+        padding: 20px;
+        font-size: 14px;
+        color: #9ea5ae;
+        line-height: 14px;
+    }
+
+    &__selected-equipment-title-with-search {
+        padding: 12px 20px;
+        font-size: 14px;
+        color: #9ea5ae;
+        line-height: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    &__selected-equipment-title-input {
+        flex: 1;
+    }
+
+    &__selected-equipment-list {
+        padding: 0 20px 20px 0;
+        flex: 1;
+        flex-basis: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    &__site-equipment-list {
+        flex: 1 0 0;
+        overflow: hidden;
+
+        .cv-checkbox.el-checkbox {
+            color: map.get(var.$text-color, 'primary');
+            font-weight: normal;
+        }
+    }
+
+    &__operations-board {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+.vis-board-args-panel {
+    display: flex;
+    flex: 1 0 0;
+
+    &__add-panel {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s;
+
+        &--show {
+            width: 260px;
+            border-right: var.$border-base;
+        }
+    }
+
+    &__list-panel {
+        flex: 1 0 0;
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+
+        &-title {
+            padding: 0 20px;
+        }
+
+        &-body {
+            flex: 1 0 0;
+            padding: 0 20px;
+        }
+
+        &-search {
+            display: flex;
+            flex: 0 30px 0;
+            border: var.$border-base;
+            margin: 0 20px 16px;
+            opacity: 1;
+            transition: opacity 0.3s;
+            border-radius: map.get(var.$border-radius, 'base');
+
+            .cv-select {
+                flex-basis: 160px;
+            }
+
+            .cv-input {
+                flex-grow: 1;
+            }
+
+            .el-input__wrapper {
+                box-shadow: none !important;
+            }
+
+            .el-select {
+                .el-input__wrapper {
+                    box-shadow: none !important;
+
+                    &.is-focus {
+                        box-shadow: none !important;
+                    }
+                }
+            }
+
+            .el-select .el-input.is-focus .el-input__wrapper {
+                box-shadow: none !important;
+            }
+
+            &.is-hidden {
+                opacity: 0;
+            }
+        }
+
+        &-split {
+            height: 100%;
+            width: 1px;
+            margin: 0 2px;
+            background-color: map.get(var.$border-color, 'base');
+        }
+
+        &-item {
+            padding-bottom: 15px;
+        }
+
+        &-add-button {
+            padding: 20px;
+
+            .cv-button {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.vis-batch-primitive-attrs {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 20px;
+}

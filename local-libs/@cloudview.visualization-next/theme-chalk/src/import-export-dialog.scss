@@ -1,0 +1,101 @@
+@use 'common/var';
+@use 'sass:map';
+
+.vis-import-export-dialog {
+}
+
+.vis-layout {
+    display: flex;
+    height: 400px;
+    width: 100%;
+    flex-direction: column;
+    border: var.$border-base;
+    border-radius: map.get(var.$border-radius, 'base');
+
+    &__filter-box {
+        flex: 0 0 40px;
+        display: flex;
+        align-items: center;
+        border-bottom: var.$border-base;
+
+        .cv-select {
+            flex-basis: 200px;
+            flex-shrink: 0;
+        }
+
+        .el-input__wrapper {
+            box-shadow: none !important;
+        }
+
+        .el-select {
+            .el-input__wrapper {
+                box-shadow: none !important;
+
+                &.is-focus {
+                    box-shadow: none !important;
+                }
+            }
+        }
+
+        .el-select .el-input.is-focus .el-input__wrapper {
+            box-shadow: none !important;
+        }
+    }
+
+    &__splitter {
+        height: 100%;
+        width: 1px;
+        margin: 0 2px;
+        background-color: map.get(var.$border-color, 'base');
+    }
+
+    &__option-box {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        background-color: map.get(var.$border-color, 'base');
+        flex-basis: 28px;
+        align-items: center;
+    }
+
+    &__card-box {
+        flex-grow: 1;
+        flex-basis: 0;
+        margin: 20px 0;
+        padding: 0 20px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    &__loading-text {
+        width: 100%;
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: map.get(var.$font-size, 'base');
+        line-height: 1;
+    }
+
+    @supports (display: grid) {
+        .vis-layout__card-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-rows: repeat(auto-fill, 140px);
+            grid-gap: 20px;
+        }
+    }
+}
+
+.vis-import-dialog {
+    &__footer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__red-border {
+        border-color: red;
+        background: #fce1e1;
+    }
+}

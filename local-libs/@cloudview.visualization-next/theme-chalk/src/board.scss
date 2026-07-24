@@ -1,0 +1,38 @@
+@use "sass:map";
+@use "common/var";
+
+.vis-board {
+    width: 100%;
+    height: 100%;
+
+    &:focus {
+        outline: none;
+    }
+
+    &.before-pan-zoom {
+        cursor: url("./assets/icon__hand.png"), move;
+    }
+
+    &.pan-zooming {
+        cursor: url("./assets/icon__fist.png"), move;
+    }
+
+    &__select-rect {
+        fill: map.get(var.$colors, 'primary', 'light-2');
+        fill-opacity: 0.3;
+    }
+
+    &__moving-rect {
+        fill-opacity: 0;
+        stroke: #333;
+        stroke-width: 1;
+        stroke-dasharray: 5, 2;
+        cursor: move;
+    }
+}
+
+.vis-resize-points {
+    &__item {
+        fill: map.get(var.$colors, 'primary', 'light-2');
+    }
+}

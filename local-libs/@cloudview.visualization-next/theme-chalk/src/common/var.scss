@@ -1,0 +1,203 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:color';
+
+// 色系
+$colors: () !default;
+$colors: map.deep-merge(
+    (
+        'white': #fff,
+        'black': #000,
+        'primary': (
+            'base': #3162e1,
+            'dark': #13275a,
+        ),
+        'success': (
+            'base': #1da500,
+            'dark': #1da500,
+        ),
+        'warning': (
+            'base': #f79900,
+            'dark': #f79900,
+        ),
+        'danger': (
+            'base': #ef424c,
+            'dark': #ef424c,
+        ),
+        'error': (
+            'base': #ef424c,
+            'dark': #ef424c,
+        ),
+        'info': (
+            'base': #3162e1,
+            'dark': #13275a,
+        ),
+    ),
+    $colors
+);
+$color-white: map.get($colors, 'white') !default;
+
+// 文字颜色
+$text-color: () !default;
+$text-color: map.merge(
+    (
+        'primary': #35353e,
+        'regular': #35353e,
+        'secondary': #888,
+        'placeholder': #aeaeb2,
+    ),
+    $text-color
+);
+
+@mixin set-color-type-light($type, $number) {
+    $colors: map.deep-merge(
+        (
+            $type: (
+                'light-#{$number}':
+                color.mix($color-white, map.get($colors, $type, 'base'), math.percentage(math.div($number, 10))),
+            ),
+        ),
+        $colors
+    ) !global;
+}
+
+$--types: primary, success, warning, danger, error, info;
+
+@for $i from 1 through 9 {
+    @each $type in $--types {
+        @include set-color-type-light($type, $i);
+    }
+}
+
+@mixin set-text-color-light($number) {
+    $text-color: map.merge(
+        (
+            'primary-light-#{$number}':
+            color.mix($color-white, map.get($text-color, 'primary'), math.percentage(math.div($number, 10))),
+            'regular-light-#{$number}':
+            color.mix($color-white, map.get($text-color, 'regular'), math.percentage(math.div($number, 10))),
+            'secondary-light-#{$number}':
+            color.mix($color-white, map.get($text-color, 'secondary'), math.percentage(math.div($number, 10))),
+            'placeholder-light-#{$number}':
+            color.mix($color-white, map.get($text-color, 'placeholder'), math.percentage(math.div($number, 10))),
+        ),
+        $text-color
+    ) !global;
+}
+
+@for $i from 1 through 9 {
+    @include set-text-color-light($i);
+}
+
+// 背景色
+$background-color: () !default;
+$background-color: map.merge(
+    (
+        'base': #f1f4fb,
+        'selected': #f5f7ff,
+        'selected-dark': #bfc5d1,
+    ),
+    $background-color
+);
+
+// 边框颜色
+$border-color: () !default;
+$border-color: map.merge(
+    (
+        'base': #d7d7d8,
+        'light': #d7d7d8,
+        'lighter': #fff,
+        'extra-light': #13275a,
+    ),
+    $border-color
+);
+
+// 边框样式
+$border-width: 1px !default;
+$border-style: solid !default;
+$border-color-hover: #aeaeb2 !default;
+$border-base: $border-width $border-style map.get($border-color, 'base');
+
+// 圆角
+$border-radius: () !default;
+$border-radius: map.merge(
+    (
+        'base': 4px,
+        'small': 2px,
+        'big': 8px,
+    ),
+    $border-radius
+);
+
+// 阴影
+$box-shadow: () !default;
+$box-shadow: map.merge(
+    (
+        'base': (
+            0 2px 4px 1px rgb(0 0 0 / 12%),
+            0 0 6px rgb(0 0 0 / 4%),
+        ),
+        'light': 0 2px 4px 1px rgb(0 0 0 / 15%),
+        'top-base': inset 0 -2px 4px -1px rgb(0 0 0 / 15%),
+        'left-base': inset -2px 0 4px -1px rgb(0 0 0 / 15%),
+        'right-base': inset 2px 0 4px -1px rgb(0 0 0 / 15%),
+        'bottom-base': inset 0 2px 4px -1px rgb(0 0 0 / 15%),
+    ),
+    $box-shadow
+);
+
+// 字体
+$font-size: () !default;
+$font-size: map.merge(
+    (
+        'medium': 16px,
+        'base': 14px,
+        'small': 12px,
+        'extra-small': 12px,
+    ),
+    $font-size
+);
+$font-weight: () !default;
+$font-weight: map.merge(
+    (
+        'base': normal,
+        'bold': bold,
+        'bolder': bolder,
+    ),
+    $font-weight
+);
+
+// 禁用
+$disabled: () !default;
+$disabled: map.merge(
+    (
+        'bg-color': #e7e7e8,
+        'text-color': #5d5d65,
+        'border-color': #e7e7e8,
+    ),
+    $disabled
+);
+
+// 间距
+$spaces: () !default;
+$spaces: map.merge(
+    (
+        'small': 4px,
+        'base': 8px,
+    ),
+    $spaces
+);
+
+@mixin set-space-type-times($number) {
+    $spaces: map.merge(
+        (
+            'base-#{$number}x': map.get($spaces, 'base') * $number,
+            'small-#{$number}x': map.get($spaces, 'small') * $number,
+        ),
+        $spaces
+    ) !global;
+}
+
+@for $i from 2 through 9 {
+    @include set-space-type-times($i);
+}

@@ -1,0 +1,9 @@
+import '@cloudview.visualization-next/theme-chalk/base.css';
+import '@cloudview.visualization-next/theme-chalk/vis-configuration-editor.css';
+import '../../board/style/css';
+import '../../attr-input/style/css';
+import '../../primitive-attrs/style/css';
+import '../../attr-add/style/css';
+import '../../data-binding/style/css';
+import '../../card/style/css';
+import '../../obj-definition-dialog/style/css';

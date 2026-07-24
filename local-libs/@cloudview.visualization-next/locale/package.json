@@ -1,0 +1,29 @@
+{
+  "name": "@cloudview.visualization-next/locale",
+  "version": "1.0.16",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "main": "dist/lib/index.js",
+  "module": "dist/es/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/lib/index.js",
+      "import": "./dist/es/index.mjs"
+    },
+    "./es": "./dist/es/index.mjs",
+    "./es/*": "./dist/es/*.mjs",
+    "./es/*.mjs": "./dist/es/*.mjs",
+    "./lib": "./dist/lib/index.js",
+    "./lib/*": "./dist/lib/*.js",
+    "./lib/*.js": "./dist/lib/*.js",
+    "./*": {
+      "require": "./dist/lib/*",
+      "import": "./dist/es/*"
+    }
+  },
+  "sideEffects": [
+    "dist/*"
+  ]
+}

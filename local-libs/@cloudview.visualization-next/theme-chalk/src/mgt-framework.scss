@@ -1,0 +1,101 @@
+@use 'common/var';
+@use 'sass:map';
+
+.vis-mgt-framework {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: map.get(var.$colors, 'white');
+    flex-direction: column;
+
+    .el-button.is-link {
+        text-decoration: none !important;
+    }
+
+    &__operate-box {
+        flex-basis: 50px;
+        flex-shrink: 0;
+        display: flex;
+        border-bottom: var.$border-base;
+        align-items: center;
+
+        .cv-select {
+            flex-basis: 200px;
+            flex-shrink: 0;
+        }
+
+        .el-input__wrapper {
+            box-shadow: none !important;
+        }
+
+        .el-select {
+            .el-input__wrapper {
+                box-shadow: none !important;
+
+                &.is-focus {
+                    box-shadow: none !important;
+                }
+            }
+        }
+
+        .el-select .el-input.is-focus .el-input__wrapper {
+            box-shadow: none !important;
+        }
+
+        .cv-button.is-text {
+            flex-basis: 120px;
+            height: 100%;
+        }
+    }
+
+    &__search {
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+
+    &__splitter {
+        height: 100%;
+        width: 1px;
+        background-color: map.get(var.$border-color, 'base');
+    }
+
+    &__container {
+        flex-grow: 1;
+        flex-basis: 0;
+        margin: 20px 0 0;
+        padding: 0 20px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+
+        .el-scrollbar__view {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            flex-grow: 1;
+            gap: 20px;
+        }
+
+        .el-scrollbar__wrap {
+            width: 100%;
+        }
+    }
+
+    &__footer {
+        flex-basis: 50px;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: end;
+        padding-right: 20px;
+        align-items: center;
+    }
+
+    @supports (display: grid) {
+        .el-scrollbar__view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-rows: repeat(auto-fill, 200px);
+            grid-gap: 20px;
+        }
+    }
+}

@@ -1,0 +1,153 @@
+@use 'sass:map';
+@use 'common/var';
+
+.vis-card {
+    display: flex;
+    flex-grow: 1;
+    border: var.$border-base;
+    border-radius: map.get(var.$border-radius, 'base');
+    flex-basis: 260px;
+    flex-direction: column;
+    width: auto;
+    height: 200px;
+    background-color: var.$color-white;
+    color: map.get(var.$text-color, 'regular');
+
+    &__img-box {
+        background-color: var.$color-white;
+        cursor: pointer;
+        flex: 0 0 140px;
+        width: 100%;
+        border-bottom: var.$border-base;
+        overflow: hidden;
+
+        &.is-basic {
+            cursor: not-allowed;
+        }
+    }
+
+    &__img {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 100%;
+        max-width: 100%;
+        border: none;
+        box-sizing: inherit;
+        outline: 0;
+    }
+
+    &__info-box {
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 6px;
+        flex-shrink: 0;
+        flex-grow: 1;
+    }
+
+    &__name {
+        font-size: map.get(var.$font-size, 'base');
+        overflow: hidden;
+        width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__operates {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &-custom {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__operate-delete {
+        &.el-button.is-link {
+            --el-button-text-color: #{map.get(var.$colors, 'danger', 'base')};
+
+            color: var(--el-button-text-color);
+
+            &:hover,
+            &:focus {
+                --el-button-text-color: #{map.get(var.$colors, 'danger', 'light-4')};
+
+                color: var(--el-button-text-color);
+            }
+
+            &:active {
+                --el-button-text-color: #{map.get(var.$colors, 'danger', 'base')};
+
+                color: var(--el-button-text-color);
+            }
+        }
+    }
+
+    @supports (display: grid) {
+        &__card {
+            margin: 0;
+            width: auto;
+        }
+    }
+
+    &--small {
+        flex-basis: 150px;
+        flex-grow: 0;
+        height: 140px;
+
+        .vis-card__img-box {
+            flex-basis: 110px;
+            border-bottom: none;
+            padding: 8px;
+        }
+
+        .vis-card__info-box {
+            flex-direction: row;
+            padding: 0 8px;
+            align-items: center;
+            justify-content: space-between;
+            column-gap: 8px;
+        }
+
+        .vis-card__name {
+            font-size: map.get(var.$font-size, 'base');
+            line-height: 1;
+        }
+    }
+
+    &--mini {
+        border: none;
+        flex-basis: 60px;
+        flex-grow: 0;
+        height: 80px;
+
+        .vis-card__img {
+            vertical-align: middle;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .vis-card__img-box {
+            flex-basis: 60px;
+            border: var.$border-base;
+            border-radius: map.get(var.$border-radius, 'base');
+        }
+
+        .vis-card__info-box {
+            flex-direction: row;
+            padding: 0 4px;
+            align-items: center;
+            justify-content: space-between;
+            column-gap: 4px;
+        }
+
+        .vis-card__name {
+            font-size: map.get(var.$font-size, 'base');
+            line-height: 1;
+        }
+    }
+}

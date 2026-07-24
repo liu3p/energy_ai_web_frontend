@@ -1,0 +1,40 @@
+import {AttrTypeEnum} from '../tokens';
+
+export const boardAttrConfig = {
+    'background-color': {
+        'id': 'background-color',
+        'type': AttrTypeEnum.COLOR,
+        'value': null,
+        'tag': 'Style',
+        'name': 'vis.property.background',
+        'definition': 'vis.property.boardBackgroundColor',
+        'readonly': false,
+        'hidden': false,
+        'desc': 'vis.property.boardBackgroundColor',
+        'attrType': 'css',
+    },
+    panDisable: {
+        'id': 'panDisable',
+        'type': AttrTypeEnum.BOOLEAN,
+        'value': false,
+        'tag': 'Arrange',
+        'name': 'vis.property.panDisable',
+        'definition': 'vis.property.boardPanDisable',
+        'readonly': false,
+        'hidden': false,
+        'desc': 'vis.property.boardPanDisable',
+        'attrType': 'other',
+    },
+    zoomDisable: {
+        'id': 'zoomDisable',
+        'type': AttrTypeEnum.BOOLEAN,
+        'value': false,
+        'tag': 'Arrange',
+        'name': 'vis.property.zoomDisable',
+        'definition': 'vis.property.boardZoomDisable',
+        'readonly': false,
+        'hidden': false,
+        'desc': 'vis.property.boardZoomDisable',
+        'attrType': 'other',
+    },
+};
