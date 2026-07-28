@@ -15,7 +15,10 @@ export function initUserInfo() {
         return getUserInfo().then(res => {
             if (res.state) {
                 userInfo.value = res.data;
-                // 使用用户ID初始化实时连接
+                initWebsocket();
+                webSocket.connect();
+            } else if (res.data && typeof res.data === 'object' && 'usertype' in (res.data as object)) {
+                userInfo.value = res.data as UserInfoModel;
                 initWebsocket();
                 webSocket.connect();
             }

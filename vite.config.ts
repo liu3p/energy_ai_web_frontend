@@ -52,13 +52,21 @@ export default defineConfig({
         port: 5173,
         proxy: {
             '/api': {
-                target: 'http://127.0.0.1:38080',
+                // target: 'http://127.0.0.1:38080',
+                target: 'http://47.103.143.170:38080',
+                changeOrigin: true,
             },
         },
     },
     resolve: {
         alias: {
             '@': resolve('./src'),
+            'cloudview.ui-next/utils': resolve('./src/shims/cloudview-ui-next/utils.ts'),
+            'cloudview.ui-next/locale/lang/zh-cn': resolve('./src/shims/cloudview-ui-next/locale/zh-cn.ts'),
+            'cloudview.ui-next/locale/lang/en': resolve('./src/shims/cloudview-ui-next/locale/en.ts'),
+            'cloudview.ui-next/theme-chalk': resolve('./local-libs/cloudview.ui-next/dist/theme-chalk'),
+            'cloudview.ui-next': resolve('./src/shims/cloudview-ui-next/index.ts'),
+            'cloudview.ui-next-icon': resolve('./src/shims/cloudview-ui-next-icon/index.ts'),
         },
     },
     css: {
