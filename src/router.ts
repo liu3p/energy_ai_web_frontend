@@ -11,7 +11,7 @@ import { clearUserInfo, initUserInfo, userInfo, userMenuList } from './common/us
 import authService from '@/common/auth.service';
 
 export const constantRoutes = [
-    { path: '', redirect: '/main/capture/point' },
+    { path: '', redirect: '/main/dashboard/index' },
     { path: '/login', component: Login },
     { path: '/403', component: Page403 },
     { path: '/404', component: Page404 },
@@ -32,7 +32,7 @@ export const asyncRoutes = [
                     {
                         path: 'index',
                         component: () => import('./modules/main/dashboard/index.vue'),
-                        meta: { title: '看板' },
+                        meta: { title: '首页' },
                     },
                 ],
             },
@@ -44,7 +44,7 @@ export const asyncRoutes = [
                     {
                         path: 'monitor',
                         component: () => import('./modules/main/capture/monitor/monitor.page.vue'),
-                        meta: { title: '数据监控' },
+                        meta: { title: '设备监控' },
                     },
                     {
                         path: 'point',
@@ -66,12 +66,60 @@ export const asyncRoutes = [
                     {
                         path: 'strategy',
                         component: () => import('./modules/main/agc/strategy/strategic-management.page.vue'),
+                        meta: { title: '策略展示' },
+                    },
+                    {
+                        path: 'strategy-config',
+                        component: () => import('./modules/main/agc/strategy/strategic-management.page.vue'),
                         meta: { title: '策略配置' },
                     },
                     {
                         path: 'model',
                         component: () => import('./modules/main/agc/model-management/model-management.page.vue'),
                         meta: { title: '模型配置' },
+                    },
+                ],
+            },
+            {
+                path: 'data',
+                meta: { title: '数据' },
+                icon: IconCollect,
+                children: [
+                    {
+                        path: 'collection',
+                        component: () => import('./modules/main/data/data-collection.page.vue'),
+                        meta: { title: '数据采集' },
+                    },
+                    {
+                        path: 'channel-message',
+                        component: () => import('./modules/main/data/channel-message.page.vue'),
+                        meta: { title: '通道报文' },
+                    },
+                ],
+            },
+            {
+                path: 'alarm',
+                meta: { title: '告警' },
+                icon: IconCollect,
+                children: [
+                    {
+                        path: 'manage',
+                        component: () => import('./modules/main/layout/placeholder.page.vue'),
+                        meta: { title: '告警管理' },
+                        props: () => ({title: '告警管理'}),
+                    },
+                ],
+            },
+            {
+                path: 'config',
+                meta: { title: '配置' },
+                icon: IconCollect,
+                children: [
+                    {
+                        path: 'display',
+                        component: () => import('./modules/main/layout/placeholder.page.vue'),
+                        meta: { title: '展示配置' },
+                        props: () => ({title: '展示配置'}),
                     },
                 ],
             },
@@ -98,7 +146,7 @@ export const asyncRoutes = [
                     {
                         path: 'log',
                         component: () => import('./modules/main/system/log/log.page.vue'),
-                        meta: { title: '日志管理' },
+                        meta: { title: '日志监控' },
                     },
                     {
                         path: 'process',
@@ -160,7 +208,10 @@ router.beforeEach(async (to, from, next) => {
     if (token && !userStore?.usertype) {
         try {
             await initUserInfo();
-            const accessedRoutes = filterRoutes(asyncRoutes, userInfo.value!.usertype);
+            if (!userInfo.value?.usertype) {
+                throw new Error('failed to load user info');
+            }
+            const accessedRoutes = filterRoutes(asyncRoutes, userInfo.value.usertype);
             userMenuList.value = accessedRoutes;
             accessedRoutes.forEach((route: RouteRecordRaw) => {
                 router.addRoute(route);

@@ -4,7 +4,7 @@ import cvZh from 'cloudview.ui-next/locale/lang/zh-cn';
 export default {
     fw: {
         common: {
-            title: 'EMS WebManager',
+            title: '能量管理系统',
             number: '序号',
             home: '首页',
             operation: '操作',

@@ -1,58 +1,52 @@
 <template>
-    <div class="main">
-        <main-header class="main__header"></main-header>
-        <main-breadcrumb></main-breadcrumb>
-        <div class="main__container">
-            <router-view></router-view>
+    <div class="main-layout">
+        <app-sidebar class="main-layout__sidebar" />
+        <div class="main-layout__content">
+            <main-header class="main-layout__header" />
+            <main-breadcrumb />
+            <div class="main-layout__container">
+                <router-view />
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import mainHeader from '../main/main-header.vue';
+import AppSidebar from '@/modules/main/layout/app-sidebar.vue';
+import MainHeader from '@/modules/main/main-header.vue';
 import MainBreadcrumb from '@/modules/main/main-breadcrumb.vue';
-
 </script>
 
 <style lang="scss" scoped>
-.main {
+.main-layout {
+    display: flex;
     height: 100%;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    background: #f2f4fa;
 
-    &__header {
-        position: relative;
-        left: 0;
-        top: 0;
-        z-index: 999;
+    &__sidebar {
+        flex-shrink: 0;
     }
 
-    &__left {
-        margin-right: var(--fw-gap);
-        width: 240px;
+    &__content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &__header {
+        flex-shrink: 0;
     }
 
     &__container {
         flex: 1;
         padding: 16px;
         box-sizing: border-box;
-        display: flex;
         overflow: hidden;
+        display: flex;
         flex-direction: column;
-        //margin-top: 56px;
-    }
-
-    &__logo {
-        font-size: 16px;
-        color: #fff;
-        text-align: center;
-    }
-
-    &__footer {
-        color: #ccc;
-        text-align: center;
-        font-size: 12px;
     }
 }
 </style>
