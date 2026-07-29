@@ -3,7 +3,6 @@
         <app-sidebar class="main-layout__sidebar" />
         <div class="main-layout__content">
             <main-header class="main-layout__header" />
-            <main-breadcrumb />
             <div class="main-layout__container">
                 <router-view />
             </div>
@@ -14,7 +13,6 @@
 <script lang="ts" setup>
 import AppSidebar from '@/modules/main/layout/app-sidebar.vue';
 import MainHeader from '@/modules/main/main-header.vue';
-import MainBreadcrumb from '@/modules/main/main-breadcrumb.vue';
 </script>
 
 <style lang="scss" scoped>
@@ -42,7 +40,7 @@ import MainBreadcrumb from '@/modules/main/main-breadcrumb.vue';
 
     &__container {
         flex: 1;
-        padding: 16px;
+        padding: 0 16px 16px 16px;
         box-sizing: border-box;
         overflow: hidden;
         display: flex;

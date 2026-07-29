@@ -1,5 +1,4 @@
 <template>
-    <div class="main-contain__header">报文</div>
     <div class="main-contain__center">
         <div class="form-wrapper">
             <cv-form :rules="rules" ref="ruleFormRef" :model="formData" inline>
@@ -188,21 +187,10 @@ onUnmounted(() => {
     margin-bottom: 0 !important;
 }
 
-.main-contain__header {
-    height: 48px;
-    background: #fff;
-    padding: 16px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #ebebeb;
-}
-
 .main-contain__center {
     padding: 16px;
     background: #fff;
-    height: calc(100% - 48px);
+    height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;

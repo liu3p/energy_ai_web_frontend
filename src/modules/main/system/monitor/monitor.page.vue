@@ -1,9 +1,6 @@
 <template>
     <div class="container">
         <div class="main-contain">
-            <div class="main-contain__header">
-                性能监控
-            </div>
             <div class="monitor-contain">
                 <div class="main-contain__left">
                     <div class="main-contain__left1">
@@ -272,20 +269,9 @@ $gap: 24px;
     width: 100%
 }
 
-.main-contain__header {
-    height: 48px;
-    background: #fff;
-    padding: 16px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #EBEBEB;
-}
-
 .monitor-contain {
     background: #fff;
-    height: calc(100% - 48px);
+    height: 100%;
     overflow: hidden;
     display: flex;
 }

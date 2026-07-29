@@ -1,7 +1,6 @@
 <template>
     <div class="container">
         <div class="main-contain">
-            <div class="main-contain__header">进程管理</div>
             <div class="process-contain">
                 <div class="form-wrapper">
                     <div>
@@ -146,20 +145,9 @@ $gap: 24px;
     width: 100%;
 }
 
-.main-contain__header {
-    height: 48px;
-    background: #fff;
-    padding: 16px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #ebebeb;
-}
-
 .process-contain {
     background: #fff;
-    height: calc(100% - 48px);
+    height: 100%;
     overflow: hidden;
 }
 

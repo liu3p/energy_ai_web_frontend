@@ -76,10 +76,9 @@ const rightMenuHandler = () => {
 
 <style lang="scss" scoped>
 .main-header {
-    height: 56px;
+    height: 64px;
     padding: 0 20px;
-    background: #fff;
-    border-bottom: 1px solid #ebeef5;
+    background: #f2f4f7;
     display: flex;
     align-items: center;
     justify-content: space-between;
