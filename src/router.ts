@@ -32,7 +32,7 @@ export const asyncRoutes = [
                     {
                         path: 'index',
                         component: () => import('./modules/main/dashboard/index.vue'),
-                        meta: { title: '首页' },
+                        meta: { title: '看板' },
                     },
                 ],
             },
@@ -106,7 +106,7 @@ export const asyncRoutes = [
                         path: 'manage',
                         component: () => import('./modules/main/layout/placeholder.page.vue'),
                         meta: { title: '告警管理' },
-                        props: () => ({title: '告警管理'}),
+                        props: () => ({ title: '告警管理' }),
                     },
                 ],
             },
@@ -117,9 +117,9 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'display',
-                        component: () => import('./modules/main/layout/placeholder.page.vue'),
+                        component: () => import('./modules/main/agc/dashboard-management/dashboard-management.page.vue'),
                         meta: { title: '展示配置' },
-                        props: () => ({title: '展示配置'}),
+                        props: () => ({ title: '展示配置' }),
                     },
                 ],
             },

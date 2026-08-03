@@ -1,11 +1,11 @@
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 // @ts-ignore
-import {CloudViewResolver} from 'cloudview.ui-next/utils';
-import {resolve} from 'path';
-import {writeFileSync, readFileSync} from 'fs';
+import { CloudViewResolver } from 'cloudview.ui-next/utils';
+import { resolve } from 'path';
+import { writeFileSync, readFileSync } from 'fs';
 
 // 打包日期插件 - 修改 config.js 添加 build_date 字段
 const buildDatePlugin = () => {
@@ -61,12 +61,12 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve('./src'),
-            'cloudview.ui-next/utils': resolve('./src/shims/cloudview-ui-next/utils.ts'),
-            'cloudview.ui-next/locale/lang/zh-cn': resolve('./src/shims/cloudview-ui-next/locale/zh-cn.ts'),
-            'cloudview.ui-next/locale/lang/en': resolve('./src/shims/cloudview-ui-next/locale/en.ts'),
-            'cloudview.ui-next/theme-chalk': resolve('./local-libs/cloudview.ui-next/dist/theme-chalk'),
-            'cloudview.ui-next': resolve('./src/shims/cloudview-ui-next/index.ts'),
-            'cloudview.ui-next-icon': resolve('./src/shims/cloudview-ui-next-icon/index.ts'),
+            // 'cloudview.ui-next/utils': resolve('./src/shims/cloudview-ui-next/utils.ts'),
+            // 'cloudview.ui-next/locale/lang/zh-cn': resolve('./src/shims/cloudview-ui-next/locale/zh-cn.ts'),
+            // 'cloudview.ui-next/locale/lang/en': resolve('./src/shims/cloudview-ui-next/locale/en.ts'),
+            // 'cloudview.ui-next/theme-chalk': resolve('./local-libs/cloudview.ui-next/dist/theme-chalk'),
+            // 'cloudview.ui-next': resolve('./src/shims/cloudview-ui-next/index.ts'),
+            // 'cloudview.ui-next-icon': resolve('./src/shims/cloudview-ui-next-icon/index.ts'),
         },
     },
     css: {
