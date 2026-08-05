@@ -1,5 +1,5 @@
 <template>
-    <cv-dialog-form v-model="visible" width="1000" inline title="配置参数" :draggable="true" z-index="2000"
+    <cv-dialog-form v-model="visible" width="1000" inline title="配置参数" :draggable="true" :z-index="2000"
         :form-model="formData" @close="cancel">
         <div style="padding: 0 56px">
             <el-tabs v-model="activeName" class="demo-tabs">
@@ -171,18 +171,10 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.w-cm {
-    width: 320px;
-}
-
 .el-checkbox {
     border: 1px solid #d8dbe1;
     padding: 20px 48px;
     border-radius: 4px;
     margin-bottom: 12px;
-}
-
-.is-checked {
-    border-color: var(--el-checkbox-checked-text-color);
 }
 </style>

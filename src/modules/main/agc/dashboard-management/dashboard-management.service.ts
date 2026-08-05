@@ -11,6 +11,10 @@ export default class dashboardManagementServiceApi {
     static async editTopologyConfig(data: { no: string; type: string; oid: string; show_value: string; show_name: string; show_unit: string }): Promise<Response<any>> {
         return http.post(`log/homepage/config/topology`, data);
     }
+    // 修改充放电配置
+    static async editPowerLevelConfig(data: { no: string; type: string; oid: string; show_value: string; show_name: string; show_unit: string }): Promise<Response<any>> {
+        return http.post(`log/homepage/config/power_level`, data);
+    }
     // 修改实时配置信息
     static async editRealtimeConfig(data: { no: string; type: string; oid: string; show_value: string; show_name: string; show_unit: string }): Promise<Response<any>> {
         return http.post(`log/homepage/config/realtime`, data);

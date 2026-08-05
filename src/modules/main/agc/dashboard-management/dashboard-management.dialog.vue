@@ -1,12 +1,13 @@
 <template>
-    <cv-dialog-form v-model="visible" width="600" title="新增" :draggable="true" :submit="submit" :form-model="formData"
-        label-width="80" z-index="1000" :submit-text="t('fw.common.confirm')" @close="cancel" :rules="rules">
+    <cv-dialog-form v-model="visible" width="600" :title="dialogType == 'add' ? '新增' : '编辑'" :draggable="true"
+        :submit="submit" :form-model="formData" label-width="80" :z-index="1000" :submit-text="t('fw.common.confirm')"
+        @close="cancel" :rules="rules">
         <div style="padding: 0 56px">
             <cv-form-item label="展示名称" prop="show_name">
                 <cv-input v-model="formData.show_name" placeholder="请输入"></cv-input>
             </cv-form-item>
             <cv-form-item label="点位类型" prop="type">
-                <cv-select :disabled="disabled" v-model="formData.type" placeholder="请输入">
+                <cv-select :disabled="disabled" v-model="formData.type" placeholder="请输入" @change="selectChange">
                     <cv-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
                 </cv-select>
             </cv-form-item>
@@ -45,7 +46,7 @@ import ReplyPointDialog from '@/modules/main/agc/dashboard-management/reply-poin
 const { t } = useLocale();
 const emit = defineEmits(['refresh', 'submit']);
 const replyPointRef = ref();
-
+const dialogType = ref('add');
 const rules = {
     type: [
         {
@@ -85,6 +86,7 @@ interface EnumItem {
     value: string
 }
 const formData = ref<{
+    no: number,
     type: string,
     show_name: string,
     oid: string,
@@ -92,6 +94,7 @@ const formData = ref<{
     show_value: string,
     enumList: EnumItem[]
 }>({
+    no: 0,
     type: '',
     show_name: '',
     oid: '',
@@ -120,22 +123,57 @@ const addEnum = () => {
     })
 }
 
-const open = (data: any, node: any) => {
+const open = (data: any) => {
+    if (data) {
+        dialogType.value = 'edit'
+        const { no, type, show_name, oid, show_unit, show_value, table } = data;
+        formData.value = {
+            no: no,
+            type: type,
+            show_name: show_name,
+            oid: oid,
+            show_unit: show_unit,
+            show_value: show_value,
+            enumList: table ? Object.keys(table).map((item, index) => {
+                return {
+                    key: Date.now(),
+                    number: item,
+                    value: table[item]
+                }
+            }) : [{
+                key: Date.now(),
+                number: "",
+                value: ""
+            }]
+        };
+    } else {
+        dialogType.value = 'add'
+    }
     visible.value = true;
 };
-
+const selectChange = () => {
+    formData.value.oid = '';
+    formData.value.show_unit = '';
+    formData.value.show_value = '';
+    formData.value.enumList = [{
+        key: Date.now(),
+        number: "",
+        value: ""
+    }]
+}
 const selectPoint = (info: any) => {
     formData.value.oid = info.id
 }
 
 const submit = async () => {
-    emit('submit', formData.value);
+    emit('submit', formData.value, dialogType.value);
     cancel();
 };
 
 const cancel = () => {
     visible.value = false;
     formData.value = {
+        no: 0,
         type: '',
         show_name: '',
         oid: '',
@@ -156,21 +194,6 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.w-cm {
-    width: 320px;
-}
-
-.el-checkbox {
-    border: 1px solid #d8dbe1;
-    padding: 20px 48px;
-    border-radius: 4px;
-    margin-bottom: 12px;
-}
-
-.is-checked {
-    border-color: var(--el-checkbox-checked-text-color);
-}
-
 .enum-list {
     display: flex;
 }

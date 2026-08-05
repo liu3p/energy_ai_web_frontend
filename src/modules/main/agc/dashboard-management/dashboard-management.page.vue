@@ -7,12 +7,14 @@
                 @click="btnClick('realtime')">实时数据配置</el-button>
             <el-button size="large" :type="modelType == 'topology' ? 'primary' : ''"
                 @click="btnClick('topology')">拓扑图配置</el-button>
+            <el-button size="large" :type="modelType == 'power_level' ? 'primary' : ''"
+                @click="btnClick('power_level')">充放电配置</el-button>
         </div>
         <div class="main-contain">
             <div class="main-contain__header">
                 <span>{{ modelName }}</span>
                 <cv-button v-if="modelType != 'topology'" type="primary" @click="modelManageRef.open()">
-                    <span>＋ 添加策略</span>
+                    <span>＋ 添加属性</span>
                 </cv-button>
                 <cv-button v-else type="primary" @click="saveConfig(configData.topology)">
                     <span>保存</span>
@@ -34,10 +36,12 @@
                                 {{ row.type == 3 ? row.show_value : row.table }}
                             </template>
                         </cv-table-column>
-                        <cv-table-column prop="show_unit" label="数据类型" />
-                        <cv-table-column label="操作" width="160">
+                        <cv-table-column prop="show_unit" label="单位" />
+                        <cv-table-column label="操作" width="180">
                             <template #default="scope">
                                 <cv-button text type="danger" @click="delect(scope.row)">删除
+                                </cv-button>
+                                <cv-button text type="primary" @click="modelManageRef.open(scope.row)">编辑
                                 </cv-button>
                                 <cv-button text type="primary" v-if="scope.row.no != 1" @click="move(scope.row, 1)">
                                     上移
@@ -49,8 +53,7 @@
                             </template>
                         </cv-table-column>
                     </cv-table>
-                    <el-card v-else class="topology-card" style="margin-top: 10px;"
-                        v-for="item in configData[modelType]">
+                    <el-card v-else style="margin-top: 10px;" v-for="item in configData[modelType]">
                         <el-checkbox v-model="item.used" :true-value='1' :false-value='0'>
                             {{ item.show_name }}
                         </el-checkbox>
@@ -63,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <dashboard-management-dialog ref="modelManageRef" @submit="addConfig"></dashboard-management-dialog>
+        <dashboard-management-dialog ref="modelManageRef" @submit="submit"></dashboard-management-dialog>
         <reply-point-dialog ref="replyPointRef" @selectPoint="selectPoint"></reply-point-dialog>
     </div>
 </template>
@@ -80,7 +83,7 @@ const modelType = ref();
 const modelName = ref();
 const typeName = ref<any>({
     1: '实时值',
-    2: '查表值',
+    2: '枚举值',
     3: '固定值',
 });
 const modelManageRef = ref();
@@ -96,6 +99,9 @@ const btnClick = (type: string) => {
             break;
         case 'topology':
             modelName.value = '拓扑图配置'
+            break;
+        case 'power_level':
+            modelName.value = '充放电配置'
             break;
     }
 
@@ -113,6 +119,7 @@ interface EnumItem {
     number: string,
     value: string
 }
+
 const delect = (row: any) => {
     let data: any = [...configData.value[modelType.value]]
     CvMessageBox.confirm('确认删除该项配置？', '确认删除', {
@@ -141,30 +148,39 @@ const move = async (row: any, type: number) => {
     saveConfig(dataList);
 }
 
-const addConfig = (addInfo: {
+const submit = (poinInfo: {
+    no: number,
     type: string,
     show_name: string,
     oid: string,
     show_unit: string,
     show_value: string,
     enumList: EnumItem[]
-}) => {
-    const { show_name, type, oid, show_value, show_unit, enumList } = addInfo
+}, submitType: string) => {
+    const { no, show_name, type, oid, show_value, show_unit, enumList } = poinInfo
     let table: Record<string, string> = {};
     enumList.forEach((item, index) => {
         if (item.number != '' && item.value != '') {
             table[item.number] = item.value;
         }
     })
-    let data = [...configData.value[modelType.value], {
+    let data = {
+        "no": no,
         "type": type,
         "oid": oid,
         "show_value": show_value,
         "show_name": show_name,
         "show_unit": show_unit,
         "table": JSON.stringify(table) === '{}' ? null : table
-    }]
-    saveConfig(data)
+    };
+    if (submitType == 'edit') {
+        let index = poinInfo.no - 1
+        configData.value[modelType.value].splice(index, 1);
+        configData.value[modelType.value].splice(index, 0, data);
+        saveConfig(configData.value[modelType.value])
+    } else {
+        saveConfig([...configData.value[modelType.value], data])
+    }
 }
 
 const saveConfig = async (data: any) => {
@@ -182,6 +198,9 @@ const saveConfig = async (data: any) => {
         case 'realtime':
             res = await dashboardManagementServiceApi.editRealtimeConfig(saveData);
             break;
+        case 'power_level':
+            res = await dashboardManagementServiceApi.editPowerLevelConfig(saveData);
+            break;
         case 'topology':
             res = await dashboardManagementServiceApi.editTopologyConfig(saveData);
             break;
@@ -197,7 +216,6 @@ const selectPoint = (info: any, no: number) => {
         return item.no == no
     })
     item.oid = info.id
-    console.info(item, "???")
 }
 onMounted(() => {
     btnClick('basic_info');
@@ -259,11 +277,9 @@ onMounted(() => {
     padding: 16px;
 }
 
-.topology-card {
-    .select-point {
-        float: right;
-        display: flex;
-        align-items: center;
-    }
+.select-point {
+    float: right;
+    display: flex;
+    align-items: center;
 }
 </style>
