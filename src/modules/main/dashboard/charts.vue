@@ -1,5 +1,5 @@
 <template>
-    <charts ref="chartRef" type="line" style="flex: 1" :options="chartOptions" />
+    <charts ref="chartRef" type="line" :options="chartOptions" style="overflow:hidden;flex: 1" />
 </template>
 <script setup lang="ts">
 import Charts from '@/common/echarts/charts.vue';

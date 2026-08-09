@@ -22,8 +22,9 @@ export const initOptions = (options?: chartParams): LineOption & {
                 icon: "path://M0,0 L6,0 L6,6 L0,6 Z"
             });
         }
-
-        colorList.push(item.color);
+        if (item.color) {
+            colorList.push(item.color);
+        }
         return {
             name: item.name,
             type: item.type,
@@ -40,10 +41,14 @@ export const initOptions = (options?: chartParams): LineOption & {
             areaStyle: {
                 color: '#1DA5000A',
             },
+            itemStyle: {
+                barBorderRadius: [6, 6, 0, 0]
+            }
         };
     })
+
     return {
-        color: colorList,
+        color: colorList.length > 0 ? colorList : ['#F43535', '#5CCF77', '#1A6FB5', '#E8841A', '#8B5CF6', '#0891B2'],
         tooltip: {
             show: true
         },
@@ -54,7 +59,7 @@ export const initOptions = (options?: chartParams): LineOption & {
             itemWidth: 10,
             itemGap: 20,
             textStyle: {
-                fontSize: 16
+                fontSize: 14
             }
         },
         grid: {
