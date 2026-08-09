@@ -47,6 +47,16 @@ export const asyncRoutes = [
                         meta: { title: '设备监控' },
                     },
                     {
+                        path: 'device-manage',
+                        component: () => import('./modules/main/capture/device-manage/device-manage.page.vue'),
+                        meta: { title: '设备管理' },
+                    },
+                    {
+                        path: 'operation-strategy',
+                        component: () => import('./modules/main/capture/operation-strategy/operation-strategy.page.vue'),
+                        meta: { title: '运行策略' },
+                    },
+                    {
                         path: 'point',
                         component: () => import('./modules/main/capture/point/point.page.vue'),
                         meta: { title: '点表配置' },

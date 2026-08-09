@@ -1,0 +1,230 @@
+{
+    "data": {
+        "type": "STATION",
+        "name": "station",
+        "para": [
+            {
+                "name": "AGCInvest",
+                "value": "0",
+                "type": "DIGITAL",
+                "max": "",
+                "min": "",
+                "database_id": "0-1-101-1001"
+            },
+            {
+                "name": "AGCLocalRemote",
+                "value": "0",
+                "type": "DIGITAL",
+                "max": "",
+                "min": "",
+                "database_id": "0-1-101-1002"
+            },
+            {
+                "name": "AGCAllowReverse",
+                "value": "0",
+                "type": "DIGITAL",
+                "max": "",
+                "min": "",
+                "database_id": "0-1-101-1004"
+            }
+        ],
+        "dyn_para": [],
+        "INLINE": [
+            {
+                "type": "INLINE",
+                "name": "inline1",
+                "para": [],
+                "dyn_para": [],
+                "TRANSFORMER": [
+                    {
+                        "type": "TRANSFORMER",
+                        "name": "transformer1",
+                        "para": [
+                            {
+                                "name": "Manufacturer",
+                                "value": "",
+                                "type": "ATTRIBUTE",
+                                "max": "",
+                                "min": ""
+                            },
+                            {
+                                "name": "Capacity",
+                                "value": "400",
+                                "type": "ANALOG",
+                                "max": "",
+                                "min": ""
+                            }
+                        ],
+                        "dyn_para": [],
+                        "PCS": [
+                            {
+                                "type": "PCS",
+                                "name": "pcs1",
+                                "para": [
+                                    {
+                                        "name": "Manufacturer",
+                                        "value": "ENJIU",
+                                        "type": "ATTRIBUTE",
+                                        "max": "",
+                                        "min": ""
+                                    },
+                                    {
+                                        "name": "Capacity",
+                                        "value": "100",
+                                        "type": "ANALOG",
+                                        "max": "",
+                                        "min": ""
+                                    },
+                                    {
+                                        "name": "SOCHigh",
+                                        "value": "100",
+                                        "type": "ANALOG",
+                                        "max": "",
+                                        "min": "",
+                                        "database_id": "0-1-101-1011"
+                                    },
+                                    {
+                                        "name": "SOCLow",
+                                        "value": "0",
+                                        "type": "ANALOG",
+                                        "max": "",
+                                        "min": "",
+                                        "database_id": "0-1-101-1012"
+                                    }
+                                ],
+                                "dyn_para": [
+                                    {
+                                        "database_id": "0-1-101-1003",
+                                        "name": "Fault",
+                                        "type": "DIGITAL",
+                                        "value": "0"
+                                    }
+                                ],
+                                "BMS": [
+                                    {
+                                        "type": "BMS",
+                                        "name": "bms12321311",
+                                        "para": [
+                                            {
+                                                "name": "Manufacturer",
+                                                "value": "ENJIU",
+                                                "type": "ATTRIBUTE",
+                                                "max": "",
+                                                "min": ""
+                                            },
+                                            {
+                                                "name": "Capacity",
+                                                "value": "215",
+                                                "type": "ANALOG",
+                                                "max": "",
+                                                "min": ""
+                                            },
+                                            {
+                                                "name": "BatteryNo",
+                                                "value": "248",
+                                                "type": "ANALOG",
+                                                "max": "",
+                                                "min": ""
+                                            }
+                                        ],
+                                        "dyn_para": [],
+                                        "DEVICE": [
+                                            {
+                                                "type": "LIQUIDCOOL",
+                                                "name": "水冷",
+                                                "para": [
+                                                    {
+                                                        "name": "Manufacturer",
+                                                        "value": "SONGZHI",
+                                                        "type": "ATTRIBUTE",
+                                                        "max": "",
+                                                        "min": ""
+                                                    }
+                                                ],
+                                                "dyn_para": [
+                                                    {
+                                                        "database_id": "800-3-101-201",
+                                                        "name": "LCRunMode",
+                                                        "type": "ANALOG",
+                                                        "value": "0"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "BMS",
+                                        "name": "电池簇 1",
+                                        "para": [
+                                            {
+                                                "name": "Manufacturer",
+                                                "value": "GAOTE",
+                                                "type": "ATTRIBUTE",
+                                                "max": "",
+                                                "min": ""
+                                            },
+                                            {
+                                                "name": "BatteryNo",
+                                                "value": "248",
+                                                "type": "ANALOG",
+                                                "max": "",
+                                                "min": ""
+                                            },
+                                            {
+                                                "name": "Capacity",
+                                                "value": "215",
+                                                "type": "ANALOG",
+                                                "max": "",
+                                                "min": ""
+                                            }
+                                        ],
+                                        "dyn_para": []
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "PCS",
+                                "name": "pcs2",
+                                "para": [
+                                    {
+                                        "name": "Manufacturer",
+                                        "value": "ENJIU",
+                                        "type": "ATTRIBUTE",
+                                        "max": "",
+                                        "min": ""
+                                    },
+                                    {
+                                        "name": "Capacity",
+                                        "value": "100",
+                                        "type": "ANALOG",
+                                        "max": "",
+                                        "min": ""
+                                    },
+                                    {
+                                        "name": "SOCHigh",
+                                        "value": "100",
+                                        "type": "ANALOG",
+                                        "max": "",
+                                        "min": "",
+                                        "database_id": "0-1-101-1011"
+                                    },
+                                    {
+                                        "name": "SOCLow",
+                                        "value": "0",
+                                        "type": "ANALOG",
+                                        "max": "",
+                                        "min": "",
+                                        "database_id": "0-1-101-1012"
+                                    }
+                                ],
+                                "dyn_para": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "method": "GET",
+    "model": "station_model"
+}

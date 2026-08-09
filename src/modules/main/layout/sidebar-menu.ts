@@ -40,10 +40,13 @@ export const sidebarMenus: SidebarMenuItem[] = [
     },
     {
         key: 'device-monitor',
-        title: '设备监控',
-        path: '/main/capture/monitor',
+        title: '运行',
         iconSrc: icNav2,
         iconActiveSrc: icNav2Pre,
+        children: [
+            {key: 'device-manage', title: '设备监控', path: '/main/capture/device-manage'},
+            {key: 'operation-strategy', title: '运行策略', path: '/main/capture/operation-strategy'},
+        ],
     },
     {
         key: 'data',
