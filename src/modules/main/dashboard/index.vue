@@ -272,23 +272,23 @@ $gap: 24px;
 }
 
 .card1 {
-    width: 30%;
+    width: 35%;
     height: 320px;
 }
 
 .card2 {
-    width: 70%;
+    width: 65%;
     margin-left: 20px;
     height: 320px;
 }
 
 .card3 {
-    width: 30%;
+    width: 35%;
     height: 300px;
 }
 
 .card4 {
-    width: 70%;
+    width: 65%;
     margin-left: 20px;
     height: 300px;
 }

@@ -1,18 +1,18 @@
 <template>
     <div class="monitor-container">
         <div class="device-list" style="margin-left:20px">
-            <div class="device-item" v-if="props.topology[3].used">
+            <div class="device-item" title="光伏板" v-if="props.topology[3].used">
                 <div class="device-value"> {{ props.topology[3].show_text }} kW
                 </div>
                 <img src="@/assets/device/guang-fu-ban.png" alt="" :width="80" :height="80" />
                 <div class="v-line"></div>
             </div>
-            <div class="device-item" v-if="props.topology[1].used">
+            <div class="device-item" title="电网" v-if="props.topology[1].used">
                 <div class="device-value"> {{ props.topology[1].show_text }} kW</div>
                 <img src="@/assets/device/dian-wang.png" alt="" :width="80" :height="80" />
                 <div class="v-line"></div>
             </div>
-            <div class="device-item" v-if="props.topology[4].used">
+            <div class="device-item" title="发电机" v-if="props.topology[4].used">
                 <div class="device-value"> {{ props.topology[4].show_text }} kW</div>
                 <img src="@/assets/device/fa-dian-ji.png" alt="" :width="80" :height="80" />
                 <div class="v-line"></div>
@@ -20,17 +20,17 @@
         </div>
         <div class="center-div"> </div>
         <div class="device-list">
-            <div class="device-item" v-if="props.topology[0].used">
+            <div class="device-item" title="储能" v-if="props.topology[0].used">
                 <div class="v-line"></div>
                 <img src="@/assets/device/chu-neng.png" alt="" :width="80" :height="80" />
                 <div class="device-value"> {{ props.topology[0].show_text }} kW</div>
             </div>
-            <div class="device-item" v-if="props.topology[2].used">
+            <div class="device-item" title="负载" v-if="props.topology[2].used">
                 <div class="v-line"></div>
                 <img src="@/assets/device/fu-zai.png" alt="" :width="80" :height="80" />
                 <div class="device-value"> {{ props.topology[2].show_text }} kW</div>
             </div>
-            <div class="device-item" v-if="props.topology[5].used">
+            <div class="device-item" title="充电桩" v-if="props.topology[5].used">
                 <div class="v-line"></div>
                 <img src="@/assets/device/chong-dian-zhuang.png" alt="" :width="80" :height="80" />
                 <div class="device-value"> {{ props.topology[5].show_text }} kW</div>
