@@ -4,27 +4,22 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  uuid: ^11.1.1
-  form-data: 4.0.6
-  ws: 8.21.0
-
 importers:
 
   .:
     dependencies:
       '@cloudview.visualization-next/components':
-        specifier: file:./local-libs/@cloudview.visualization-next/components
-        version: file:local-libs/@cloudview.visualization-next/components(cloudview.ui-next-icon@file:local-libs/cloudview.ui-next-icon(vue@3.5.34(typescript@5.9.3)))(cloudview.ui-next@file:local-libs/cloudview.ui-next(axios@1.16.1)(vue@3.5.34(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
+        specifier: ^1.0.25
+        version: 1.0.25(cloudview.ui-next-icon@0.0.11(vue@3.5.34(typescript@5.9.3)))(cloudview.ui-next@2.9.17(axios@1.16.1)(vue@3.5.34(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
       '@cloudview.visualization-next/locale':
-        specifier: file:./local-libs/@cloudview.visualization-next/locale
-        version: file:local-libs/@cloudview.visualization-next/locale
+        specifier: ^1.0.16
+        version: 1.0.16
       '@cloudview.visualization-next/theme-chalk':
-        specifier: file:./local-libs/@cloudview.visualization-next/theme-chalk
-        version: file:local-libs/@cloudview.visualization-next/theme-chalk
+        specifier: ^1.0.16
+        version: 1.0.16
       '@cloudview.visualization-next/utils':
-        specifier: file:./local-libs/@cloudview.visualization-next/utils
-        version: file:local-libs/@cloudview.visualization-next/utils
+        specifier: ^1.0.10
+        version: 1.0.10
       '@element-plus/icons-vue':
         specifier: ^2.3.2
         version: 2.3.2(vue@3.5.34(typescript@5.9.3))
@@ -41,11 +36,11 @@ importers:
         specifier: '1.16'
         version: 1.16.1
       cloudview.ui-next:
-        specifier: file:./local-libs/cloudview.ui-next
-        version: file:local-libs/cloudview.ui-next(axios@1.16.1)(vue@3.5.34(typescript@5.9.3))
+        specifier: ^2.9.0
+        version: 2.9.17(axios@1.16.1)(vue@3.5.34(typescript@5.9.3))
       cloudview.ui-next-icon:
-        specifier: file:./local-libs/cloudview.ui-next-icon
-        version: file:local-libs/cloudview.ui-next-icon(vue@3.5.34(typescript@5.9.3))
+        specifier: ^0.0.11
+        version: 0.0.11(vue@3.5.34(typescript@5.9.3))
       echarts:
         specifier: ^6.0.0
         version: 6.0.0
@@ -230,25 +225,25 @@ packages:
   '@cacheable/utils@2.4.1':
     resolution: {integrity: sha512-eiFgzCbIneyMlLOmNG4g9xzF7Hv3Mga4LjxjcSC/ues6VYq2+gUbQI8JqNuw/ZM8tJIeIaBGpswAsqV2V7ApgA==}
 
-  '@cloudview.visualization-next/components@file:local-libs/@cloudview.visualization-next/components':
-    resolution: {directory: local-libs/@cloudview.visualization-next/components, type: directory}
+  '@cloudview.visualization-next/components@1.0.25':
+    resolution: {integrity: sha512-nIRhy2lW/SF17EKd+o6FzsFu4N+FoDTnvuFc5rQA5kfPalCPHGLRoEG2j6e13pIh9889cwKIAgTwDOyNd0FL9g==}
     peerDependencies:
       cloudview.ui-next: ^2.2.17
       cloudview.ui-next-icon: ^0.0.11
       vue: ^3.3.4
       vue-router: ^4.0.14
 
-  '@cloudview.visualization-next/locale@file:local-libs/@cloudview.visualization-next/locale':
-    resolution: {directory: local-libs/@cloudview.visualization-next/locale, type: directory}
+  '@cloudview.visualization-next/locale@1.0.16':
+    resolution: {integrity: sha512-wukcRifq319DabWdALlmxntUEFTaWNbcfWjZTcwnpetochDKcWiGIG51XzsrCvkin/lhDWnKvPGxX5WnFcHFZA==}
 
-  '@cloudview.visualization-next/services@file:local-libs/@cloudview.visualization-next/services':
-    resolution: {directory: local-libs/@cloudview.visualization-next/services, type: directory}
+  '@cloudview.visualization-next/services@1.0.17':
+    resolution: {integrity: sha512-PUDZdbHQb8EYkClrv+krAkSAuvJaYHbap8DtKAFekivWqMMqdkPxmAjY3afuChgw0qMGyAYULwpvogqOw6B/hw==}
 
-  '@cloudview.visualization-next/theme-chalk@file:local-libs/@cloudview.visualization-next/theme-chalk':
-    resolution: {directory: local-libs/@cloudview.visualization-next/theme-chalk, type: directory}
+  '@cloudview.visualization-next/theme-chalk@1.0.16':
+    resolution: {integrity: sha512-XVDxrRqyw6hh92virxvgPHV9XPK02jkMUO+jeS5QQ7QkiHTMerg8FXJnihB6emjTtCCdMn32o0Iz13mVXbNULg==}
 
-  '@cloudview.visualization-next/utils@file:local-libs/@cloudview.visualization-next/utils':
-    resolution: {directory: local-libs/@cloudview.visualization-next/utils, type: directory}
+  '@cloudview.visualization-next/utils@1.0.10':
+    resolution: {integrity: sha512-gDxgm8Bj3bN99Es4zOX1WecXZ+jfV0DTqCMEHUG3KRjEOoNAnFqOAtS9G5nbrtqZ+69Rppa4oJ3XWFmrhlkH1A==}
 
   '@csstools/css-parser-algorithms@3.0.5':
     resolution: {integrity: sha512-DaDeUkXZKjdGhgYaHNJTV9pV7Y9B3b644jCLs9Upc3VeNGg6LWARAT6O+Q+/COo+2gg/bM5rhpMAtf70WqfBdQ==}
@@ -1047,13 +1042,13 @@ packages:
     resolution: {integrity: sha512-qOhPa/Fj7s6TY8H8esGu5QNpMMQxz79h+urzrNYN6mn+9BnxlDGf5QZ+XeCDsxSjPqsSR56XOZOJmpeurnLMeg==}
     engines: {node: '>=0.10.0'}
 
-  cloudview.ui-next-icon@file:local-libs/cloudview.ui-next-icon:
-    resolution: {directory: local-libs/cloudview.ui-next-icon, type: directory}
+  cloudview.ui-next-icon@0.0.11:
+    resolution: {integrity: sha512-rBmDlQS8NKRfjd2C2yugo9KY1aERVvSP24WvVrj6TD6x0Kxb8tU8nFZggUuYeQUIHILeeB4h83y4AcPZ48idtg==}
     peerDependencies:
       vue: ^3.2.13
 
-  cloudview.ui-next@file:local-libs/cloudview.ui-next:
-    resolution: {directory: local-libs/cloudview.ui-next, type: directory}
+  cloudview.ui-next@2.9.17:
+    resolution: {integrity: sha512-EQat3QlUw5RP1jvPE+lH4LQ2d3LX1khD+yAmtpOuv3AE6PoONtSUdGM4RIJSstlbGCvgAae+P32V41taOceZgQ==}
     peerDependencies:
       axios: ^1.4.0
       vue: ^3.3.4
@@ -1554,6 +1549,10 @@ packages:
   forever-agent@0.6.1:
     resolution: {integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==}
 
+  form-data@2.3.3:
+    resolution: {integrity: sha512-1lLKB2Mu3aGP1Q/2eCOx0fNbRMe7XdwktwOruhfqqd0rIJWwN4Dh+E3hrPSlDCXnSR7UtZ1N38rVXm+6+MEhJQ==}
+    engines: {node: '>= 0.12'}
+
   form-data@4.0.6:
     resolution: {integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==}
     engines: {node: '>= 6'}
@@ -2045,6 +2044,9 @@ packages:
 
   lodash.truncate@4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
+
+  lodash@4.18.0:
+    resolution: {integrity: sha512-l1mfj2atMqndAHI3ls7XqPxEjV2J9ZkcNyHpoZA3r2T1LLwDB69jgkMWh71YKwhBbK0G2f4WSn05ahmQXVxupA==}
 
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
@@ -2936,6 +2938,15 @@ packages:
     resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
     hasBin: true
 
+  uuid@3.4.0:
+    resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
+    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+
+  uuid@8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
@@ -3109,12 +3120,12 @@ packages:
     resolution: {integrity: sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  ws@8.21.0:
-    resolution: {integrity: sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==}
-    engines: {node: '>=10.0.0'}
+  ws@7.5.13:
+    resolution: {integrity: sha512-rsKI6xDBFVf4r/x8XyChGK04QR/XHroxs/jUcoWvtEZM8TPU/X/uIY9B1CsSzYws9ZJb/6bbBu7dPhFW00CAoA==}
+    engines: {node: '>=8.3.0'}
     peerDependencies:
       bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
+      utf-8-validate: ^5.0.2
     peerDependenciesMeta:
       bufferutil:
         optional: true
@@ -3200,18 +3211,18 @@ snapshots:
       hashery: 1.5.1
       keyv: 5.6.0
 
-  '@cloudview.visualization-next/components@file:local-libs/@cloudview.visualization-next/components(cloudview.ui-next-icon@file:local-libs/cloudview.ui-next-icon(vue@3.5.34(typescript@5.9.3)))(cloudview.ui-next@file:local-libs/cloudview.ui-next(axios@1.16.1)(vue@3.5.34(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))':
+  '@cloudview.visualization-next/components@1.0.25(cloudview.ui-next-icon@0.0.11(vue@3.5.34(typescript@5.9.3)))(cloudview.ui-next@2.9.17(axios@1.16.1)(vue@3.5.34(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))':
     dependencies:
-      '@cloudview.visualization-next/locale': file:local-libs/@cloudview.visualization-next/locale
-      '@cloudview.visualization-next/services': file:local-libs/@cloudview.visualization-next/services
-      '@cloudview.visualization-next/theme-chalk': file:local-libs/@cloudview.visualization-next/theme-chalk
-      '@cloudview.visualization-next/utils': file:local-libs/@cloudview.visualization-next/utils
+      '@cloudview.visualization-next/locale': 1.0.16
+      '@cloudview.visualization-next/services': 1.0.17
+      '@cloudview.visualization-next/theme-chalk': 1.0.16
+      '@cloudview.visualization-next/utils': 1.0.10
       '@element-plus/icons-vue': 2.3.2(vue@3.5.34(typescript@5.9.3))
       '@svgdotjs/svg.js': 3.2.5
       '@svgdotjs/svg.panzoom.js': 2.1.2
       ace-builds: 1.44.0
-      cloudview.ui-next: file:local-libs/cloudview.ui-next(axios@1.16.1)(vue@3.5.34(typescript@5.9.3))
-      cloudview.ui-next-icon: file:local-libs/cloudview.ui-next-icon(vue@3.5.34(typescript@5.9.3))
+      cloudview.ui-next: 2.9.17(axios@1.16.1)(vue@3.5.34(typescript@5.9.3))
+      cloudview.ui-next-icon: 0.0.11(vue@3.5.34(typescript@5.9.3))
       html-to-image: 1.11.13
       mqtt: 4.3.8
       vue: 3.5.34(typescript@5.9.3)
@@ -3221,20 +3232,20 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@cloudview.visualization-next/locale@file:local-libs/@cloudview.visualization-next/locale': {}
+  '@cloudview.visualization-next/locale@1.0.16': {}
 
-  '@cloudview.visualization-next/services@file:local-libs/@cloudview.visualization-next/services':
+  '@cloudview.visualization-next/services@1.0.17':
     dependencies:
       mqtt: 4.3.8
-      uuid: 11.1.1
+      uuid: 8.3.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  '@cloudview.visualization-next/theme-chalk@file:local-libs/@cloudview.visualization-next/theme-chalk': {}
+  '@cloudview.visualization-next/theme-chalk@1.0.16': {}
 
-  '@cloudview.visualization-next/utils@file:local-libs/@cloudview.visualization-next/utils': {}
+  '@cloudview.visualization-next/utils@1.0.10': {}
 
   '@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4)':
     dependencies:
@@ -4041,21 +4052,21 @@ snapshots:
       isobject: 3.0.1
       static-extend: 0.1.2
 
-  cloudview.ui-next-icon@file:local-libs/cloudview.ui-next-icon(vue@3.5.34(typescript@5.9.3)):
+  cloudview.ui-next-icon@0.0.11(vue@3.5.34(typescript@5.9.3)):
     dependencies:
       vue: 3.5.34(typescript@5.9.3)
 
-  cloudview.ui-next@file:local-libs/cloudview.ui-next(axios@1.16.1)(vue@3.5.34(typescript@5.9.3)):
+  cloudview.ui-next@2.9.17(axios@1.16.1)(vue@3.5.34(typescript@5.9.3)):
     dependencies:
       '@element-plus/icons-vue': 1.1.4(vue@3.5.34(typescript@5.9.3))
       '@popperjs/core': 2.11.8
       async-validator: 3.5.2
       axios: 1.16.1
-      cloudview.ui-next-icon: file:local-libs/cloudview.ui-next-icon(vue@3.5.34(typescript@5.9.3))
+      cloudview.ui-next-icon: 0.0.11(vue@3.5.34(typescript@5.9.3))
       cronstrue: 2.59.0
       dayjs: 1.11.20
       element-plus: 2.9.7(vue@3.5.34(typescript@5.9.3))
-      lodash: 4.18.1
+      lodash: 4.18.0
       mitt: 2.1.0
       normalize-wheel: 1.0.1
       resize-observer-polyfill: 1.5.1
@@ -4615,6 +4626,12 @@ snapshots:
 
   forever-agent@0.6.1: {}
 
+  form-data@2.3.3:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+
   form-data@4.0.6:
     dependencies:
       asynckit: 0.4.0
@@ -5143,6 +5160,8 @@ snapshots:
 
   lodash.truncate@4.4.2: {}
 
+  lodash@4.18.0: {}
+
   lodash@4.18.1: {}
 
   loose-envify@1.4.0:
@@ -5271,7 +5290,7 @@ snapshots:
       reinterval: 1.1.0
       rfdc: 1.4.1
       split2: 3.2.2
-      ws: 8.21.0
+      ws: 7.5.13
       xtend: 4.0.2
     transitivePeerDependencies:
       - bufferutil
@@ -5612,7 +5631,7 @@ snapshots:
       combined-stream: 1.0.8
       extend: 3.0.2
       forever-agent: 0.6.1
-      form-data: 4.0.6
+      form-data: 2.3.3
       har-validator: 5.1.5
       http-signature: 1.2.0
       is-typedarray: 1.0.0
@@ -5625,7 +5644,7 @@ snapshots:
       safe-buffer: 5.2.1
       tough-cookie: 2.5.0
       tunnel-agent: 0.6.0
-      uuid: 11.1.1
+      uuid: 3.4.0
 
   require-from-string@2.0.2: {}
 
@@ -6133,6 +6152,10 @@ snapshots:
 
   uuid@11.1.1: {}
 
+  uuid@3.4.0: {}
+
+  uuid@8.3.2: {}
+
   vary@1.1.2: {}
 
   verror@1.10.0:
@@ -6316,7 +6339,7 @@ snapshots:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
 
-  ws@8.21.0: {}
+  ws@7.5.13: {}
 
   xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz: {}
 
