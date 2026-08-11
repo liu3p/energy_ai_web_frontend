@@ -5,7 +5,8 @@
                 <div class="card-contain__header">
                     监控数据
                 </div>
-                <div class="card-contain__body">
+                <div class="card-contain__body  ">
+                    <monitor v-if="configData" :topology="configData.topology" />
                 </div>
             </div>
             <div class="card-contain card2">
@@ -16,219 +17,224 @@
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
-                        <el-date-picker v-model="value1" type="date" :editable="false" :clearable='false'
-                            style="width: 120px;margin-left:10px" />
+                        <el-date-picker v-model="realTimeDate" @change="getRealTime" type="date" :editable="false"
+                            :clearable='false' style="width: 120px;margin-left:10px" />
                     </div>
                 </div>
                 <div class="card-contain__body">
-                    <charts :data="lineChartData!" />
+                    <charts :data="realTimeData!" />
                 </div>
             </div>
         </div>
         <div class="container-middle">
-            <div class="card-contain card1">
+            <div class="card-contain  card3">
                 <div class="card-contain__header">
                     基本信息
                 </div>
                 <div class="card-contain__body">
-                    <div class="baseInfo-content">
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">电站名称</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">储能规模</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">电站位置</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">SOC</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">当前警告数</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">等效循环（次）</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">远方/就地</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="baseInfo-content-item">
-                            <div class="item-name">当前策略</div>
-                            <div class="item-value">--</div>
+                    <div class="baseInfo-content" v-if="configData">
+                        <div class="baseInfo-content-item" v-for="item, index in configData.basic_info" :key="index">
+                            <div class="item-name">{{ item.show_name }}</div>
+                            <div class="item-value" :style="`color:${item.color}`">{{ item.show_text }}</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-contain card2">
+            <div class="card-contain card4">
                 <div class="card-contain__header">
                     实时数据
                 </div>
-                <div class="card-contain__body">
-                    <div class="realtimeData-content">
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">消防系统故障</div>
-                            <div class="item-value">未发生</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">配电舱温湿度传感器</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item warn">
-                            <div class="item-name">电池模组过流1</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过温度</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过压</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">消防系统故障</div>
-                            <div class="item-value">未发生</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">配电舱温湿度传感器</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过流</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过温度</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过压</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">消防系统故障</div>
-                            <div class="item-value">未发生</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">配电舱温湿度传感器</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过流</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过温度</div>
-                            <div class="item-value">--</div>
-                        </div>
-                        <div class="realtimeData-content-item">
-                            <div class="item-name">电池模组过压</div>
-                            <div class="item-value">--</div>
+                <div class="card-contain__body ">
+                    <div class="realtimeData-content" v-if="configData">
+                        <div class="realtimeData-content-item" v-for="item, index in configData.realtime" :key="index">
+                            <div class="item-name">{{ item.show_name }}</div>
+                            <div class="item-value" :style="`color:${item.color}`">{{ item.show_text }}</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="container-bottom">
-            <div class="card-contain ">
+            <div class="card-contain card5">
                 <div class="card-contain__header">
                     充放电量与效率
                     <div class="header-select">
-                        <el-date-picker v-model="value1" type="date" :editable="false" :clearable='false'
-                            style="width: 120px;" />
+                        <el-date-picker v-model="powerLevelDate" @change="getPowerLevel" type="month" :editable="false"
+                            :clearable='false' style="width: 120px;" />
                     </div>
                 </div>
-                <div class=" card-contain__body">
-                    <charts :data="barChartData!" />
+                <div class="card-contain__body">
+                    <charts :data="powerLevelData!" />
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted } from 'vue';;
+import { ref, onUnmounted, onMounted } from 'vue';
+import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
 import charts from '@/modules/main/dashboard/charts.vue';
-import moment from 'moment';
-type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar', color: string, data: (number | string)[] }[] };
-const lineChartData = ref<chartParams>();
-const barChartData = ref<chartParams>();
+import monitor from '@/modules/main/dashboard/monitor.vue';
+import { webSocket } from '@/common/websocket/websocket';
+import dayjs from 'dayjs'
+
+type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar', color?: string, data: (number | string)[] }[] };
+const configData = ref();
+const realTimeData = ref<chartParams>({
+    xAxis: [],
+    data: []
+});
+const powerLevelData = ref<chartParams>({
+    xAxis: [],
+    data: []
+});
 const value = ref('全站')
-const value1 = ref(new Date())
+const powerLevelDate = ref(new Date())
+const realTimeDate = ref(new Date())
 const options = [
     {
         value: '全站',
         label: '全站',
     },
-    {
-        value: '站点1',
-        label: '站点1',
-    },
 ]
-const init = () => {
-    lineChartData.value = {
-        xAxis: [1, 2, 3, 4, 5],
-        data: [{
-            name: "电网",
-            type: "line",
-            color: '#1A6FB5',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "储能",
-            type: "line",
-            color: '#1DA500',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "光伏",
-            type: "line",
-            color: '#E8841A',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "柴油发电机",
-            type: "line",
-            color: '#D93C3C',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "负载",
-            type: "line",
-            color: '#8B5CF6',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "充电桩",
-            type: "line",
-            color: '#0891B2',
-            data: [1, 1, 1, 1, 1],
-        }]
+const getRealTime = async () => {
+    realTimeData.value = {
+        xAxis: [],
+        data: []
     };
-    barChartData.value = {
-        xAxis: [1, 2, 3, 4, 5],
-        data: [{
-            name: "充电",
-            type: "bar",
-            color: '#D93C3C',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "放电",
-            type: "bar",
-            color: '#1DA500',
-            data: [1, 1, 1, 1, 1],
-        }, {
-            name: "效率",
-            type: "line",
-            color: '#1A6FB5',
-            data: [1, 1, 1, 1, 1],
-        }]
+    let dataList = configData.value.topology.filter((item) => {
+        return item.used == 1;
+    })
+    let requistList: any[] = [];
+    dataList.forEach((n, i) => {
+        const params = {
+            "type": "analog",
+            "ids": [n.oid],
+            "start_time": dayjs(realTimeDate.value).startOf('day'),
+            "end_time": dayjs(realTimeDate.value).startOf('day').add(1, 'day'),
+            "interval": 3600
+        };
+        switch (n.oid.split("-")[2]) {
+            case '101':
+                params.type = "digital";
+                break;
+            case '102':
+                params.type = "analog";
+                break;
+            case '105':
+                params.type = "pulse";
+                break;
+        }
+        requistList.push(dashboardServiceApi.getHistory(params))
+    })
+    const result = await Promise.all(requistList)
+    dataList.forEach((n1, i1) => {
+        if (result[i1].state) {
+            if (realTimeData.value.xAxis.length == 0) {
+                realTimeData.value.xAxis = result[i1].data.data.map((n2, i2) => {
+                    return dayjs(n2.time).format("HH:mm")
+                });
+            }
+            realTimeData.value.data.push({
+                name: n1.show_name,
+                type: "line",
+                data: result[i1].data.data.map((n3) => { return n3.data[n1.oid] }),
+            })
+        }
+    })
+    realTimeData.value = JSON.parse(JSON.stringify(realTimeData.value))
+}
+
+const getPowerLevel = async () => {
+    powerLevelData.value = {
+        xAxis: [],
+        data: []
     };
+    let dataList = configData.value.power_level;
+    let requistList: any[] = [];
+    dataList.forEach((n, i) => {
+        const params = {
+            "type": "analog",
+            "ids": [n.oid],
+            "start_time": dayjs(powerLevelDate.value).startOf('month'),
+            "end_time": dayjs(powerLevelDate.value).startOf('month').add(1, 'month'),
+            "interval": 86400
+        };
+        switch (n.oid.split("-")[2]) {
+            case '101':
+                params.type = "digital";
+                break;
+            case '102':
+                params.type = "analog";
+                break;
+            case '105':
+                params.type = "pulse";
+                break;
+        }
+        requistList.push(dashboardServiceApi.getHistory(params))
+    })
+    const result = await Promise.all(requistList)
+    dataList.forEach((n1, i1) => {
+        if (result[i1].state) {
+            if (powerLevelData.value.xAxis.length == 0) {
+                powerLevelData.value.xAxis = result[i1].data.data.map((n2, i2) => {
+                    return dayjs(n2.time).format("D")
+                });
+            }
+            powerLevelData.value.data.push({
+                name: n1.show_name,
+                type: "bar",
+                data: result[i1].data.data.map((n3) => { return n3.data[n1.oid] }),
+            })
+        }
+    })
+    powerLevelData.value = JSON.parse(JSON.stringify(powerLevelData.value))
+}
+
+function onMessage(data: any) {
+    if (data) {
+        const res = JSON.parse(data);
+        Object.keys(configData.value).forEach((item, index) => {
+            configData.value[item].forEach((n1, i1) => {
+                if (n1.type != 3) {//不是固定值
+                    configData.value[item][i1].show_text = "--";
+                    const info = res.content.find((n2, i2) => {
+                        return n2.oid == n1.oid
+                    })
+                    if (info) {
+                        if (n1.type == 2) {//枚举值
+                            configData.value[item][i1].show_text = n1.table[info.value].split("_")[0]
+                            configData.value[item][i1].color = n1.table[info.value].split("_")[1]
+                        } else {//实时值
+                            configData.value[item][i1].show_text = info.value + " " + n1.show_unit;
+                        }
+                    }
+                }
+            });
+        })
+    }
+}
+const initData = () => {
+    dashboardServiceApi.getConfig().then(res => {
+        if (res.state) {
+            configData.value = res.data.data
+            getPowerLevel();
+            getRealTime();
+            webSocket.send(JSON.stringify({ topic: "homepage_subscribe" }))
+            webSocket.onMessage(onMessage);
+            Object.keys(configData.value).forEach((item, index) => {
+                configData.value[item].forEach((n1, i1) => {
+                    configData.value[item][i1].show_text = "--";
+                    if (n1.type == 3) {//固定值
+                        configData.value[item][i1].show_text = n1.show_value
+                    }
+                });
+            })
+        }
+    });
 };
 onMounted(async () => {
-    init();
+    initData();
 });
 onUnmounted(() => {
 });
@@ -262,15 +268,34 @@ $gap: 24px;
     background: #fff;
     width: 100%;
     border-bottom: 1px solid #EBEBEB;
+    box-shadow: 0px 2px 8px 0px #0C19330F;
 }
 
 .card1 {
-    width: 30%
+    width: 35%;
+    height: 320px;
 }
 
 .card2 {
-    width: 70%;
+    width: 65%;
     margin-left: 20px;
+    height: 320px;
+}
+
+.card3 {
+    width: 35%;
+    height: 300px;
+}
+
+.card4 {
+    width: 65%;
+    margin-left: 20px;
+    height: 300px;
+}
+
+.card5 {
+    width: 100%;
+    height: 300px;
 }
 
 .card-contain__header {
@@ -288,8 +313,8 @@ $gap: 24px;
 }
 
 .card-contain__body {
-    height: 264px;
     padding: 0px 16px;
+    height: 100%;
     overflow-y: auto;
 }
 
@@ -301,6 +326,7 @@ $gap: 24px;
     .baseInfo-content-item {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         width: calc(50% - 16px);
         padding: 16px 0;
         border-bottom: 1px solid #EBEBEB;

@@ -33,7 +33,13 @@
                         </cv-table-column>
                         <cv-table-column prop="table" label="展示值">
                             <template #default="{ row }">
-                                {{ row.type == 3 ? row.show_value : row.table }}
+                                <div v-if="row.type == 3">{{ row.show_value }}</div>
+                                <div v-else-if="row.table">
+                                    <div v-for="item, index in Object.keys(row.table)"
+                                        :style="`color:${row.table[item].split('_')[1] || '#000'}`">
+                                        {{ item }}：{{ row.table[item].split("_")[0] || '#000' }}
+                                    </div>
+                                </div>
                             </template>
                         </cv-table-column>
                         <cv-table-column prop="show_unit" label="单位" />
@@ -117,6 +123,7 @@ const initData = () => {
 interface EnumItem {
     key: number,
     number: string,
+    color: string,
     value: string
 }
 
@@ -161,7 +168,7 @@ const submit = (poinInfo: {
     let table: Record<string, string> = {};
     enumList.forEach((item, index) => {
         if (item.number != '' && item.value != '') {
-            table[item.number] = item.value;
+            table[item.number] = item.value + "_" + item.color;
         }
     })
     let data = {

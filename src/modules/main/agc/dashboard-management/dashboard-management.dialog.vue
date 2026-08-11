@@ -1,5 +1,5 @@
 <template>
-    <cv-dialog-form v-model="visible" width="600" :title="dialogType == 'add' ? '新增' : '编辑'" :draggable="true"
+    <cv-dialog-form v-model="visible" width="700" :title="dialogType == 'add' ? '新增' : '编辑'" :draggable="true"
         :submit="submit" :form-model="formData" label-width="80" :z-index="1000" :submit-text="t('fw.common.confirm')"
         @close="cancel" :rules="rules">
         <div style="padding: 0 56px">
@@ -21,11 +21,13 @@
             <template v-if="formData.type == '2'">
                 <div class="enum-list" v-for="(domain, index) in formData.enumList">
                     <cv-form-item label="数值" label-width="80" :key="domain.key" :prop="'enumList.' + index + '.value'">
-                        <cv-input v-model="domain.number" type="number" style="width: 100px" placeholder="请输入" />
+                        <cv-input v-model="domain.number" type="number" style="width: 90px" placeholder="请输入" />
                     </cv-form-item>
                     <cv-form-item label="值名称" label-width="70" :key="domain.key" :prop="'enumList.' + index + '.value'">
-                        <cv-input v-model="domain.value" style="width: 100px" placeholder="请输入" />
+                        <cv-input v-model="domain.value" style="width: 170px" placeholder="请输入" />
                     </cv-form-item>
+                    <el-color-picker v-model="domain.color" size="large" style="margin-left:5px"
+                        :predefine="predefineColors" />
                     <el-button class="enum-btn" @click="addEnum">＋</el-button>
                     <el-button class="enum-btn" v-if="formData.enumList.length != 1"
                         @click="removeEnum(domain)">—</el-button>
@@ -45,6 +47,16 @@ import { ref } from 'vue';
 import ReplyPointDialog from '@/modules/main/agc/dashboard-management/reply-point-dialog.vue'
 const { t } = useLocale();
 const emit = defineEmits(['refresh', 'submit']);
+const predefineColors = ref([
+    '#000000',
+    '#ff4500',
+    '#ff8c00',
+    '#ffd700',
+    '#90ee90',
+    '#00ced1',
+    '#1e90ff',
+    '#c71585',
+])
 const replyPointRef = ref();
 const dialogType = ref('add');
 const rules = {
@@ -83,6 +95,7 @@ const typeOptions = ref([
 interface EnumItem {
     key: number,
     number: string,
+    color: string,
     value: string
 }
 const formData = ref<{
@@ -102,6 +115,7 @@ const formData = ref<{
     show_value: "",
     enumList: [{
         key: Date.now(),
+        color: '#000000',
         number: "",
         value: ""
     }]
@@ -119,6 +133,7 @@ const addEnum = () => {
     formData.value.enumList.push({
         key: Date.now(),
         number: '',
+        color: "#000000",
         value: '',
     })
 }
@@ -137,8 +152,9 @@ const open = (data: any) => {
             enumList: table ? Object.keys(table).map((item, index) => {
                 return {
                     key: Date.now(),
+                    color: table[item].split("_")[1],
                     number: item,
-                    value: table[item]
+                    value: table[item].split("_")[0],
                 }
             }) : [{
                 key: Date.now(),
@@ -158,6 +174,7 @@ const selectChange = () => {
     formData.value.enumList = [{
         key: Date.now(),
         number: "",
+        color: "#000000",
         value: ""
     }]
 }
@@ -182,6 +199,7 @@ const cancel = () => {
         enumList: [{
             key: Date.now(),
             number: "",
+            color: "#000000",
             value: ""
         }]
     };

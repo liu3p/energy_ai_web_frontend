@@ -31,6 +31,11 @@
                 </template>
             </Table>
         </div>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="cancel">关闭</el-button>
+            </div>
+        </template>
     </cv-dialog-form>
 </template>
 
@@ -60,27 +65,27 @@ const columns = [
         title: '参数名称',
         dataIndex: 'name',
     },
-    {
-        title: '原始值',
-        dataIndex: 'rawvalue',
-    },
+    // {
+    //     title: '原始值',
+    //     dataIndex: 'rawvalue',
+    // },
 
-    {
-        title: '当前值',
-        dataIndex: 'currvalue',
-    },
-    {
-        title: '死数',
-        dataIndex: 'dead',
-    },
-    {
-        title: '品质数',
-        dataIndex: 'quality',
-    },
-    {
-        title: '刷新时间',
-        dataIndex: 'sendtime'
-    },
+    // {
+    //     title: '当前值',
+    //     dataIndex: 'currvalue',
+    // },
+    // {
+    //     title: '死数',
+    //     dataIndex: 'dead',
+    // },
+    // {
+    //     title: '品质数',
+    //     dataIndex: 'quality',
+    // },
+    // {
+    //     title: '刷新时间',
+    //     dataIndex: 'sendtime'
+    // },
     {
         title: '操作',
         key: 'operation',
