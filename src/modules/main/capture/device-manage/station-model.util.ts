@@ -255,3 +255,16 @@ export function findFirstLeafNode(node: DeviceTreeNode): DeviceTreeNode | null {
     }
     return findFirstLeafNode(node.children[0]);
 }
+
+export function findNodeByKey(node: DeviceTreeNode, key: string): DeviceTreeNode | null {
+    if (node.key === key) {
+        return node;
+    }
+    for (const child of node.children) {
+        const matched = findNodeByKey(child, key);
+        if (matched) {
+            return matched;
+        }
+    }
+    return null;
+}
