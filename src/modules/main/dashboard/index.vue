@@ -76,7 +76,7 @@ import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
 import charts from '@/modules/main/dashboard/charts.vue';
 import monitor from '@/modules/main/dashboard/monitor.vue';
 import { webSocket } from '@/common/websocket/websocket';
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 
 type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar', color?: string, data: (number | string)[] }[] };
 const configData = ref();

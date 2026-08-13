@@ -8,6 +8,7 @@
             :reserve-selection="false"
             @select-all="handleSelectAll"
             @selection-change="handleSelectionChange"
+            size="small"
         >
             <cv-table-column type="selection" width="55" />
             <cv-table-column
@@ -49,7 +50,7 @@
                 </template>
 
                 <template v-if="col.type === 'select'" #default="{row}">
-                    <cv-select v-model="row[col.prop]">
+                    <cv-select v-model="row[col.prop]" size="small">
                         <cv-option
                             v-for="item in col.selectOptions"
                             :key="item.value"
@@ -60,7 +61,7 @@
                 </template>
 
                 <template v-else-if="col.prop !== 'index' && col.prop !== 'id'" #default="{row}">
-                    <cv-input v-model="row[col.prop]" />
+                    <cv-input v-model="row[col.prop]" size="small" />
                 </template>
             </cv-table-column>
 
@@ -131,7 +132,7 @@ const formulaDrawerRef = ref();
 const cvTableRef = ref();
 const pages = reactive({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 20,
 });
 const {currentPage, pageSize} = toRefs(pages);
 
@@ -336,6 +337,10 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+:deep(.el-table td.el-table__cell) {
+  border-bottom: none !important;
+}
+
 .container {
     width: 100%;
     height: 100%;
