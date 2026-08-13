@@ -58,20 +58,13 @@ export const sidebarMenus: SidebarMenuItem[] = [
             {key: 'channel-message', title: '通道报文', path: '/main/data/channel-message'},
         ],
     },
-    {
-        key: 'alarm',
-        title: '告警',
-        iconSrc: icNav4,
-        iconActiveSrc: icNav4Pre,
-        children: [{key: 'alarm-manage', title: '告警管理', path: '/main/alarm/manage'}],
-    },
-    {
-        key: 'strategy',
-        title: '策略',
-        iconSrc: icNav5,
-        iconActiveSrc: icNav5Pre,
-        children: [{key: 'strategy-display', title: '策略展示', path: '/main/agc/strategy'}],
-    },
+    // {
+    //     key: 'alarm',
+    //     title: '告警',
+    //     iconSrc: icNav4,
+    //     iconActiveSrc: icNav4Pre,
+    //     children: [{key: 'alarm-manage', title: '告警管理', path: '/main/alarm/manage'}],
+    // },
     {
         key: 'config',
         title: '配置',

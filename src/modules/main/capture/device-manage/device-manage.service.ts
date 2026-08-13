@@ -20,12 +20,17 @@ function buildStationTree(root: StationNode): DeviceTreeNode {
 
 export async function fetchStationModel(): Promise<DeviceTreeNode | null> {
     try {
-        const res = await http.get<AgcDataResponse>('/log/agc/agc_data');
-        if (res.state && res.data?.station_model) {
-            const root = extractStationPayload(res.data.station_model);
-            if (root) {
-                return buildStationTree(root);
-            }
+        const res = await http.get<AgcDataResponse | StationNode | {data: StationNode}>('/log/agc/station_model');
+        if (!res.state || !res.data) {
+            return null;
+        }
+
+        const payload = res.data as AgcDataResponse;
+        const root = payload.station_model
+            ? extractStationPayload(payload.station_model)
+            : extractStationPayload(res.data);
+        if (root) {
+            return buildStationTree(root);
         }
     } catch (error) {
         console.warn('[device-manage] fetch station model failed', error);

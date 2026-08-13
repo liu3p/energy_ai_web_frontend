@@ -18,19 +18,45 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import Empty from '@/common/empty.vue';
 import StrategySectionPanel from './strategy-section-panel.vue';
 import DispatchControlDialog from './dispatch-control-dialog.vue';
 import type {DispatchTarget, StrategyRunValue, StrategySection} from './operation-strategy.types';
 import {fetchStrategySections} from './operation-strategy.service';
 
+const POLL_INTERVAL_MS = 3000;
+
 const sections = ref<StrategySection[]>([]);
 const dispatchVisible = ref(false);
 const dispatchDialogRef = ref<InstanceType<typeof DispatchControlDialog>>();
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+let loadingSections = false;
 
 async function loadSections() {
-    sections.value = await fetchStrategySections();
+    if (loadingSections) {
+        return;
+    }
+    loadingSections = true;
+    try {
+        sections.value = await fetchStrategySections();
+    } finally {
+        loadingSections = false;
+    }
+}
+
+function startPolling() {
+    stopPolling();
+    pollTimer = setInterval(() => {
+        void loadSections();
+    }, POLL_INTERVAL_MS);
+}
+
+function stopPolling() {
+    if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+    }
 }
 
 function handleDispatch(sectionId: string, runValue: StrategyRunValue) {
@@ -46,7 +72,12 @@ function handleDispatchSuccess(target: DispatchTarget, value: string) {
 }
 
 onMounted(() => {
-    loadSections();
+    void loadSections();
+    startPolling();
+});
+
+onUnmounted(() => {
+    stopPolling();
 });
 </script>
 

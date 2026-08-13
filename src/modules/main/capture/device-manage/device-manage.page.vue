@@ -31,13 +31,15 @@
 </template>
 
 <script setup lang="ts">
-import {nextTick, onMounted, ref} from 'vue';
+import {nextTick, onMounted, onUnmounted, ref} from 'vue';
 import Empty from '@/common/empty.vue';
 import DeviceDetail from './device-detail.vue';
 import DispatchDialog from './dispatch-dialog.vue';
 import type {DeviceTreeNode, ParamCardItem} from './device-manage.types';
 import {fetchStationModel} from './device-manage.service';
-import {findFirstLeafNode} from './station-model.util';
+import {findFirstLeafNode, findNodeByKey} from './station-model.util';
+
+const POLL_INTERVAL_MS = 3000;
 
 const treeData = ref<DeviceTreeNode[]>([]);
 const currentNode = ref<DeviceTreeNode | null>(null);
@@ -45,22 +47,50 @@ const currentKey = ref('');
 const dispatchVisible = ref(false);
 const dispatchDialogRef = ref<InstanceType<typeof DispatchDialog>>();
 const treeRef = ref();
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+let loadingTree = false;
 
-async function initTree() {
-    const root = await fetchStationModel();
-    if (!root) {
-        treeData.value = [];
-        currentNode.value = null;
-        currentKey.value = '';
+async function loadTree(preserveSelection = false) {
+    if (loadingTree) {
         return;
     }
-    treeData.value = [root];
-    const defaultNode = findFirstLeafNode(root) ?? root;
-    if (defaultNode) {
-        currentNode.value = defaultNode;
-        currentKey.value = defaultNode.key;
+    loadingTree = true;
+    try {
+        const root = await fetchStationModel();
+        if (!root) {
+            if (!preserveSelection) {
+                treeData.value = [];
+                currentNode.value = null;
+                currentKey.value = '';
+            }
+            return;
+        }
+
+        treeData.value = [root];
+        const previousKey = preserveSelection ? currentKey.value : '';
+        const targetNode =
+            (previousKey ? findNodeByKey(root, previousKey) : null) ?? findFirstLeafNode(root) ?? root;
+
+        currentNode.value = targetNode;
+        currentKey.value = targetNode.key;
         await nextTick();
-        treeRef.value?.setCurrentKey?.(defaultNode.key);
+        treeRef.value?.setCurrentKey?.(targetNode.key);
+    } finally {
+        loadingTree = false;
+    }
+}
+
+function startPolling() {
+    stopPolling();
+    pollTimer = setInterval(() => {
+        void loadTree(true);
+    }, POLL_INTERVAL_MS);
+}
+
+function stopPolling() {
+    if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
     }
 }
 
@@ -89,7 +119,12 @@ function handleDispatchSuccess(paramName: string, value: string | number) {
 }
 
 onMounted(() => {
-    initTree();
+    void loadTree(false);
+    startPolling();
+});
+
+onUnmounted(() => {
+    stopPolling();
 });
 </script>
 

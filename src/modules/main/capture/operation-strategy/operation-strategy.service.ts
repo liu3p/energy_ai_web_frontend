@@ -40,12 +40,16 @@ function hasSettingList(strategyList: StrategyApiItem[] | undefined): strategyLi
 
 export async function fetchStrategySections(): Promise<StrategySection[]> {
     try {
-        const res = await http.get<AgcDataResponse>('/log/agc/agc_data');
-        if (res.state && res.data?.strategy_model) {
-            const payload = extractStrategyPayload(res.data.strategy_model);
-            if (payload && hasSettingList(payload.strategy)) {
-                return parseStrategyResponse(payload);
-            }
+        const res = await http.get<AgcDataResponse | StrategyApiResponse>('/log/agc/strategy_model');
+        if (!res.state || !res.data) {
+            return [];
+        }
+
+        const payload = (res.data as AgcDataResponse).strategy_model
+            ? extractStrategyPayload((res.data as AgcDataResponse).strategy_model)
+            : extractStrategyPayload(res.data);
+        if (payload && hasSettingList(payload.strategy)) {
+            return parseStrategyResponse(payload);
         }
     } catch (error) {
         console.warn('[operation-strategy] fetch strategy model failed', error);
