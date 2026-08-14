@@ -27,17 +27,17 @@ export function getTypeLabel(type: string): string {
     return translateDeviceManage(`typeLabel.${type}`, type);
 }
 
-/** 静态配置项，仅展示在厂站参数，不参与遥控遥调 */
+/** 静态配置项，仅展示在厂站参数，不按四遥分类 */
 const STATION_STATIC_PARAM_NAMES = new Set(['Capacity', 'BatteryNo', 'Manufacturer']);
 
-function isRemoteControlParam(item: StationParam): boolean {
-    if (item.type !== 'DIGITAL' && item.type !== 'ANALOG') {
-        return false;
+function getDispatchMode(type: string): DispatchMode | undefined {
+    if (type === 'CONTROL') {
+        return 'control';
     }
-    if (STATION_STATIC_PARAM_NAMES.has(item.name)) {
-        return false;
+    if (type === 'REGULATE') {
+        return 'regulate';
     }
-    return !!item.database_id;
+    return undefined;
 }
 
 const TYPE_ICON_MAP: Record<string, string> = {
@@ -160,64 +160,65 @@ export function getParamUnit(name: string): string {
     return translateDeviceManage(`paramUnit.${name}`, '');
 }
 
-function mapParaToCard(item: StationParam, options?: {dispatchable?: boolean}): ParamCardItem {
-    const dispatchMode: DispatchMode | undefined =
-        item.type === 'DIGITAL' ? 'control' : item.type === 'ANALOG' ? 'regulate' : undefined;
+function mapToCard(item: StationParam | DynParam, keyPrefix: string, dispatchable: boolean): ParamCardItem {
+    const dispatchMode = dispatchable ? getDispatchMode(item.type) : undefined;
 
     return {
-        key: `para-${item.name}`,
+        key: `${keyPrefix}-${item.database_id ?? ''}-${item.name}`,
         name: item.name,
         label: getParamLabel(item.name),
         value: item.value ?? '--',
         unit: getParamUnit(item.name),
         type: item.type,
-        dispatchable: options?.dispatchable ?? false,
-        dispatchMode: options?.dispatchable ? dispatchMode : undefined,
+        dispatchable,
+        dispatchMode,
         database_id: item.database_id,
-        max: item.max,
-        min: item.min,
+        max: 'max' in item ? item.max : undefined,
+        min: 'min' in item ? item.min : undefined,
     };
 }
 
-function mapDynParaToCard(item: DynParam): ParamCardItem {
-    return {
-        key: `dyn-${item.database_id}-${item.name}`,
-        name: item.name,
-        label: getParamLabel(item.name),
-        value: item.value ?? '--',
-        unit: getParamUnit(item.name),
-        type: item.type,
-        dispatchable: false,
-        database_id: item.database_id,
-    };
+function classifyParam(item: StationParam | DynParam, keyPrefix: string, groups: {
+    controlAdjust: ParamCardItem[];
+    telemetry: ParamCardItem[];
+    stationParams: ParamCardItem[];
+}) {
+    if (item.type === 'ATTRIBUTE') {
+        return;
+    }
+    if (STATION_STATIC_PARAM_NAMES.has(item.name)) {
+        groups.stationParams.push(mapToCard(item, keyPrefix, false));
+        return;
+    }
+    if (item.type === 'CONTROL' || item.type === 'REGULATE') {
+        groups.controlAdjust.push(mapToCard(item, keyPrefix, true));
+        return;
+    }
+    if (item.type === 'DIGITAL' || item.type === 'ANALOG') {
+        groups.telemetry.push(mapToCard(item, keyPrefix, false));
+        return;
+    }
+    groups.stationParams.push(mapToCard(item, keyPrefix, false));
 }
 
 export function buildParamCardGroups(para: StationParam[], dynPara: DynParam[]): ParamCardGroup[] {
-    const controlAdjust: ParamCardItem[] = [];
-    const telemetry: ParamCardItem[] = [];
-    const stationParams: ParamCardItem[] = [];
+    const groups = {
+        controlAdjust: [] as ParamCardItem[],
+        telemetry: [] as ParamCardItem[],
+        stationParams: [] as ParamCardItem[],
+    };
 
     for (const item of para) {
-        if (item.type === 'ATTRIBUTE') {
-            continue;
-        }
-        if (item.type === 'DIGITAL' || item.type === 'ANALOG') {
-            if (isRemoteControlParam(item)) {
-                controlAdjust.push(mapParaToCard(item, {dispatchable: true}));
-            } else {
-                stationParams.push(mapParaToCard(item));
-            }
-        }
+        classifyParam(item, 'para', groups);
     }
-
     for (const item of dynPara) {
-        telemetry.push(mapDynParaToCard(item));
+        classifyParam(item, 'dyn', groups);
     }
 
     return [
-        {title: translateDeviceManage('paramGroup.controlAdjust', '遥控遥调'), showDispatch: true, items: controlAdjust},
-        {title: translateDeviceManage('paramGroup.telemetry', '遥信遥测'), showDispatch: false, items: telemetry},
-        {title: translateDeviceManage('paramGroup.stationParams', '厂站参数'), showDispatch: false, items: stationParams},
+        {title: translateDeviceManage('paramGroup.controlAdjust', '遥控遥调'), showDispatch: true, items: groups.controlAdjust},
+        {title: translateDeviceManage('paramGroup.telemetry', '遥信遥测'), showDispatch: false, items: groups.telemetry},
+        {title: translateDeviceManage('paramGroup.stationParams', '厂站参数'), showDispatch: false, items: groups.stationParams},
     ];
 }
 
