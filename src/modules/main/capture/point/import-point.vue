@@ -81,7 +81,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {computed, ref, watch} from 'vue';
+import {computed, nextTick, ref, watch} from 'vue';
 import FileImport from '@/modules/main/capture/point/file-import.vue';
 import {IconSubmit, IconIcExport, IconIcImport} from '@/icons';
 import Collect from '@/modules/main/capture/point/collect/collect.page.vue';
@@ -134,7 +134,7 @@ const panes = ref<
 //     type.value === 3 ? [...pointType, {label: "属性", name: "attribute"}] : pointType
 // );
 
-const initDevicePoints = () => {
+const initDevicePoints = (init = true) => {
   const rid = props.node.parent.data.id;
   const did = props.node.data.id;
   const type = activeName.value;
@@ -143,7 +143,7 @@ const initDevicePoints = () => {
       rowPointsData.value = res.data || {};
       pointsData.value = {...rowPointsData.value};
       initPointsData.value = _.cloneDeep(pointsData.value);
-      renderCount.value = -1;
+      init && (renderCount.value = -1);
       selectedCount.value = 0;
       collectRef.value?.clearSelection();
     }
@@ -174,8 +174,9 @@ const handleImportPoints = async (file: File) => {
   const did = props.node.data.id;
   const res = await importExcelPoints(rid, did, file);
   if (res.state) {
-    initDevicePoints();
+    initDevicePoints(false);
     CvMessage.success('导入成功');
+    renderCount.value = 1;
   } else {
     CvMessage.error(res.data.msg || '导入失败');
   }

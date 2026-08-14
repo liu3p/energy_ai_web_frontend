@@ -49,12 +49,6 @@
           </div>
           <div class="rtu-contain__center">
             <cv-scrollbar height="100%">
-              <cv-form-item label="通道名称" prop="channel.name">
-                <cv-input v-model="form.channel.name"></cv-input>
-              </cv-form-item>
-              <cv-form-item label="通道ID">
-                <cv-input v-model="form.channel.id" disabled></cv-input>
-              </cv-form-item>
               <cv-form-item label="应用层协议">
                 <cv-select
                     v-model="form.appPluginId"
@@ -68,6 +62,12 @@
                       :value="item.id"
                   />
                 </cv-select>
+              </cv-form-item>
+              <cv-form-item label="通道名称" prop="channel.name">
+                <cv-input v-model="form.channel.name" disabled></cv-input>
+              </cv-form-item>
+              <cv-form-item label="通道ID">
+                <cv-input v-model="form.channel.id" disabled></cv-input>
               </cv-form-item>
               <div>
                 <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
