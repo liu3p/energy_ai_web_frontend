@@ -19,6 +19,8 @@ export interface SidebarMenuItem {
     key: string;
     title: string;
     path?: string;
+    /** 点击后触发动作，不跳转页面 */
+    action?: 'param-enable';
     /** 兼容旧用法：Vue 图标组件 */
     icon?: Component;
     /** 默认态 SVG（可直接引用 assets 下的 .svg） */
@@ -77,6 +79,7 @@ export const sidebarMenus: SidebarMenuItem[] = [
             {key: 'network-config', title: '网络配置', path: '/main/system/network'},
             {key: 'system-config', title: '系统配置', path: '/main/system/system'},
             {key: 'display-config', title: '展示配置', path: '/main/config/display'},
+            {key: 'param-enable', title: '参数使能', action: 'param-enable'},
         ],
     },
     {
@@ -100,7 +103,7 @@ export function filterSidebarMenus(menus: SidebarMenuItem[], usertype: string): 
             ...item,
             children: item.children ? filterSidebarMenus(item.children, usertype) : undefined,
         }))
-        .filter(item => item.path || (item.children && item.children.length > 0));
+        .filter(item => item.path || item.action || (item.children && item.children.length > 0));
 }
 
 export function findMenuTitleByPath(path: string, menus: SidebarMenuItem[] = sidebarMenus): string {

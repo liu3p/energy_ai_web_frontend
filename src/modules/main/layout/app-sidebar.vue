@@ -34,13 +34,25 @@
                             </cv-icon>
                             <span>{{ item.title }}</span>
                         </template>
-                        <el-menu-item
-                            v-for="child in item.children"
-                            :key="child.key"
-                            :index="child.path"
-                        >
-                            {{ child.title }}
-                        </el-menu-item>
+                        <template v-for="child in item.children" :key="child.key">
+                            <div
+                                v-if="child.action"
+                                class="app-sidebar__action"
+                                @click.stop="handleMenuAction(child)"
+                            >
+                                <button
+                                    class="app-sidebar__action-btn"
+                                    type="button"
+                                    :disabled="actionLoading"
+                                >
+                                    {{ child.title }}
+                                </button>
+                                <span class="app-sidebar__action-warn">!</span>
+                            </div>
+                            <el-menu-item v-else :index="child.path">
+                                {{ child.title }}
+                            </el-menu-item>
+                        </template>
                     </el-sub-menu>
                     <el-menu-item v-else :index="item.path!">
                         <sidebar-menu-icon
@@ -74,13 +86,14 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue';
 import {useRoute} from 'vue-router';
-import {useLocale} from 'cloudview.ui-next';
+import {CvMessage, useLocale} from 'cloudview.ui-next';
 import {userInfo} from '@/common/user';
 import icFold from '@/assets/sidebar-icons/ic_fold.svg';
 import icFoldHover from '@/assets/sidebar-icons/ic_fold_hover.svg';
 import icUnfold from '@/assets/sidebar-icons/ic_unfold.svg';
 import icUnfoldHover from '@/assets/sidebar-icons/ic_unfold_hover.svg';
-import {filterSidebarMenus, isMenuItemActive, sidebarMenus} from './sidebar-menu';
+import {filterSidebarMenus, isMenuItemActive, sidebarMenus, type SidebarMenuItem} from './sidebar-menu';
+import {enableParams} from './param-enable.service';
 import SidebarMenuIcon from './sidebar-menu-icon.vue';
 
 const EXPANDED_WIDTH = 220;
@@ -105,6 +118,26 @@ const toggleIconSrc = computed(() => {
 const visibleMenus = computed(() => filterSidebarMenus(sidebarMenus, userInfo.value?.usertype ?? ''));
 
 const activePath = computed(() => route.path);
+const actionLoading = ref(false);
+
+async function handleMenuAction(item: SidebarMenuItem) {
+    if (item.action !== 'param-enable' || actionLoading.value) {
+        return;
+    }
+    actionLoading.value = true;
+    try {
+        const res = await enableParams();
+        if (res.state) {
+            CvMessage.success(res.msg || '参数使能成功');
+        } else {
+            CvMessage.error(res.msg || '参数使能失败');
+        }
+    } catch {
+        CvMessage.error('参数使能失败');
+    } finally {
+        actionLoading.value = false;
+    }
+}
 
 function toggleCollapsed() {
     collapsed.value = !collapsed.value;
@@ -267,6 +300,54 @@ watch(collapsed, val => {
         vertical-align: middle;
     }
 
+    &__action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 44px;
+        margin: 2px 8px;
+        padding-left: 43px;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    &__action-btn {
+        display: inline-flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 10px;
+        border: 1px solid #e6a23c;
+        border-radius: 4px;
+        background: transparent;
+        color: #e6a23c;
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background: rgb(230 162 60 / 8%);
+        }
+
+        &:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    }
+
+    &__action-warn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #e6a23c;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
     &__toggle {
         display: flex;
         align-items: center;
@@ -291,5 +372,46 @@ watch(collapsed, val => {
         display: block;
         flex-shrink: 0;
     }
+}
+</style>
+
+<style lang="scss">
+.el-menu--popup .app-sidebar__action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    margin: 2px 8px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.el-menu--popup .app-sidebar__action-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid #e6a23c;
+    border-radius: 4px;
+    background: transparent;
+    color: #e6a23c;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.el-menu--popup .app-sidebar__action-warn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #e6a23c;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
 }
 </style>
