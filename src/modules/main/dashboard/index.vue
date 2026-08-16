@@ -76,7 +76,7 @@ import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
 import charts from '@/modules/main/dashboard/charts.vue';
 import monitor from '@/modules/main/dashboard/monitor.vue';
 import { webSocket } from '@/common/websocket/websocket';
-// import dayjs from 'dayjs'
+import moment from 'moment';
 
 type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar', color?: string, data: (number | string)[] }[] };
 const configData = ref();
@@ -110,8 +110,8 @@ const getRealTime = async () => {
         const params = {
             "type": "analog",
             "ids": [n.oid],
-            "start_time": dayjs(realTimeDate.value).startOf('day'),
-            "end_time": dayjs(realTimeDate.value).startOf('day').add(1, 'day'),
+            "start_time": moment(realTimeDate.value).startOf('day'),
+            "end_time": moment(realTimeDate.value).startOf('day').add(1, 'day'),
             "interval": 3600
         };
         switch (n.oid.split("-")[2]) {
@@ -132,7 +132,7 @@ const getRealTime = async () => {
         if (result[i1].state) {
             if (realTimeData.value.xAxis.length == 0) {
                 realTimeData.value.xAxis = result[i1].data.data.map((n2, i2) => {
-                    return dayjs(n2.time).format("HH:mm")
+                    return moment(n2.time).format("HH:mm")
                 });
             }
             realTimeData.value.data.push({
@@ -156,8 +156,8 @@ const getPowerLevel = async () => {
         const params = {
             "type": "analog",
             "ids": [n.oid],
-            "start_time": dayjs(powerLevelDate.value).startOf('month'),
-            "end_time": dayjs(powerLevelDate.value).startOf('month').add(1, 'month'),
+            "start_time": moment(powerLevelDate.value).startOf('month'),
+            "end_time": moment(powerLevelDate.value).startOf('month').add(1, 'month'),
             "interval": 86400
         };
         switch (n.oid.split("-")[2]) {
@@ -178,7 +178,7 @@ const getPowerLevel = async () => {
         if (result[i1].state) {
             if (powerLevelData.value.xAxis.length == 0) {
                 powerLevelData.value.xAxis = result[i1].data.data.map((n2, i2) => {
-                    return dayjs(n2.time).format("D")
+                    return moment(n2.time).format("D")
                 });
             }
             powerLevelData.value.data.push({
