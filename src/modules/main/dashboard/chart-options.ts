@@ -1,12 +1,13 @@
 import { LineOption } from '@/common/echarts/type';
-type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar'; color: string; data: (number | string)[] }[] };
+type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar'; color: string; data: (number | string)[] }[]; unit?: string };
 export const initOptions = (options?: chartParams): LineOption & {
     xAxis: echarts.XAXisComponentOption & { data: Array<number | string | null> };
     series: echarts.SeriesOption[];
 } => {
     const propsData = options ?? {
         xAxis: [],
-        data: []
+        data: [],
+        unit: ""
     };
     const legendData: any = [];
     const colorList: string[] = [];
@@ -87,7 +88,7 @@ export const initOptions = (options?: chartParams): LineOption & {
         },
         yAxis: [
             {
-                name: 'kW',
+                name: propsData.unit || "kW",
                 type: 'value',
                 boundaryGap: [0, 0.1],
                 axisLabel: {
