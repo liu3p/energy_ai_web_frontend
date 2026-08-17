@@ -323,6 +323,10 @@ const handleExport = () => {
 };
 </script>
 <style scoped lang="scss">
+:deep(.cv-table .el-table__body-wrapper tr td.el-table-fixed-column--left.is-last-column::before) {
+  box-shadow: none !important;
+}
+
 :deep(.el-tabs__header) {
   margin: 0;
 }
