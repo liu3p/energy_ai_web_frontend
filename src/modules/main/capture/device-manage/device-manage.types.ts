@@ -1,4 +1,4 @@
-export type ParamType = 'DIGITAL' | 'ANALOG' | 'ATTRIBUTE';
+export type ParamType = 'DIGITAL' | 'ANALOG' | 'ATTRIBUTE' | 'CONTROL' | 'REGULATE';
 
 export interface StationParam {
     name: string;

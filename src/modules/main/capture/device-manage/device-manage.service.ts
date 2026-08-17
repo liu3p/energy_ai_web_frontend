@@ -62,7 +62,7 @@ export async function dispatchDeviceParam(
     }
 
     const payload: DispatchPayload = {value, checkpwd};
-    const dispatchMode: DispatchMode = param.dispatchMode ?? (param.type === 'DIGITAL' ? 'control' : 'regulate');
+    const dispatchMode: DispatchMode = param.dispatchMode ?? (param.type === 'CONTROL' ? 'control' : 'regulate');
 
     try {
         const res =

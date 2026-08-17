@@ -16,6 +16,7 @@
                     <cv-button v-if="!reportConnected" type="primary" @click="runReportSocket">启动</cv-button>
                     <cv-button v-if="reportConnected" type="danger" @click="stop">停止</cv-button>
                     <cv-button @click="clearBoard">清空</cv-button>
+                    <cv-button type="warning">重启</cv-button>
                 </cv-form-item>
             </cv-form>
         </div>
@@ -33,15 +34,15 @@
     </div>
 </template>
 <script setup lang="ts">
-import {nextTick, onUnmounted, ref, watch} from 'vue';
-import {WebsocketClass} from '@/common/websocket/websocket.class';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
+import { WebsocketClass } from '@/common/websocket/websocket.class';
 import {
     getChannelByRtu,
     initChannelReportWebsocket,
     initChannelStatusWebsocket,
 } from '@/modules/main/capture/monitor/monitor.service';
 
-const props = defineProps<{rid: string; node: any}>();
+const props = defineProps<{ rid: string; node: any }>();
 
 const rules = {
     channel: [
@@ -65,9 +66,9 @@ const reportSocket = ref<WebsocketClass>();
 const formData = ref<{
     channel: string;
     plugin: string;
-}>({channel: '', plugin: ''});
-const channelOptions = ref<{name: string; id: string; plugins: any[]}[]>();
-const pluginOptions = ref<{name: string; id: string; plugins: any[]}[]>();
+}>({ channel: '', plugin: '' });
+const channelOptions = ref<{ name: string; id: string; plugins: any[] }[]>();
+const pluginOptions = ref<{ name: string; id: string; plugins: any[] }[]>();
 const channelId = ref();
 const connected = ref(false);
 const reportConnected = ref(false);
@@ -79,18 +80,18 @@ watch(
     () => props.node,
     () => {
         close();
-        formData.value = {channel: '', plugin: ''};
+        formData.value = { channel: '', plugin: '' };
         channelOptions.value = [];
         pluginOptions.value = [];
         initChannelList(props.rid);
     },
-    {immediate: true}
+    { immediate: true }
 );
 
 function initChannelList(id: string) {
     getChannelByRtu(id).then(res => {
         if (res.state) {
-            const {channel = []} = res.data;
+            const { channel = [] } = res.data;
             channelId.value = res.data.id;
             channelOptions.value = channel;
         }
