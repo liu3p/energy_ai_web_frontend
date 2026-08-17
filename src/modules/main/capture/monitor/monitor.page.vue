@@ -2,18 +2,11 @@
     <div class="container">
         <div class="side-tree__wrapper">
             <collapse-slider v-model="collapse" :width="sliderProps.width" :collapse-width="sliderProps.collapseWidth">
-                <cv-tree
-                    ref="treeRef"
-                    node-key="key"
-                    :data="treeData"
-                    :props="{
-                        children: 'device',
-                        label: 'name',
-                    }"
-                    default-expand-all
-                    @node-click="handleNodeClick"
-                >
-                    <template #default="{node, data}">
+                <cv-tree ref="treeRef" node-key="key" :data="treeData" :props="{
+                    children: 'device',
+                    label: 'name',
+                }" default-expand-all @node-click="handleNodeClick">
+                    <template #default="{ node, data }">
                         <div class="custom-tree-node">
                             <span class="custom-tree-node-label">{{ node.label }}</span>
                             <!-- <span v-if="node.level === 1" class="custom-tree-node-status"></span> -->
@@ -23,17 +16,16 @@
             </collapse-slider>
         </div>
         <div class="main-contain">
-            <monitor-report :node="currentNode" :rid="currentNode.data.id" v-if="currentNode?.level === 1" />
-            <monitor-point :node="currentNode" v-else-if="currentNode?.level === 2" />
+            <monitor-point :node="currentNode" v-if="currentNode?.level === 2" />
             <empty class-name="empty" v-else />
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import {ref, computed, onMounted} from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import CollapseSlider from '@/common/collapse-slider.vue';
 import MonitorReport from '@/modules/main/capture/monitor/monitor-report.vue';
-import {queryRtuListExceptPoints} from '@/modules/main/capture/point/point.service';
+import { queryRtuListExceptPoints } from '@/modules/main/capture/point/point.service';
 import MonitorPoint from '@/modules/main/capture/monitor/monitor-point.vue';
 import Empty from '@/common/empty.vue';
 
@@ -72,6 +64,7 @@ const handleNodeClick = (_: any, node: any) => {
 <style scoped lang="scss">
 $sliderWidth: v-bind(sliderWidth);
 $gap: 24px;
+
 .container {
     width: 100%;
     height: 100%;
