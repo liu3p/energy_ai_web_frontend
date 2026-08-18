@@ -9,7 +9,7 @@
                     </cv-select>
                 </cv-form-item>
                 <cv-form-item label="协议：" prop="plugin">
-                    <cv-select v-model="formData.plugin" style="width: 240px" size="large">
+                    <cv-select v-model="formData.plugin" style="width: 240px" size="large" @change="changePlugin">
                         <cv-option v-for="item in pluginOptions" :key="item.id" :label="item.name" :value="item.id" />
                     </cv-select>
                 </cv-form-item>
@@ -88,7 +88,6 @@ function initChannelList() {
 
 const handleChange = async (val: string) => {
     close();
-    closeSocket();
     formData.value.plugin = '';
     const row = channelOptions.value!.find(channelgroup => channelgroup.channelgroupid === val)!;
     pluginOptions.value = row.plugins;
@@ -170,6 +169,11 @@ function close() {
     closeReportSocket();
 }
 
+function changePlugin() {
+    reportConnected.value = false;
+    closeReportSocket();
+    dataSource.value = [];
+}
 onMounted(() => {
     close();
     formData.value = { channelgroup: '', plugin: '' };
