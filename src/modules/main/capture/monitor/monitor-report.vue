@@ -2,9 +2,10 @@
     <div class="main-contain__center">
         <div class="form-wrapper">
             <cv-form :rules="rules" ref="ruleFormRef" :model="formData" inline>
-                <cv-form-item label="通道：" prop="channel">
-                    <cv-select v-model="formData.channel" style="width: 240px" size="large" @change="handleChange">
-                        <cv-option v-for="item in channelOptions" :key="item.id" :label="item.name" :value="item.id" />
+                <cv-form-item label="通道：" prop="channelgroup">
+                    <cv-select v-model="formData.channelgroup" style="width: 240px" size="large" @change="handleChange">
+                        <cv-option v-for="item in channelOptions" :key="item.channelgroupid" :label="item.name"
+                            :value="item.channelgroupid" />
                     </cv-select>
                 </cv-form-item>
                 <cv-form-item label="协议：" prop="plugin">
@@ -34,18 +35,19 @@
     </div>
 </template>
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { WebsocketClass } from '@/common/websocket/websocket.class';
 import {
     getChannelByRtu,
     initChannelReportWebsocket,
     initChannelStatusWebsocket,
+    getAllChannel
 } from '@/modules/main/capture/monitor/monitor.service';
 
 const props = defineProps<{ rid: string; node: any }>();
 
 const rules = {
-    channel: [
+    channelgroup: [
         {
             required: true,
             message: '请选择',
@@ -64,46 +66,34 @@ const ruleFormRef = ref();
 const socket = ref<WebsocketClass>();
 const reportSocket = ref<WebsocketClass>();
 const formData = ref<{
-    channel: string;
+    channelgroup: string;
     plugin: string;
-}>({ channel: '', plugin: '' });
-const channelOptions = ref<{ name: string; id: string; plugins: any[] }[]>();
+}>({ channelgroup: '', plugin: '' });
+const channelOptions = ref<{ id: string; name: string; channelgroupid: string; plugins: any[] }[]>();
 const pluginOptions = ref<{ name: string; id: string; plugins: any[] }[]>();
-const channelId = ref();
 const connected = ref(false);
 const reportConnected = ref(false);
 const dataSource = ref<string[]>([]);
 const scrollerRef = ref();
 const scrollTimer = ref<number | null>(null);
 
-watch(
-    () => props.node,
-    () => {
-        close();
-        formData.value = { channel: '', plugin: '' };
-        channelOptions.value = [];
-        pluginOptions.value = [];
-        initChannelList(props.rid);
-    },
-    { immediate: true }
-);
 
-function initChannelList(id: string) {
-    getChannelByRtu(id).then(res => {
+function initChannelList() {
+    getAllChannel().then(res => {
         if (res.state) {
-            const { channel = [] } = res.data;
-            channelId.value = res.data.id;
-            channelOptions.value = channel;
+            channelOptions.value = res.data;
         }
     });
 }
 
 const handleChange = async (val: string) => {
+    close();
     closeSocket();
-    const row = channelOptions.value!.find(channel => channel.id === val)!;
+    formData.value.plugin = '';
+    const row = channelOptions.value!.find(channelgroup => channelgroup.channelgroupid === val)!;
     pluginOptions.value = row.plugins;
     connected.value = false;
-    socket.value = await initChannelStatusWebsocket(channelId.value, row.id);
+    socket.value = await initChannelStatusWebsocket(formData.value.channelgroup, row.id);
     socket.value.connect();
     socket.value.onMessage(onMessage);
 };
@@ -153,8 +143,9 @@ const runReportSocket = () => {
     ruleFormRef.value.validate(async (valid: boolean) => {
         if (valid) {
             closeReportSocket();
-            const cgid = channelId.value;
-            const cid = formData.value.channel;
+            const row = channelOptions.value!.find(channelgroup => channelgroup.channelgroupid === formData.value.channelgroup)!;
+            const cgid = formData.value.channelgroup;
+            const cid = row.id;
             const pluginId = formData.value.plugin;
             reportSocket.value = await initChannelReportWebsocket(cgid, cid, pluginId);
             reportSocket.value.connect();
@@ -178,6 +169,14 @@ function close() {
     closeSocket();
     closeReportSocket();
 }
+
+onMounted(() => {
+    close();
+    formData.value = { channelgroup: '', plugin: '' };
+    channelOptions.value = [];
+    pluginOptions.value = [];
+    initChannelList();
+});
 
 onUnmounted(() => {
     close();

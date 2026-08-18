@@ -72,6 +72,11 @@ export const getChannelByRtu = (rid: string): Promise<Response<any>> => {
     return http.get(`/log/datamonitor/rtu/${rid}/channels`);
 };
 
+export const getAllChannel = (): Promise<Response<any>> => {
+    return http.get(`/log/dbcfg/channels`);
+};
+
+
 export const monitorControl = (rid: string, did: string, pid: string, data: any): Promise<Response<any>> => {
     return http.post(`/log/datamonitor/rtu/${rid}/device/${did}/point/${pid}/control`, data);
 };

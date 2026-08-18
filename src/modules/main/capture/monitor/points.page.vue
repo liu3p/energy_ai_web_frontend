@@ -172,9 +172,7 @@ const history = (records: any) => {
     getHistory();
 };
 const getHistory = () => {
-    // const oid = selectNode.value.pointID;
-    console.info(selectNode.value)
-    const oid = "0-1-101-1002";
+    const oid = selectNode.value.pointID;
     historyChartData.value = {
         xAxis: [],
         data: [],
@@ -242,7 +240,6 @@ const cancel = () => {
 const submit = async () => {
     const { did, rid } = props;
     const { checkpwd, pid, value } = formData.value;
-    console.log(rid, did, checkpwd, pid);
     const data = { value, checkpwd };
     let res: any;
     if (props.active === 'regulate') res = await monitorRegulate(rid, did, pid!, data);

@@ -1,9 +1,9 @@
 Window.AGENT_CONFIG = {
     API_URL: '/api/v1',
-    FILE_URL: 'http://192.168.2.101:38080/',
+    FILE_URL: 'http://47.103.143.170:38080/',
     API_PREFIX: 'api/v1/',
     INTERNATIONAL: false,
-    SOCKET_API_URL: 'ws://192.168.2.101:38080/api/v1',
+    SOCKET_API_URL: 'ws://47.103.143.170:38080/api/v1',
 };
 
 Window.AGENT_CONFIG_PRODUCT = {
