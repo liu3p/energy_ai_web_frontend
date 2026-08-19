@@ -269,6 +269,16 @@ defineExpose({
     width: 100%;
     height: calc(100% - 64px);
     border: none;
+
+    :deep(.el-table__row) {
+        height: 40px;
+    }
+
+    :deep(.el-table__cell) {
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 40px;
+    }
 }
 
 .history-header {

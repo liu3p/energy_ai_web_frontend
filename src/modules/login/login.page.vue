@@ -9,7 +9,7 @@
                 @command="handleClick"
             >
                 <div class="center">
-                    <cv-icon :size="14" style="margin-right: 3px" color="#fff">
+                    <cv-icon :size="14" style="margin-right: 3px" color="#062b45">
                         <icon-international></icon-international>
                     </cv-icon>
                     {{ Locale.localeName === 'zh-CN' ? '中文' : 'English' }}
@@ -28,34 +28,32 @@
             <cv-form
                 ref="ruleFormRef"
                 :model="data"
-                label-position="top"
                 class="login__form__body"
                 :rules="rules"
                 @submit.prevent="submit"
             >
-                <cv-form-item prop="name" :label="t('fw.login.username')">
+                <cv-form-item prop="name">
                     <cv-input
                         v-model="data.name"
                         v-trim
-                        :placeholder="
-                            t('fw.login.username') +
-                            (isInternational ? '/' + t('fw.login.email') : '/' + t('fw.login.phone'))
-                        "
+                        :prefix-icon="User"
+                        :placeholder="t('fw.login.enterUsername')"
                         autocomplete="username"
                         :maxlength="60"
                     ></cv-input>
                 </cv-form-item>
-                <cv-form-item prop="password" :label="t('fw.login.password')">
+                <cv-form-item prop="password">
                     <cv-input
                         v-model="data.password"
                         v-trim
                         type="password"
-                        :placeholder="t('fw.login.password')"
+                        show-password
+                        :prefix-icon="Lock"
+                        :placeholder="t('fw.login.enterPassword')"
                         autocomplete="current-password"
                         :maxlength="100"
                     ></cv-input>
                 </cv-form-item>
-<!--                <p class="forget-pwd" @click="retrievePwdDialog?.open()">{{ t('fw.login.forgotPwd') }}</p>-->
                 <cv-form-item>
                     <cv-button
                         native-type="submit"
@@ -63,7 +61,7 @@
                         type="primary"
                         :loading="loading"
                         :disabled="loading"
-                        size="default"
+                        size="large"
                     >
                         {{ t('fw.login.login') }}
                     </cv-button>
@@ -76,23 +74,19 @@
 <script lang="ts" setup>
 import {reactive, ref} from 'vue';
 import {CvMessage, useLocale} from 'cloudview.ui-next';
+import {User, Lock} from '@element-plus/icons-vue';
 import authService from '@/common/auth.service';
 import {Locale} from '@/common/locale';
 import {IconInternational} from '@/icons/index';
 import router from '@/router';
 import {Token} from '@/common/token';
 import retrievePwd from './retrieve-pwd.vue';
-import {getConfig} from '@/common/config_util';
-import {getErrorCodeTips} from '@/common/error-code';
-import {initUserInfo, userInfo} from '@/common/user';
 
 const {t} = useLocale();
 const data = reactive({
     name: '',
     password: '',
 });
-
-const isInternational = getConfig('INTERNATIONAL');
 
 const retrievePwdDialog = ref();
 const loading = ref(false);
@@ -117,7 +111,6 @@ const rules = {
 const submit = async () => {
     ruleFormRef.value.validate(async (valid: boolean) => {
         if (valid) {
-
             loading.value = true;
             const res = await authService.login(data.name, data.password);
             loading.value = false;
@@ -155,37 +148,22 @@ p {
     margin: 0;
 }
 
-.icp {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin: 10px 0;
-    width: 100%;
-    height: 36px;
-    white-space: pre;
-    text-align: center;
-    color: #d0d0d0;
-    z-index: 1000;
-}
-
-.icp > a {
-    color: #d0d0d0;
-}
-
-.icp > a:hover {
-    text-decoration: none;
-}
-
 .login {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: url('../../assets/login-bg.png') no-repeat top left;
+    background: url('../../assets/login-bg.png') no-repeat center center;
     background-size: cover;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 
     &__header {
-        width: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1;
         height: 94px;
         display: flex;
         justify-content: flex-end;
@@ -215,44 +193,62 @@ p {
     }
 
     &__form {
-        width: 416px;
-        height: 370px;
-        border-radius: 4px;
-        background-color: #fff;
-        position: absolute;
-        right: 40px;
-        top: 50%;
-        transform: translateY(-50%);
-        padding: 16px 40px;
+        width: 480px;
+        border-radius: 32px;
+        background: rgb(255 255 255 / 80%);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px 0 rgb(12 25 51 / 10%);
+        padding: 48px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 36px;
+        box-sizing: border-box;
 
         &__title {
             color: #35353e;
             font-size: 24px;
             font-weight: 700;
-            margin: 20px 0;
+            line-height: 32px;
+            text-align: center;
         }
 
         &__body {
-            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
 
-            .forget-pwd {
-                height: 14px;
-                line-height: 14px;
-                cursor: pointer;
-                color: var(--primary-color);
-                text-align: right;
+            :deep(.el-form-item) {
+                margin-bottom: 0;
             }
-        }
 
-        :deep(.el-form-item--label-top .el-form-item__label) {
-            margin-bottom: 2px;
-            font-weight: 700;
+            :deep(.el-form-item__error) {
+                padding-top: 4px;
+            }
+
+            :deep(.el-input__wrapper) {
+                background-color: #f5f6f8;
+                box-shadow: none;
+                border-radius: 8px;
+                padding: 1px 12px;
+                min-height: 40px;
+            }
+
+            :deep(.el-input__wrapper.is-focus) {
+                box-shadow: 0 0 0 1px var(--primary-color, #3162e1) inset;
+            }
+
+            :deep(.el-input__prefix),
+            :deep(.el-input__suffix) {
+                color: #98a3be;
+            }
         }
     }
 
     &__btn {
         width: 100%;
-        margin-top: 24px;
+        height: 40px;
+        border-radius: 8px;
+        font-size: 16px;
     }
 }
 </style>

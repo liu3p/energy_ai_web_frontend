@@ -4,7 +4,7 @@ import cvZh from 'cloudview.ui-next/locale/lang/zh-cn';
 export default {
     fw: {
         common: {
-            title: '能量管理系统',
+            title: 'EMS能量管理系统',
             number: '序号',
             home: '首页',
             operation: '操作',
@@ -161,8 +161,8 @@ export default {
             phone: '手机',
             forgotPwd: '忘记密码?',
             login: '登录',
-            enterUsername: '请输入账号',
-            enterPassword: '请输入密码',
+            enterUsername: '输入用户名',
+            enterPassword: '输入密码',
             resetPwd: '重置密码',
             retrievePwd: '找回密码',
             enterSendTo: '请输入发送至',
