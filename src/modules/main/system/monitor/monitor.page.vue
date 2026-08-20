@@ -4,24 +4,24 @@
             <div class="monitor-contain">
                 <div class="main-contain__left">
                     <div class="main-contain__left1">
-                        <h1 class="bold-text">主机</h1>
+                        <h1 class="bold-text">{{ t('fw.systemPages.host') }}</h1>
                         <div class="bold-text">{{ systemInfo?.hostname ?? '-' }}</div>
-                        <div>主机名</div>
+                        <div>{{ t('fw.systemPages.hostname') }}</div>
                         <div class="bold-text">{{ systemInfo?.sn ?? '-' }}</div>
-                        <div>序列号</div>
+                        <div>{{ t('fw.systemPages.serialNumber') }}</div>
                         <div class="bold-text">{{ systemInfo?.modelnum ?? '-' }}</div>
-                        <div>设备型号</div>
+                        <div>{{ t('fw.systemPages.deviceModel') }}</div>
                         <div class="bold-text">{{ systemInfo?.version ?? '-' }}</div>
-                        <div>软件版本号</div>
+                        <div>{{ t('fw.systemPages.softwareVersionNo') }}</div>
                     </div>
                     <div class="main-contain__left2">
                         <cv-scrollbar height="100%">
-                            <h1 class="bold-text">设备统计</h1>
+                            <h1 class="bold-text">{{ t('fw.systemPages.deviceStats') }}</h1>
                             <div class="bold-text">{{ systemDevice.connectCount ?? '-' }} /
                                 {{ systemDevice.deviceTotal ?? '-'
                                 }}
                             </div>
-                            <div style="margin-top: 8px;">RTU在线/总数</div>
+                            <div style="margin-top: 8px;">{{ t('fw.systemPages.rtuOnlineTotal') }}</div>
                             <div class="bold-text">
                                 <p v-for="(item,i) in systemDevice.device" :key="i">{{ item.rtuname }}
                                     <span v-if="item.device?.length">（
@@ -31,49 +31,49 @@
                                 ）</span>
                                 </p>
                             </div>
-                            <div style="margin-top: 8px;">离线设备</div>
+                            <div style="margin-top: 8px;">{{ t('fw.systemPages.offlineDevices') }}</div>
                         </cv-scrollbar>
                     </div>
                 </div>
                 <div class="main-contain__center">
                     <div class="chart-block">
                         <h2 class="chart-block-title">CPU</h2>
-                        <div class="chart-block-unit">利用率(%)</div>
+                        <div class="chart-block-unit">{{ t('fw.systemPages.utilizationPercent') }}</div>
                         <div class="chart-block-content">
                             <line-charts :data="cpuData!" />
                         </div>
                         <div class="chart-block-footer">
                             <div>
                                 <h2 class="chart-block-title">{{ cpuData?.value }}%</h2>
-                                <div class="chart-block-unit">利用率</div>
+                                <div class="chart-block-unit">{{ t('fw.systemPages.utilization') }}</div>
                             </div>
                             <div>
                                 <h2 class="chart-block-title">{{ cpuData?.freq }}GHz</h2>
-                                <div class="chart-block-unit">主频</div>
+                                <div class="chart-block-unit">{{ t('fw.systemPages.frequency') }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="chart-block">
-                        <h2 class="chart-block-title">内存</h2>
-                        <div class="chart-block-unit">利用率(%)</div>
+                        <h2 class="chart-block-title">{{ t('fw.systemPages.memory') }}</h2>
+                        <div class="chart-block-unit">{{ t('fw.systemPages.utilizationPercent') }}</div>
                         <div class="chart-block-content">
                             <line-charts :data="memData!" />
                         </div>
                         <div class="chart-block-footer">
                             <div>
                                 <h2 class="chart-block-title">{{ memData?.value }}%</h2>
-                                <div class="chart-block-unit">利用率</div>
+                                <div class="chart-block-unit">{{ t('fw.systemPages.utilization') }}</div>
                             </div>
                             <div>
                                 <h2 class="chart-block-title">{{ memData?.memused }}/{{ memData?.memtotal }}GB</h2>
-                                <div class="chart-block-unit">使用量/总量</div>
+                                <div class="chart-block-unit">{{ t('fw.systemPages.usedTotal') }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="main-contain__right">
                     <div class="main-contain__right1">
-                        <h1 class="bold-text">系统磁盘</h1>
+                        <h1 class="bold-text">{{ t('fw.systemPages.systemDisk') }}</h1>
                         <div class="disc-wrapper"><span style="font-weight: bold;">{{ sysDisk?.used ?? '-' }} /</span>
                             {{ sysDisk?.total ?? '-' }}GB
                         </div>
@@ -81,7 +81,7 @@
                                      :stroke-width="8" />
                     </div>
                     <!-- <div class="main-contain__right1">
-                        <h1 class="bold-text">数据磁盘</h1>
+                        <h1 class="bold-text">{{ t('fw.systemPages.dataDisk') }}</h1>
                         <div class="disc-wrapper"><span style="font-weight: bold;">{{ dataDisk?.used ?? '-' }} /</span>
                             {{ dataDisk?.total ?? '-' }}GB
                         </div>
@@ -90,7 +90,7 @@
                     </div> -->
                     <div class="main-contain__right2">
                         <cv-scrollbar height="100%">
-                            <h1 class="bold-text">网络</h1>
+                            <h1 class="bold-text">{{ t('fw.systemPages.network') }}</h1>
                             <template v-for="(item,i) in networks" :key="i">
                                 <div class="network-block">
                                     <div class="network-block-title">
@@ -128,6 +128,9 @@ import {initDeviceWebsocket, initWebsocket} from '@/modules/main/system/monitor/
 import {WebsocketClass} from '@/common/websocket/websocket.class';
 import moment from 'moment';
 import {getSystemInfo} from '@/modules/main/system/system/system.service';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 const cpuData = ref<{
     freq: string;

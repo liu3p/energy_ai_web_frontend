@@ -2,34 +2,34 @@
     <div class="container">
         <div class="device-param" style="height: 138px">
             <div class="device-param__header">
-                <span>设备参数</span>
+                <span>{{ t('fw.systemPages.deviceParams') }}</span>
                 <span>
-                    <cv-button v-if="disabled" @click="disabled = false">编辑</cv-button>
-                    <cv-button v-if="!disabled" @click="disabled = true">取消</cv-button>
-                    <cv-button v-if="!disabled" @click="save">保存</cv-button>
+                    <cv-button v-if="disabled" @click="disabled = false">{{ t('fw.common.edit') }}</cv-button>
+                    <cv-button v-if="!disabled" @click="disabled = true">{{ t('fw.common.cancel') }}</cv-button>
+                    <cv-button v-if="!disabled" @click="save">{{ t('fw.capturePoint.save') }}</cv-button>
                 </span>
             </div>
             <div class="device-param__contain">
                 <div class="form-item">
-                    <div class="label">序列号</div>
+                    <div class="label">{{ t('fw.systemPages.serialNumber') }}</div>
                     <div class="form-wrap">
                         <cv-input v-model="formData.sn" :disabled="disabled" />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">设备型号</div>
+                    <div class="label">{{ t('fw.systemPages.deviceModel') }}</div>
                     <div class="form-wrap">
                         <cv-input v-model="formData.modelnum" :disabled="disabled" />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">主机名</div>
+                    <div class="label">{{ t('fw.systemPages.hostname') }}</div>
                     <div class="form-wrap">
                         <cv-input v-model="formData.hostname" :disabled="disabled" />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">当前时间</div>
+                    <div class="label">{{ t('fw.systemPages.currentTime') }}</div>
                     <div class="form-wrap">
                         <cv-date-picker
                             v-model="formData.timeinfo.time"
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">时区</div>
+                    <div class="label">{{ t('fw.systemPages.timezone') }}</div>
                     <div class="form-wrap">
                         <cv-select
                             v-model="formData.timeinfo.zone"
@@ -66,6 +66,9 @@ import {zoneOptions} from '@/modules/main/system/system/zone';
 import ReportLog from '@/modules/main/system/system/report-log.vue';
 import {getSystemInfo, updateSystemInfo} from '@/modules/main/system/system/system.service';
 import moment from 'moment';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 let timer: any;
 const formData = ref<Partial<{
@@ -103,7 +106,7 @@ const save = () => {
         if (res.state) {
             init();
             disabled.value = true;
-            CvMessage.success('操作成功');
+            CvMessage.success(t('fw.common.operateSuccess'));
         } else CvMessage.error(res.data.msg);
     });
 };

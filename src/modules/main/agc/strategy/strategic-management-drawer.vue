@@ -1,17 +1,17 @@
 <template>
     <cv-drawer
         v-model="visible"
-        title="配置参数"
+        :title="t('fw.strategyManagement.configParams')"
         size="800"
         @close="cancel"
     >
         <cv-table :data="dataSource" class="table-container" row-key="id">
-            <cv-table-column prop="name" label="名称" width="120" />
-            <cv-table-column prop="desc" label="描述" width="120" />
-            <cv-table-column prop="type" label="数据类型" width="120" />
-            <cv-table-column prop="max" label="最大值" width="120" />
-            <cv-table-column prop="min" label="最小值" width="120" />
-            <cv-table-column prop="value" label="值">
+            <cv-table-column prop="name" :label="t('fw.strategyManagement.name')" width="120" />
+            <cv-table-column prop="desc" :label="t('fw.strategyManagement.description')" width="120" />
+            <cv-table-column prop="type" :label="t('fw.strategyManagement.dataType')" width="120" />
+            <cv-table-column prop="max" :label="t('fw.strategyManagement.max')" width="120" />
+            <cv-table-column prop="min" :label="t('fw.strategyManagement.min')" width="120" />
+            <cv-table-column prop="value" :label="t('fw.strategyManagement.value')">
                 <template #default="scope">
                     <cv-input-number v-if="scope.row.min && scope.row.max" 
                                      v-model="scope.row.value"
@@ -64,7 +64,7 @@ const convertValueToString = (items: any[]) => {
 const submit = () => {
     StrategicManagementService.updateStrategyParams(strategyName.value, convertValueToString(dataSource.value)).then(res => {
         if (res.state) {
-            CvMessage.success('操作成功');
+            CvMessage.success(t('fw.common.operateSuccess'));
             cancel();
         }
     });

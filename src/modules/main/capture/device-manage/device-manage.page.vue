@@ -1,26 +1,30 @@
 <template>
     <div class="container">
-        <div class="side-tree__wrapper">
-            <cv-scrollbar height="100%">
-                <cv-tree
-                    ref="treeRef"
-                    node-key="key"
-                    :data="treeData"
-                    :props="{children: 'children', label: 'label'}"
-                    :current-node-key="currentKey"
-                    highlight-current
-                    default-expand-all
-                    @node-click="handleNodeClick"
+        <div class="panel">
+            <div class="side-tree">
+                <cv-scrollbar height="100%">
+                    <cv-tree
+                        ref="treeRef"
+                        class="device-tree"
+                        node-key="key"
+                        :data="treeData"
+                        :props="{children: 'children', label: 'label'}"
+                        :current-node-key="currentKey"
+                        :indent="18"
+                        highlight-current
+                        default-expand-all
+                        @node-click="handleNodeClick"
+                    />
+                </cv-scrollbar>
+            </div>
+            <div class="main-contain">
+                <device-detail
+                    v-if="currentNode"
+                    :node="currentNode"
+                    @dispatch="handleDispatch"
                 />
-            </cv-scrollbar>
-        </div>
-        <div class="main-contain">
-            <device-detail
-                v-if="currentNode"
-                :node="currentNode"
-                @dispatch="handleDispatch"
-            />
-            <empty v-else class-name="empty" />
+                <empty v-else class-name="empty" />
+            </div>
         </div>
         <dispatch-dialog
             ref="dispatchDialogRef"
@@ -50,6 +54,26 @@ const treeRef = ref();
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let loadingTree = false;
 
+function findInForest(nodes: DeviceTreeNode[], key: string): DeviceTreeNode | null {
+    for (const node of nodes) {
+        const matched = findNodeByKey(node, key);
+        if (matched) {
+            return matched;
+        }
+    }
+    return null;
+}
+
+function findFirstLeafInForest(nodes: DeviceTreeNode[]): DeviceTreeNode | null {
+    for (const node of nodes) {
+        const leaf = findFirstLeafNode(node);
+        if (leaf) {
+            return leaf;
+        }
+    }
+    return nodes[0] ?? null;
+}
+
 async function loadTree(preserveSelection = false) {
     if (loadingTree) {
         return;
@@ -66,10 +90,18 @@ async function loadTree(preserveSelection = false) {
             return;
         }
 
-        treeData.value = [root];
+        // 与设计稿一致：树从厂站下级设备开始展示
+        treeData.value = root.children.length ? root.children : [root];
         const previousKey = preserveSelection ? currentKey.value : '';
         const targetNode =
-            (previousKey ? findNodeByKey(root, previousKey) : null) ?? findFirstLeafNode(root) ?? root;
+            (previousKey ? findInForest(treeData.value, previousKey) : null) ??
+            findFirstLeafInForest(treeData.value);
+
+        if (!targetNode) {
+            currentNode.value = null;
+            currentKey.value = '';
+            return;
+        }
 
         currentNode.value = targetNode;
         currentKey.value = targetNode.key;
@@ -129,23 +161,69 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-$gap: 16px;
-
 .container {
     width: 100%;
     height: 100%;
-    display: flex;
-    gap: $gap;
 }
 
-.side-tree__wrapper {
+.panel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.side-tree {
     flex: 0 0 240px;
     width: 240px;
     height: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    background: #fff;
+    padding: 16px 12px;
+    border-right: 1px solid #eef1f6;
+    box-sizing: border-box;
     overflow: hidden;
+}
+
+.device-tree {
+    background: transparent;
+
+    :deep(.el-tree-node__content) {
+        height: 36px;
+        margin-bottom: 2px;
+        padding-right: 8px;
+        border-radius: 6px;
+        color: #35353e;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    :deep(.el-tree-node__content:hover) {
+        background-color: #f5f6f8;
+    }
+
+    :deep(.el-tree-node__expand-icon) {
+        margin-right: 4px;
+        font-size: 12px;
+        color: #98a3be;
+    }
+
+    :deep(.el-tree-node__expand-icon.is-leaf) {
+        color: transparent;
+        cursor: default;
+    }
+
+    :deep(.el-tree-node__label) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    :deep(.is-current > .el-tree-node__content) {
+        background-color: #f0f1f5 !important;
+        color: #35353e !important;
+        font-weight: 400 !important;
+    }
 }
 
 .main-contain {
@@ -156,7 +234,7 @@ $gap: 16px;
 }
 
 .empty {
-    background: #fff;
-    border-radius: 12px;
+    height: 100%;
+    background: transparent;
 }
 </style>

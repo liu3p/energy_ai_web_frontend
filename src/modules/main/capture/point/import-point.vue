@@ -6,39 +6,39 @@
     <div class="main-contain__center">
       <cv-scrollbar style="height: 40px">
         <cv-form ref="formRef" inline :model="formData" class="form-container">
-          <cv-form-item label="点号">
+          <cv-form-item :label="t('fw.capturePoint.gin')">
             <cv-input v-model.trim="formData.gin" class="w-cm"/>
           </cv-form-item>
-          <cv-form-item label="原始名">
+          <cv-form-item :label="t('fw.capturePoint.originalName')">
             <cv-input v-model.trim="formData.name" class="w-cm"/>
           </cv-form-item>
           <cv-button size="default" @click="handleReset" style="margin-left: 20px">
-            <span>清空</span>
+            <span>{{ t('fw.common.clear') }}</span>
           </cv-button>
           <cv-button size="default" type="primary" @click="handleSearch">
-            <span>查询</span>
+            <span>{{ t('fw.common.search') }}</span>
           </cv-button>
           <div class="extra">
             <cv-button size="mini" v-if="type === 2 || type === 3" @click="handleAdd">
-              <span>添加</span>
+              <span>{{ t('fw.capturePoint.add') }}</span>
             </cv-button>
             <cv-button class="primary-btn" size="mini" v-else @click="fileImportRef.open()">
               <cv-icon :size="16" color="transparent">
                 <icon-ic-import/>
               </cv-icon>
-              <span>导入</span>
+              <span>{{ t('fw.common.import') }}</span>
             </cv-button>
             <cv-button class="primary-btn" size="mini" @click="handleExport">
               <cv-icon :size="16" color="transparent">
                 <icon-ic-export/>
               </cv-icon>
-              <span>导出</span>
+              <span>{{ t('fw.capturePoint.export') }}</span>
             </cv-button>
             <cv-button size="mini" type="danger" :disabled="selectedCount === 0" @click="handleBatchDelete">
               <cv-icon size="16">
                 <cv-icon-delete/>
               </cv-icon>
-              <span>批量删除 ({{ selectedCount }})</span>
+              <span>{{ t('fw.capturePoint.batchDeleteWithCount').replace('{count}', String(selectedCount)) }}</span>
             </cv-button>
             <cv-button
                 :loading="loading"
@@ -50,7 +50,7 @@
               <cv-icon :size="16" color="transparent" style="cursor: pointer">
                 <icon-submit></icon-submit>
               </cv-icon>
-              <span>提交</span>
+              <span>{{ t('fw.common.submit') }}</span>
             </cv-button>
           </div>
 
@@ -97,7 +97,9 @@ import {
 import {pointType} from '@/modules/main/capture/point/point.model';
 import axios from 'axios';
 import _ from 'lodash';
-import {CvMessageBox} from 'cloudview.ui-next';
+import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 const props = defineProps<{
   node: any;
@@ -123,16 +125,12 @@ const initPointsData = ref<any>({});
 const rowPointsData = ref<any>({});
 const renderCount = ref(-1);
 const loading = ref(false);
-const panes = ref<
-    {
-      label: string | number;
-      name: string | number;
-    }[]
->(pointType);
-
-// const panes = computed(() =>
-//     type.value === 3 ? [...pointType, {label: "属性", name: "attribute"}] : pointType
-// );
+const panes = computed(() =>
+  pointType.map(item => ({
+    ...item,
+    label: t(`fw.monitor.pointType.${item.name}`),
+  }))
+);
 
 const initDevicePoints = (init = true) => {
   const rid = props.node.parent.data.id;
@@ -175,10 +173,10 @@ const handleImportPoints = async (file: File) => {
   const res = await importExcelPoints(rid, did, file);
   if (res.state) {
     initDevicePoints(false);
-    CvMessage.success('导入成功');
+    CvMessage.success(t('fw.capturePoint.importSuccess'));
     renderCount.value = 1;
   } else {
-    CvMessage.error(res.data.msg || '导入失败');
+    CvMessage.error(res.data.msg || t('fw.capturePoint.importFailed'));
   }
 };
 
@@ -226,10 +224,10 @@ const handleSubmit = async () => {
     param[activeName.value] = modifiedItems;
     const res = await updatePoint(rid, did, param);
     if (res.state) {
-      CvMessage.success('操作成功');
+      CvMessage.success(t('fw.common.operateSuccess'));
       initDevicePoints();
     } else {
-      CvMessage.error(res.data.msg || '操作失败');
+      CvMessage.error(res.data.msg || t('fw.common.operateFailed'));
     }
     loading.value = false;
   }
@@ -258,9 +256,9 @@ const handleTransferSubmit = async (values: any) => {
   const res = await updateDevicePoints(rid, did, param);
   if (res.state) {
     initDevicePoints();
-    CvMessage.success('添加成功');
+    CvMessage.success(t('fw.capturePoint.addSuccess'));
   } else {
-    CvMessage.error(res.data.msg || '添加失败');
+    CvMessage.error(res.data.msg || t('fw.capturePoint.addFailed'));
   }
 };
 
@@ -271,11 +269,15 @@ const handleReset = () => {
 
 //批量删除测点
 const handleBatchDelete = () => {
-  CvMessageBox.confirm(`确定要删除选中的 ${selectedCount.value} 条记录吗？`, '确认删除', {
-    confirmButtonText: '删除',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
+  CvMessageBox.confirm(
+      t('fw.capturePoint.confirmDeleteSelected').replace('{count}', String(selectedCount.value)),
+      t('fw.capturePoint.confirmDeleteTitle'),
+      {
+        confirmButtonText: t('fw.common.delete'),
+        cancelButtonText: t('fw.common.cancel'),
+        type: 'warning',
+      }
+  )
       .then(async () => {
         await collectRef.value?.batchDelete();
         selectedCount.value = 0;
@@ -367,7 +369,7 @@ const handleExport = () => {
 
 .main-contain {
   height: 100%;
-  border-radius: 12px;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -376,7 +378,7 @@ const handleExport = () => {
 
 .main-contain__header {
   height: 48px;
-  background: #fff;
+  background: transparent;
   border-bottom: 1px solid #ebebeb;
   padding: 16px;
   font-weight: bold;
@@ -387,7 +389,7 @@ const handleExport = () => {
 
 .main-contain__center {
   padding: 16px;
-  background: #fff;
+  background: transparent;
   height: calc(100% - 48px);
 }
 

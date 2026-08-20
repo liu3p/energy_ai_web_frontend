@@ -2,7 +2,7 @@
     <cv-dialog-form
         v-model="visible"
         width="560"
-        title="批量编辑"
+        :title="t('fw.capturePoint.batchEdit')"
         :draggable="true"
         :submit="submit"
         :form-model="formData"
@@ -12,23 +12,14 @@
         @close="cancel"
     >
         <div class="tips">
-            提示：请键入行号或用逗号分隔的行范围(例如：1,3或4-10)。
+            {{ t('fw.capturePoint.batchTips') }}
         </div>
-        <cv-form-item label="选择行" prop="lines" style="margin-bottom: 24px;">
+        <cv-form-item :label="t('fw.capturePoint.selectRows')" prop="lines" style="margin-bottom: 24px;">
             <cv-input v-model.trim="formData.lines" class="w-cm" :placeholder="t('fw.common.pleaseInput')">
                 <template #append>
                     <cv-select v-model="formData.unit" style="width: 80px" :disabled="formData.mode === 1">
                         <cv-option
-                            v-for="item in [
-                                {
-                                    label: '行号',
-                                    value: 0
-                                },
-                                {
-                                    label: '范围',
-                                    value: 1
-                                }
-                            ]"
+                            v-for="item in lineUnitOptions"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -37,26 +28,17 @@
                 </template>
             </cv-input>
         </cv-form-item>
-        <cv-form-item v-if="type === 'text'" label="替换方式" prop="mode" style="margin-bottom: 24px;">
+        <cv-form-item v-if="type === 'text'" :label="t('fw.capturePoint.replaceMode')" prop="mode" style="margin-bottom: 24px;">
             <cv-select v-model.trim="formData.mode" :placeholder="t('fw.common.pleaseSelect')" class="w-cm" @change="modeChange">
                 <cv-option
-                    v-for="item in [
-                        {
-                            label: '相同值',
-                            value: 0
-                        },
-                        {
-                            label: '递增',
-                            value: 1
-                        },
-                    ]"
+                    v-for="item in replaceModeOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
                 />
             </cv-select>
         </cv-form-item>
-        <cv-form-item v-if="formData.mode === 0 || type !== 'text'" label="替换参数值" prop="value" style="margin-bottom: 24px;">
+        <cv-form-item v-if="formData.mode === 0 || type !== 'text'" :label="t('fw.capturePoint.replaceValue')" prop="value" style="margin-bottom: 24px;">
             <cv-input v-if="type === 'text'" v-model.trim="formData.value" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
             <cv-switch v-if="type === 'switch'" v-model.trim="formData.value" :active-value="1" :inactive-value="0" />
             <cv-select v-if="type === 'select'" v-model.trim="formData.value" :placeholder="t('fw.common.pleaseSelect')" class="w-cm">
@@ -69,10 +51,10 @@
             </cv-select>
         </cv-form-item>
         <template v-else>
-            <cv-form-item label="起始值" prop="startValue" style="margin-bottom: 24px;">
+            <cv-form-item :label="t('fw.capturePoint.startValue')" prop="startValue" style="margin-bottom: 24px;">
                 <cv-input v-model.trim="formData.startValue" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
             </cv-form-item>
-            <cv-form-item label="步长" prop="step" style="margin-bottom: 24px;">
+            <cv-form-item :label="t('fw.capturePoint.step')" prop="step" style="margin-bottom: 24px;">
                 <cv-input v-model.trim="formData.step" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
             </cv-form-item>
         </template>
@@ -81,9 +63,18 @@
 
 <script lang="ts" setup>
 import {useLocale} from 'cloudview.ui-next';
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 
 const {t} = useLocale();
+
+const lineUnitOptions = computed(() => [
+    {label: t('fw.capturePoint.lineNo'), value: 0},
+    {label: t('fw.common.range'), value: 1},
+]);
+const replaceModeOptions = computed(() => [
+    {label: t('fw.capturePoint.sameValue'), value: 0},
+    {label: t('fw.capturePoint.increment'), value: 1},
+]);
 
 const options = ref<any[]>([]);
 const key = ref();
@@ -116,12 +107,12 @@ const rules = {
                 if (unit === 0) {
                     const regex = /^\d+(,\d+)*$/;
                     if (!regex.test(value)) {
-                        return callback(new Error('请输入数字且以 , 分割'));
+                        return callback(new Error(t('fw.capturePoint.lineNoFormatError')));
                     }
                  } else {
                     const regex = /^(0|[1-9]\d*)-(0|[1-9]\d*)$/;
                     if (!regex.test(value)) {
-                        return callback(new Error('请输入数字且以 - 分割'));
+                        return callback(new Error(t('fw.capturePoint.rangeFormatError')));
                     }
                 }
                 return callback();

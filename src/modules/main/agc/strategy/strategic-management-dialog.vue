@@ -2,7 +2,7 @@
     <cv-dialog
         v-model="visible"
         width="800"
-        title="添加策略"
+        :title="t('fw.strategyManagement.addStrategy')"
         :draggable="true"
         :submit="submit"
         :submit-text="t('fw.common.confirm')"
@@ -54,7 +54,7 @@ const submit = () => {
     }
     StrategicManagementService.createStrategy(checkList.value.map(item => ({name: item}))).then(res => {
         if (res.state) {
-            CvMessage.success('操作成功');
+            CvMessage.success(t('fw.common.operateSuccess'));
             emit('refresh');
             cancel();
         }

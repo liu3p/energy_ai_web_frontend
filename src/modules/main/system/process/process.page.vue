@@ -4,42 +4,42 @@
             <div class="process-contain">
                 <div class="form-wrapper">
                     <div>
-                        <span>搜索： </span>
-                        <cv-input v-model="filter.keywords" placeholder="请输入进程名称" style="width: 200px" />
+                        <span>{{ t('fw.monitor.search') }}{{ t('fw.common.colon') }} </span>
+                        <cv-input v-model="filter.keywords" :placeholder="t('fw.systemPages.pleaseInputProcessName')" style="width: 200px" />
                     </div>
-                    <cv-button type="primary" @click="reset('设备重启')">设备重启</cv-button>
+                    <cv-button type="primary" @click="reset(t('fw.systemPages.deviceRestart'))">{{ t('fw.systemPages.deviceRestart') }}</cv-button>
                 </div>
                 <div class="table-container">
                     <cv-table :data="filterData" style="width: 100%; border: none">
-                        <cv-table-column type="index" prop="index" label="序号" width="100px" />
-                        <cv-table-column prop="name" label="进程名称" width="600px" />
+                        <cv-table-column type="index" prop="index" :label="t('fw.common.number')" width="100px" />
+                        <cv-table-column prop="name" :label="t('fw.systemPages.processName')" width="600px" />
                         <cv-table-column prop="cpuusage" label="CPU">
                             <template #default="{row}">
                                 <span>{{ row.cpuusage }}%</span>
                             </template>
                         </cv-table-column>
-                        <cv-table-column prop="memused" label="内存">
+                        <cv-table-column prop="memused" :label="t('fw.systemPages.memory')">
                             <template #default="{row}">
                                 <span>{{ row.memused }}MB</span>
                             </template>
                         </cv-table-column>
-                        <cv-table-column prop="status" label="状态">
+                        <cv-table-column prop="status" :label="t('fw.systemPages.status')">
                             <template #default="{row}">
-                                <cv-tag v-if="row.status === 'Stopped'" type="danger">停止</cv-tag>
-                                <cv-tag v-else-if="row.status === 'Running'" type="success">运行</cv-tag>
+                                <cv-tag v-if="row.status === 'Stopped'" type="danger">{{ t('fw.systemPages.stopped') }}</cv-tag>
+                                <cv-tag v-else-if="row.status === 'Running'" type="success">{{ t('fw.systemPages.running') }}</cv-tag>
                             </template>
                         </cv-table-column>
-                        <cv-table-column label="操作" width="160px">
+                        <cv-table-column :label="t('fw.common.operation')" width="160px">
                             <template #default="{row}">
                                 <cv-button
                                     type="primary"
                                     link
                                     v-if="row.status === 'Running'"
-                                    @click="reset('进程重启', row.id)"
+                                    @click="reset(t('fw.systemPages.processRestart'), row.id)"
                                 >
-                                    进程重启
+                                    {{ t('fw.systemPages.processRestart') }}
                                 </cv-button>
-                                <cv-button type="primary" link @click="handleExportLog(row)">日志导出</cv-button>
+                                <cv-button type="primary" link @click="handleExportLog(row)">{{ t('fw.systemPages.logExport') }}</cv-button>
                             </template>
                         </cv-table-column>
                     </cv-table>
@@ -56,6 +56,9 @@ import {initWebsocket, resetProcess, resetReboot} from '@/modules/main/system/pr
 import {WebsocketClass} from '@/common/websocket/websocket.class';
 import ConfirmPwdDialog from '@/modules/main/system/process/confirm-pwd.dialog.vue';
 import LogExportDialog from '@/modules/main/system/process/log-export.dialog.vue';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 const tableData = ref();
 const pwdRef = ref();
@@ -111,10 +114,10 @@ const submit = async (values: {password: string; id: string}) => {
         });
     }
     if (res.state) {
-        CvMessage.success('操作成功');
+        CvMessage.success(t('fw.common.operateSuccess'));
         pwdRef.value.close();
     } else {
-        CvMessage.error('操作失败');
+        CvMessage.error(t('fw.common.operateFailed'));
     }
 };
 onMounted(async () => {
@@ -158,6 +161,7 @@ $gap: 24px;
     justify-content: space-between;
     height: 48px;
     padding: 4px 16px;
+    margin-top: 10px;
 }
 
 .table-container {

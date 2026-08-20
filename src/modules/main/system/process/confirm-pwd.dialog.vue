@@ -7,17 +7,20 @@
         :rules="rules"
         :submit="submit"
         width="428px"
-        submitText="确定"
+        :submitText="t('fw.common.sure')"
         label-position="top"
     >
-        <div class="tips">确定执行重启操作？</div>
-        <cv-form-item label="登录密码：" prop="password">
+        <div class="tips">{{ t('fw.systemPages.confirmRestart') }}</div>
+        <cv-form-item :label="t('fw.monitor.loginPassword') + t('fw.common.colon')" prop="password">
             <cv-input type="password" show-password v-model="formData.password"></cv-input>
         </cv-form-item>
     </cv-dialog-form>
 </template>
 <script setup lang="ts">
 import {ref} from 'vue';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 defineProps<{
     title: string
@@ -34,7 +37,7 @@ const rules = {
     password: [
         {
             required: true,
-            message: '请输入登录密码',
+            message: t('fw.deviceManage.dispatch.pleaseInputLoginPwd'),
             trigger: 'blur',
         },
     ],

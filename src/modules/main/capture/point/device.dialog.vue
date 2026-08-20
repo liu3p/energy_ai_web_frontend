@@ -2,22 +2,22 @@
     <cv-dialog-form
         v-model="visible"
         width="500"
-        :title="isEdit ? '编辑设备' : '新增设备'"
+        :title="isEdit ? t('fw.capturePoint.editDevice') : t('fw.capturePoint.addDevice')"
         :draggable="true"
         :submit="submit"
         :form-model="formData"
-        submit-text="确定"
+        :submit-text="t('fw.common.sure')"
         label-width="130px"
         @close="close"
         :rules="rules"
     >
-        <cv-form-item v-if="isEdit" label="设备ID" prop="name">
+        <cv-form-item v-if="isEdit" :label="t('fw.capturePoint.deviceId')" prop="name">
             <cv-input v-model.trim="formData.id" disabled :controls="false" class="w-cm" />
         </cv-form-item>
-        <cv-form-item label="设备名称" prop="name">
+        <cv-form-item :label="t('fw.capturePoint.deviceName')" prop="name">
             <cv-input v-model.trim="formData.name" :controls="false" class="w-cm" />
         </cv-form-item>
-        <cv-form-item label="设备地址" prop="devaddr">
+        <cv-form-item :label="t('fw.capturePoint.deviceAddr')" prop="devaddr">
             <cv-input
                 v-model.trim="formData.devaddr"
                 :disabled="isEdit"
@@ -26,7 +26,7 @@
                 class="w-cm"
             />
         </cv-form-item>
-        <cv-form-item v-if="type === 2" label="待转发设备" prop="deviceId">
+        <cv-form-item v-if="type === 2" :label="t('fw.capturePoint.transferDevice')" prop="deviceId">
             <cv-select-tree
                 v-model="formData.deviceId"
                 :data="filteredDeviceOption"

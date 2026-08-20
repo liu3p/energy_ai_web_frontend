@@ -1,54 +1,79 @@
 <template>
-    <cv-dialog-form v-model="visible" width="1000" inline title="配置参数" :draggable="true" :z-index="2000"
-        :form-model="formData" @close="cancel">
+    <cv-dialog-form
+        v-model="visible"
+        width="1000"
+        inline
+        :title="t('fw.strategyManagement.configParams')"
+        :draggable="true"
+        :z-index="2000"
+        :form-model="formData"
+        @close="cancel"
+    >
         <div style="padding: 0 56px">
             <el-tabs v-model="activeName" class="demo-tabs">
-                <el-tab-pane label="遥测" name="analog"></el-tab-pane>
-                <el-tab-pane label="遥信" name="digital"></el-tab-pane>
-                <el-tab-pane label="遥脉" name="pulse"></el-tab-pane>
-                <el-tab-pane label="遥控" name="control"></el-tab-pane>
-                <el-tab-pane label="遥调" name="regulate"></el-tab-pane>
+                <el-tab-pane :label="t('fw.monitor.pointType.analog')" name="analog"></el-tab-pane>
+                <el-tab-pane :label="t('fw.monitor.pointType.digital')" name="digital"></el-tab-pane>
+                <el-tab-pane :label="t('fw.monitor.pointType.pulse')" name="pulse"></el-tab-pane>
+                <el-tab-pane :label="t('fw.monitor.pointType.control')" name="control"></el-tab-pane>
+                <el-tab-pane :label="t('fw.monitor.pointType.regulate')" name="regulate"></el-tab-pane>
             </el-tabs>
             <cv-form-item label="RTU" prop="type">
-                <el-select v-model="rtuId" placeholder="Select" teleported @change="handleRtuChange"
-                    style="width: 240px;z-index: 9999 !important;">
+                <el-select
+                    v-model="rtuId"
+                    placeholder="Select"
+                    teleported
+                    @change="handleRtuChange"
+                    style="width: 240px; z-index: 9999 !important"
+                >
                     <el-option v-for="item in treeOptions" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
             </cv-form-item>
-            <cv-form-item label="设备" prop="type">
-                <el-select v-model="deviceId" placeholder="Select" teleported
-                    style="width: 240px;z-index: 9999 !important;">
+            <cv-form-item :label="t('fw.dashboardManagement.device')" prop="type">
+                <el-select
+                    v-model="deviceId"
+                    placeholder="Select"
+                    teleported
+                    style="width: 240px; z-index: 9999 !important"
+                >
                     <el-option v-for="item in deviceList" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
             </cv-form-item>
             <cv-form-item prop="type">
-                <el-button type="primary" @click="getTableData">查询</el-button>
+                <el-button type="primary" @click="getTableData">{{ t('fw.common.search') }}</el-button>
             </cv-form-item>
-            <Table :columns="columns" :data-source="tableData" size="small" bordered
-                :pagination="{ showTotal: total => `共 ${total} 条` }">
-                <template #action="{ record }">
-                    <a @click="selectPoint(record)">确定</a>
+            <Table
+                :columns="columns"
+                :data-source="tableData"
+                size="small"
+                bordered
+                :pagination="{
+                    showTotal: (total: number) =>
+                        t('fw.dashboardManagement.totalCount').replace('{total}', String(total)),
+                }"
+            >
+                <template #action="{record}">
+                    <a @click="selectPoint(record)">{{ t('fw.common.sure') }}</a>
                 </template>
             </Table>
         </div>
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="cancel">关闭</el-button>
+                <el-button @click="cancel">{{ t('fw.monitor.close') }}</el-button>
             </div>
         </template>
     </cv-dialog-form>
 </template>
 
 <script lang="ts" setup>
-import { Table } from 'ant-design-vue';
-import { useLocale } from 'cloudview.ui-next';
-import { onMounted, ref } from 'vue';
+import {Table} from 'ant-design-vue';
+import {useLocale} from 'cloudview.ui-next';
+import {computed, onMounted, ref} from 'vue';
 import dashboardManagementServiceApi from '@/modules/main/agc/dashboard-management/dashboard-management.service';
-import { queryRtuListExceptPoints } from '@/modules/main/capture/point/point.service';
+import {queryRtuListExceptPoints} from '@/modules/main/capture/point/point.service';
 
-const { t } = useLocale();
+const {t} = useLocale();
 const emit = defineEmits(['refresh', 'selectPoint']);
-const activeName = ref('analog')
+const activeName = ref('analog');
 const treeOptions = ref();
 const deviceList = ref([]);
 const rtuId = ref();
@@ -56,48 +81,27 @@ const deviceId = ref();
 const tableData = ref<any>([]);
 const dataNo = ref();
 
-const columns = [
+const columns = computed(() => [
     {
         dataIndex: 'id',
         title: 'OID',
     },
     {
-        title: '参数名称',
+        title: t('fw.monitor.paramName'),
         dataIndex: 'name',
     },
-    // {
-    //     title: '原始值',
-    //     dataIndex: 'rawvalue',
-    // },
-
-    // {
-    //     title: '当前值',
-    //     dataIndex: 'currvalue',
-    // },
-    // {
-    //     title: '死数',
-    //     dataIndex: 'dead',
-    // },
-    // {
-    //     title: '品质数',
-    //     dataIndex: 'quality',
-    // },
-    // {
-    //     title: '刷新时间',
-    //     dataIndex: 'sendtime'
-    // },
     {
-        title: '操作',
+        title: t('fw.common.operation'),
         key: 'operation',
-        slots: { customRender: 'action' },
+        slots: {customRender: 'action'},
     },
-];
+]);
 
 const selectPoint = (selectInfo: Object) => {
     emit('selectPoint', selectInfo, dataNo.value);
-    CvMessage.success('操作成功');
+    CvMessage.success(t('fw.common.operateSuccess'));
     cancel();
-}
+};
 
 const visible = ref(false);
 
@@ -110,7 +114,6 @@ const open = (no: number) => {
     dataNo.value = no;
     visible.value = true;
 };
-
 
 function findTreeNodeById(tree: any, targetId: any, children: string) {
     for (const node of tree) {
@@ -133,7 +136,7 @@ const getTableData = async () => {
     if (res?.state) {
         tableData.value = res.data[activeName.value];
     } else {
-        CvMessage.error(res.data.msg || '查询失败');
+        CvMessage.error(res.data.msg || t('fw.dashboardManagement.queryFailed'));
     }
 };
 
@@ -167,7 +170,6 @@ const initRtuList = () => {
 onMounted(() => {
     initRtuList();
 });
-
 
 defineExpose({
     open,

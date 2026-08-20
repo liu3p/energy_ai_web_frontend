@@ -11,10 +11,10 @@
     <div class="main-contain__center">
         <cv-scrollbar style="height: 40px">
             <cv-form ref="formRef" inline :model="formData" class="form-container">
-                <cv-form-item label="搜索">
+                <cv-form-item :label="t('fw.monitor.search')">
                     <cv-input
                         v-model.trim="formData.name"
-                        placeholder="请输入参数名称"
+                        :placeholder="t('fw.monitor.pleaseInputParamName')"
                         clearable
                         class="w-cm"
                         @input="handleSearch"
@@ -38,11 +38,14 @@
     </div>
 </template>
 <script setup lang="ts">
-import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
+import {computed, onUnmounted, ref, watch} from 'vue';
+import {useLocale} from 'cloudview.ui-next';
 import Points from '@/modules/main/capture/monitor/points.page.vue';
 import {pointType} from '@/modules/main/capture/point/point.model';
 import {WebsocketClass} from '@/common/websocket/websocket.class';
 import {initWebsocket} from '@/modules/main/capture/monitor/monitor.service';
+
+const {t} = useLocale();
 
 const props = defineProps<{
     node: any;
@@ -54,12 +57,12 @@ const activeName = ref('analog');
 const formData = ref<{
     name?: string;
 }>({});
-const panes = ref<
-    {
-        label: string | number;
-        name: string | number;
-    }[]
->(pointType);
+const panes = computed(() =>
+    pointType.map(item => ({
+        ...item,
+        label: t(`fw.monitor.pointType.${item.name}`),
+    }))
+);
 const socket = ref<WebsocketClass>();
 const rowDataSource = ref([]);
 const reConnect = ref(true);
@@ -178,7 +181,7 @@ onUnmounted(() => {
 
 .main-contain__header {
     height: 66px;
-    background: #fff;
+    background: transparent;
     border-bottom: 1px solid #ebebeb;
     padding: 16px;
     font-weight: bold;
@@ -189,7 +192,7 @@ onUnmounted(() => {
 
 .main-contain__center {
     padding: 16px;
-    background: #fff;
+    background: transparent;
     height: calc(100% - 66px);
 }
 

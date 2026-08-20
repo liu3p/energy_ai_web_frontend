@@ -65,7 +65,7 @@
                 </template>
             </cv-table-column>
 
-            <cv-table-column v-if="type === 5" label="操作" min-width="160" fixed="right">
+            <cv-table-column v-if="type === 5" :label="t('fw.common.operation')" min-width="160" fixed="right">
                 <template #default="{row}">
                     <cv-button
                         type="primary"
@@ -73,14 +73,14 @@
                         text
                         @click="formulaDrawerRef.open({rid, did, pid: row.id})"
                     >
-                        公式编辑
+                        {{ t('fw.capturePoint.formulaEdit') }}
                     </cv-button>
                 </template>
             </cv-table-column>
 
-            <cv-table-column label="操作" min-width="100" fixed="right">
+            <cv-table-column :label="t('fw.common.operation')" min-width="100" fixed="right">
                 <template #default="{row}">
-                    <cv-button type="danger" :disabled="!row.id" text @click="deleteOpen(row)">删除</cv-button>
+                    <cv-button type="danger" :disabled="!row.id" text @click="deleteOpen(row)">{{ t('fw.common.delete') }}</cv-button>
                 </template>
             </cv-table-column>
         </cv-table>
@@ -107,8 +107,10 @@ import {IconEdit} from '@/icons';
 import BatchingDialog from '@/modules/main/capture/point/batching-dialog.vue';
 import {tableConfigs, ColumnConfig} from '@/modules/main/capture/point/collect/collect.model';
 import FormulaDrawer from '../formula.drawer.vue';
-import {CvMessageBox, CvMessage} from 'cloudview.ui-next';
+import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
 import {delPointById} from '@/modules/main/capture/point/point.service';
+
+const {t} = useLocale();
 
 const props = defineProps<{
     type: number;
@@ -147,16 +149,62 @@ const isTransfer = computed(() => props.type === 2);
 
 const tableConfig = computed(() => tableConfigs[props.active]);
 
+const subtypeDictKey: Record<string, string> = {
+    analog: 'ycsubtype',
+    digital: 'yxsubtype',
+    pulse: 'ymsubtype',
+};
+
+const getColLabel = (col: ColumnConfig) => {
+    if (col.prop === 'index') return t('fw.common.number');
+    if (col.prop === 'id') return t('fw.capturePoint.col.oid');
+    if (col.prop === 'subtype') {
+        const key = subtypeDictKey[props.active];
+        return key ? t(`fw.capturePoint.col.${key}`) : col.label;
+    }
+    if (col.prop === 'coeff' && props.active === 'regulate') {
+        return t('fw.capturePoint.col.dispatchCoeff');
+    }
+    return t(`fw.capturePoint.col.${col.prop}`);
+};
+
+const translateSelectOptions = (col: ColumnConfig) => {
+    if (!col.selectOptions) return undefined;
+    let dictKey = '';
+    if (col.prop === 'subtype') {
+        dictKey = subtypeDictKey[props.active] || '';
+    } else if (col.prop === 'ctlmode') {
+        dictKey = 'ctrlMode';
+    } else if (col.prop === 'datatype') {
+        return col.selectOptions.map(opt =>
+            opt.value === '33' || opt.value === '34'
+                ? {...opt, label: t(`fw.capturePoint.dataTypeExtra.${opt.value}`)}
+                : opt
+        );
+    }
+    if (!dictKey) return col.selectOptions;
+    return col.selectOptions.map(opt => ({
+        ...opt,
+        label: t(`fw.capturePoint.${dictKey}.${opt.value}`),
+    }));
+};
+
 const filteredColumns = computed(() => {
     if (!tableConfig.value) return [];
-    return tableConfig.value.columns.filter((col: ColumnConfig) => {
-        if (!col.condition) return true;
+    return tableConfig.value.columns
+        .filter((col: ColumnConfig) => {
+            if (!col.condition) return true;
 
-        if (col.condition === 'isTransfer') return isTransfer.value;
-        if (col.condition === '!isTransfer') return !isTransfer.value;
+            if (col.condition === 'isTransfer') return isTransfer.value;
+            if (col.condition === '!isTransfer') return !isTransfer.value;
 
-        return true;
-    });
+            return true;
+        })
+        .map((col: ColumnConfig) => ({
+            ...col,
+            label: getColLabel(col),
+            selectOptions: translateSelectOptions(col),
+        }));
 });
 
 const tableData = computed(() => {
@@ -224,9 +272,9 @@ const handleSubmit = (key: string, map: Map<number, string>, value: any) => {
 };
 
 const deleteOpen = (row: any) => {
-    CvMessageBox.confirm(`确认删除？`, '删除', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
+    CvMessageBox.confirm(t('fw.capturePoint.confirmDelete'), t('fw.common.delete'), {
+        confirmButtonText: t('fw.common.confirm'),
+        cancelButtonText: t('fw.common.cancel'),
         type: 'warning',
     })
         .then(() => {
@@ -235,7 +283,7 @@ const deleteOpen = (row: any) => {
         .catch(() => {
             CvMessage({
                 type: 'info',
-                message: '删除取消！',
+                message: t('fw.capturePoint.deleteCancelled'),
             });
         });
 };
@@ -268,7 +316,7 @@ const handleDelete = async (id: string) => {
         if (res.code === 200) {
             CvMessage({
                 type: 'success',
-                message: '删除成功！',
+                message: t('fw.capturePoint.deleteSuccess'),
             });
             emit('updatePoints');
         } else {
@@ -281,7 +329,7 @@ const handleDelete = async (id: string) => {
         console.log(error);
         CvMessage({
             type: 'error',
-            message: '删除失败',
+            message: t('fw.common.operateFailed'),
         });
     }
 };
@@ -289,7 +337,7 @@ const handleDelete = async (id: string) => {
 const batchDelete = async () => {
     const ids = selectedRows.value.map(row => row.id).filter(id => id);
     if (ids.length === 0) {
-        CvMessage({type: 'warning', message: '请选择要删除的记录'});
+        CvMessage({type: 'warning', message: t('fw.capturePoint.pleaseSelectToDelete')});
         return;
     }
 
@@ -314,7 +362,7 @@ const batchDelete = async () => {
     try {
         const res = await delPointById(props.rid, props.did, data);
         if (res.code === 200) {
-            CvMessage({type: 'success', message: '删除成功！'});
+            CvMessage({type: 'success', message: t('fw.capturePoint.deleteSuccess')});
             emit('updatePoints');
             clearSelection();
         } else {
@@ -322,7 +370,7 @@ const batchDelete = async () => {
         }
     } catch (error) {
         console.log(error);
-        CvMessage({type: 'error', message: '删除失败'});
+        CvMessage({type: 'error', message: t('fw.common.operateFailed')});
     }
 };
 

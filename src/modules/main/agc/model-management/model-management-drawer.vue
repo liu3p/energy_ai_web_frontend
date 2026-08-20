@@ -1,7 +1,7 @@
 <template>
     <cv-drawer
         v-model="visible"
-        title="绑定点位"
+        :title="t('fw.modelManagement.bindPoint')"
         size="908"
         @close="cancel"
     >
@@ -25,22 +25,37 @@
                 </cv-select>
             </cv-form-item>
             <cv-form-item>
-                <cv-input v-model="filters.pointID" placeholder="请输入代码" allow-clear style="width: 180px;" />
+                <cv-input
+                    v-model="filters.pointID"
+                    :placeholder="t('fw.modelManagement.pleaseInputCode')"
+                    allow-clear
+                    style="width: 180px;"
+                />
             </cv-form-item>
             <cv-form-item>
-                <cv-input v-model="filters.name" placeholder="请输入名称" allow-clear style="width: 180px;" />
+                <cv-input
+                    v-model="filters.name"
+                    :placeholder="t('fw.modelManagement.pleaseInputName')"
+                    allow-clear
+                    style="width: 180px;"
+                />
             </cv-form-item>
         </cv-form>
         <cv-table :data="filterData" class="table-container" :row-style="rowStyle" row-key="id">
-            <cv-table-column prop="pointID" label="代码" />
-            <cv-table-column prop="name" label="名称" />
+            <cv-table-column prop="pointID" :label="t('fw.modelManagement.code')" />
+            <cv-table-column prop="name" :label="t('fw.modelManagement.name')" />
             <cv-table-column prop="mqttkey" label="MQTT_ID" />
-            <cv-table-column prop="value" label="操作">
+            <cv-table-column prop="value" :label="t('fw.common.operation')" width="100">
                 <template #default="scope">
-                    <cv-button v-if="activeId !== scope.row.pointID" text type="primary" @click="submit(scope.row)"
-                    >绑定
+                    <cv-button
+                        v-if="activeId !== scope.row.pointID"
+                        text
+                        type="primary"
+                        @click="submit(scope.row)"
+                    >
+                        {{ t('fw.modelManagement.bind') }}
                     </cv-button>
-                    <span v-else style="color: #006F04;">已绑定</span>
+                    <span v-else style="color: #006F04;">{{ t('fw.modelManagement.bound') }}</span>
                 </template>
             </cv-table-column>
         </cv-table>
@@ -52,9 +67,8 @@
 
 <script lang="ts" setup>
 import {useLocale} from 'cloudview.ui-next';
-import {computed, onMounted, reactive, ref} from 'vue';
+import {computed, reactive, ref} from 'vue';
 import ModelManagementServiceApi from '@/modules/main/agc/model-management/model-management.service';
-import _ from 'lodash';
 
 const {t} = useLocale();
 const emit = defineEmits(['submit']);
@@ -65,17 +79,12 @@ const filters = reactive({
     name: '',
 });
 
-const panes = ref<
-    {
-        label: string;
-        name: string;
-    }[]
->([
-    {label: '遥测', name: 'yc'},
-    {label: '遥信', name: 'yx'},
-    {label: '遥脉', name: 'ym'},
-    {label: '遥控', name: 'yk'},
-    {label: '遥调', name: 'yt'},
+const panes = computed(() => [
+    {label: t('fw.modelManagement.pointType.yc'), name: 'yc'},
+    {label: t('fw.modelManagement.pointType.yx'), name: 'yx'},
+    {label: t('fw.modelManagement.pointType.ym'), name: 'ym'},
+    {label: t('fw.modelManagement.pointType.yk'), name: 'yk'},
+    {label: t('fw.modelManagement.pointType.yt'), name: 'yt'},
 ]);
 const visible = ref(false);
 const rowData = ref<{database_id?: string;}>({});

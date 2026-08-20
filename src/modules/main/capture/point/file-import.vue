@@ -2,11 +2,11 @@
     <cv-dialog v-model="visible" :title="t('fw.common.import')" size="small" width="420" @close="cancel">
         <div class="tips">
             <div class="tips-item">
-                <span>导入说明：只支持上传 <span style="color: #3162e1">.xls .xlsx</span> 文件</span>
-                <cv-button class="download-temp" @click="downloadFile">下载模版</cv-button>
+                <span>{{ t('fw.capturePoint.importTips') }}</span>
+                <cv-button class="download-temp" @click="downloadFile">{{ t('fw.capturePoint.downloadTemplate') }}</cv-button>
             </div>
             <div class="tips-warn">
-                <span>注意：导入成功后，将清空该设备下原有的所有点位数据。</span>
+                <span>{{ t('fw.capturePoint.importWarn') }}</span>
             </div>
         </div>
         <cv-upload

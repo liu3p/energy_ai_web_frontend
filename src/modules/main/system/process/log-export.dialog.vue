@@ -1,10 +1,10 @@
 <template>
-    <cv-dialog v-model="visible" title="日志导出" width="600px" @close="cancel">
+    <cv-dialog v-model="visible" :title="t('fw.systemPages.logExport')" width="600px" @close="cancel">
         <div class="log-list-container">
             <cv-table ref="tableRef" :data="logList" style="width: 100%" @selection-change="handleSelectionChange">
                 <cv-table-column type="selection" width="55" />
-                <cv-table-column prop="name" label="日志文件名" />
-                <cv-table-column prop="size" label="大小">
+                <cv-table-column prop="name" :label="t('fw.systemPages.logFileName')" />
+                <cv-table-column prop="size" :label="t('fw.systemPages.size')">
                     <template #default="{row}">
                         <span>{{ Utils.formatFileSize(row.size) }}</span>
                     </template>
@@ -13,14 +13,14 @@
         </div>
         <template #footer>
             <span class="dialog-footer">
-                <cv-button @click="cancel">取消</cv-button>
+                <cv-button @click="cancel">{{ t('fw.common.cancel') }}</cv-button>
                 <cv-button
                     type="primary"
                     :disabled="selectedFiles.length === 0"
                     :loading="exportLoading"
                     @click="handleExport"
                 >
-                    批量导出 ({{ selectedFiles.length }})
+                    {{ t('fw.systemPages.batchExportWithCount').replace('{count}', String(selectedFiles.length)) }}
                 </cv-button>
             </span>
         </template>
@@ -29,8 +29,10 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import {getProcessLogList, downloadProcessLogs} from './process.service';
-import {CvMessage} from 'cloudview.ui-next';
+import {CvMessage, useLocale} from 'cloudview.ui-next';
 import Utils from '@/common/utils';
+
+const {t} = useLocale();
 
 const visible = ref(false);
 const logList = ref<any[]>([]);
@@ -58,10 +60,10 @@ const handleExport = async () => {
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            CvMessage.success('导出请求已提交，数据下载中');
+            CvMessage.success(t('fw.systemPages.exportSubmitted'));
             cancel();
         } else {
-            CvMessage.error('导出失败');
+            CvMessage.error(t('fw.systemPages.exportFailed'));
         }
     } finally {
         exportLoading.value = false;
@@ -87,7 +89,7 @@ const open = async (processName: string) => {
             size: sizes[index] || 0,
         }));
     } else {
-        CvMessage.error(res.data.msg || '获取日志列表失败');
+        CvMessage.error(res.data.msg || t('fw.systemPages.getLogListFailed'));
     }
 };
 

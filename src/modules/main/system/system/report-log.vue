@@ -1,7 +1,7 @@
 <template>
     <div class="device-param">
         <div class="device-param__header">
-            <span>软件版本</span>
+            <span>{{ t('fw.systemPages.softwareVersion') }}</span>
             <span>
                        <cv-upload
                            ref="uploadRef"
@@ -12,7 +12,7 @@
                            :on-exceed="handleExceed"
                            style="width: 100px;"
                        >
-                       <span style="font-weight: normal;">上传升级包</span>
+                       <span style="font-weight: normal;">{{ t('fw.updateMng.uploadPkg') }}</span>
                     </cv-upload>
                     <cv-progress
                         v-if="fileName"
@@ -24,20 +24,20 @@
         </div>
         <div class="device-param__contain">
             <div class="form-item">
-                <div class="label">版本号</div>
+                <div class="label">{{ t('fw.systemPages.versionNumber') }}</div>
                 <div class="form-wrap">
                     <cv-input :disabled="true" />
                 </div>
             </div>
             <div class="form-item">
-                <div class="label">升级包</div>
+                <div class="label">{{ t('fw.systemPages.upgradePackage') }}</div>
                 <div class="form-wrap">
                     <cv-button type="primary" text>{{ fileName }}</cv-button>
                 </div>
             </div>
         </div>
         <div class="device-param__log">
-            <div class="label">更新日志</div>
+            <div class="label">{{ t('fw.systemPages.changelog') }}</div>
             <div class="log-monitor">
                 <cv-scrollbar class="log-console-box">
                     {{ uploadInfo }}

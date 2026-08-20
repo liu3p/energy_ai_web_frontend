@@ -1,7 +1,7 @@
 <template>
     <cv-drawer v-model="visible" :title="title" size="75%" @close="cancel" destroy-on-close>
         <cv-form :model="filters" class="transfer-form" inline style="margin-top: -16px">
-            <cv-form-item label="设备：">
+            <cv-form-item :label="t('fw.capturePoint.device') + t('fw.common.colon')">
                 <cv-select-tree
                     v-model="devcode"
                     :data="deviceOption"
@@ -17,13 +17,13 @@
                 ></cv-select-tree>
             </cv-form-item>
             <cv-form-item label="OID：">
-                <cv-input v-model="filters.id" placeholder="请输入" allow-clear style="width: 180px" />
+                <cv-input v-model="filters.id" :placeholder="t('fw.common.pleaseInput')" allow-clear style="width: 180px" />
             </cv-form-item>
-            <cv-form-item label="原始名：">
-                <cv-input v-model="filters.name" placeholder="请输入" allow-clear style="width: 180px" />
+            <cv-form-item :label="t('fw.capturePoint.originalName') + t('fw.common.colon')">
+                <cv-input v-model="filters.name" :placeholder="t('fw.common.pleaseInput')" allow-clear style="width: 180px" />
             </cv-form-item>
             <cv-form-item>
-                <span>MQTT_ID值不为空：</span>
+                <span>{{ t('fw.capturePoint.mqttIdNotEmpty') }}</span>
                 <cv-switch v-model="filters.MqttKey" />
             </cv-form-item>
         </cv-form>
@@ -59,9 +59,8 @@ import {ref, reactive, watch, computed} from 'vue';
 import ReplyPointTransferTable from '@/modules/main/capture/point/transfer/reply-point-transfer-table.vue';
 import {Transfer, Table} from 'ant-design-vue';
 import type {SelectAllLabel} from 'ant-design-vue/es/transfer';
-import {useLocale} from 'cloudview.ui-next';
+import {useLocale, CvMessage} from 'cloudview.ui-next';
 import _ from 'lodash';
-import {pointType} from '@/modules/main/capture/point/point.model';
 import {queryTransPoints} from '@/modules/main/capture/point/point.service';
 
 const {t} = useLocale();
@@ -93,8 +92,8 @@ const filters = reactive({
 });
 const visible = ref(false);
 const title = computed(() => {
-    const text = pointType.find(point => point.name === props.type)?.label;
-    return `添加${text}`;
+    const text = t(`fw.monitor.pointType.${props.type}`);
+    return t('fw.capturePoint.addWithType').replace('{type}', text);
 });
 
 const filterTableData = computed(() => {
@@ -148,7 +147,7 @@ const getTableData = async () => {
     if (res?.state) {
         tableData.value = res.data[queryInfo.value.data_type];
     } else {
-        CvMessage.error(res.data.msg || '查询失败');
+        CvMessage.error(res.data.msg || t('fw.capturePoint.queryFailed'));
     }
 };
 const submit = () => {

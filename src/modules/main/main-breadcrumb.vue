@@ -9,27 +9,25 @@
 <script setup lang="ts">
 import {computed} from 'vue';
 import {useRoute} from 'vue-router';
-import {findMenuTitleByPath, sidebarMenus, type SidebarMenuItem} from '@/modules/main/layout/sidebar-menu';
+import {useLocale} from 'cloudview.ui-next';
+import {findMenuTitleKeyByPath, findParentTitleKeyByPath} from '@/modules/main/layout/sidebar-menu';
 
+const {t} = useLocale();
 const route = useRoute();
 
-function findParentTitle(path: string, menus: SidebarMenuItem[] = sidebarMenus): string {
-    for (const item of menus) {
-        if (item.children?.some(child => child.path === path)) {
-            return item.title;
-        }
-        if (item.children) {
-            const nested = findParentTitle(path, item.children);
-            if (nested) {
-                return nested;
-            }
-        }
+const currentTitle = computed(() => {
+    const menuTitleKey = findMenuTitleKeyByPath(route.path);
+    const metaTitle = route.meta.title as string | undefined;
+    const titleKey = menuTitleKey || (metaTitle?.startsWith('fw.') ? metaTitle : '');
+    if (titleKey) {
+        return t(titleKey);
     }
-    return '';
-}
-
-const currentTitle = computed(() => findMenuTitleByPath(route.path) || (route.meta.title as string) || '');
-const parentTitle = computed(() => findParentTitle(route.path));
+    return metaTitle || '';
+});
+const parentTitle = computed(() => {
+    const titleKey = findParentTitleKeyByPath(route.path);
+    return titleKey ? t(titleKey) : '';
+});
 </script>
 
 <style scoped lang="scss">

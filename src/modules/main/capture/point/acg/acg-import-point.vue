@@ -4,20 +4,20 @@
             <cv-tabs v-model="activeName" type="card" :panes="panes" style="height: 48px"></cv-tabs>
             <div class="extra">
                 <cv-button v-if="type === 2 || type === 3" @click="acgTransferRef.open(rowPointsData[activeName])">
-                    <span>添加</span>
+                    <span>{{ t('fw.capturePoint.add') }}</span>
                 </cv-button>
                 <cv-button v-else @click="fileImportRef.open()">
                     <cv-icon :size="16" color="transparent" style="cursor: pointer">
                         <icon-download></icon-download>
                     </cv-icon>
-                    <span>导入</span>
+                    <span>{{ t('fw.common.import') }}</span>
                 </cv-button>
 
                 <cv-button @click="handleExport">
-                    <span>导出</span>
+                    <span>{{ t('fw.capturePoint.export') }}</span>
                 </cv-button>
                 <cv-button type="danger" :disabled="selectedCount === 0" @click="handleBatchDelete">
-                    <span>批量删除 ({{ selectedCount }})</span>
+                    <span>{{ t('fw.capturePoint.batchDeleteWithCount').replace('{count}', String(selectedCount)) }}</span>
                 </cv-button>
                 <cv-button
                     :loading="loading"
@@ -28,24 +28,24 @@
                     <cv-icon :size="16" color="transparent" style="cursor: pointer">
                         <icon-submit></icon-submit>
                     </cv-icon>
-                    <span>提交</span>
+                    <span>{{ t('fw.common.submit') }}</span>
                 </cv-button>
             </div>
         </div>
         <div class="main-contain__center">
             <cv-scrollbar style="height: 40px">
                 <cv-form ref="formRef" inline :model="formData" class="form-container">
-                    <cv-form-item label="点号">
+                    <cv-form-item :label="t('fw.capturePoint.gin')">
                         <cv-input v-model.trim="formData.gin" class="w-cm" />
                     </cv-form-item>
-                    <cv-form-item label="原始名">
+                    <cv-form-item :label="t('fw.capturePoint.originalName')">
                         <cv-input v-model.trim="formData.name" class="w-cm" />
                     </cv-form-item>
                     <cv-button size="default" @click="handleReset" style="margin-left: 20px">
-                        <span>清空</span>
+                        <span>{{ t('fw.common.clear') }}</span>
                     </cv-button>
                     <cv-button size="default" type="primary" @click="handleSearch">
-                        <span>查询</span>
+                        <span>{{ t('fw.common.search') }}</span>
                     </cv-button>
                 </cv-form>
             </cv-scrollbar>
@@ -85,7 +85,9 @@ import {
 import {acgPointType} from '@/modules/main/capture/point/point.model';
 import axios from 'axios';
 import _ from 'lodash';
-import {CvMessageBox} from 'cloudview.ui-next';
+import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 const props = defineProps<{
     node: any;
@@ -109,16 +111,12 @@ const initPointsData = ref<any>({});
 const rowPointsData = ref<any>({});
 const renderCount = ref(-1);
 const loading = ref(false);
-const panes = ref<
-    {
-        label: string | number;
-        name: string | number;
-    }[]
->(acgPointType);
-
-// const panes = computed(() =>
-//     type.value === 3 ? [...pointType, {label: "属性", name: "attribute"}] : pointType
-// );
+const panes = computed(() =>
+    acgPointType.map(item => ({
+        ...item,
+        label: t(`fw.monitor.pointType.${item.name}`),
+    }))
+);
 
 const initDevicePoints = () => {
     const rid = props.node.parent.data.id;
@@ -162,9 +160,9 @@ const handleImportPoints = async (file: File) => {
     const res = await importExcelPoints(rid, did, file);
     if (res.state) {
         initDevicePoints();
-        CvMessage.success('导入成功');
+        CvMessage.success(t('fw.capturePoint.importSuccess'));
     } else {
-        CvMessage.error(res.data.msg || '导入失败');
+        CvMessage.error(res.data.msg || t('fw.capturePoint.importFailed'));
     }
 };
 
@@ -205,10 +203,10 @@ const handleSubmit = async () => {
         param[activeName.value] = modifiedItems;
         const res = await updatePoint(rid, did, param);
         if (res.state) {
-            CvMessage.success('操作成功');
+            CvMessage.success(t('fw.common.operateSuccess'));
             initDevicePoints();
         } else {
-            CvMessage.error(res.data.msg || '操作失败');
+            CvMessage.error(res.data.msg || t('fw.common.operateFailed'));
         }
         loading.value = false;
     }
@@ -234,9 +232,9 @@ const handleTransferSubmit = async (values: any, type: string) => {
     const res = await updateDevicePoints(rid, did, param);
     if (res.state) {
         initDevicePoints();
-        CvMessage.success('添加成功');
+        CvMessage.success(t('fw.capturePoint.addSuccess'));
     } else {
-        CvMessage.error('添加失败');
+        CvMessage.error(t('fw.capturePoint.addFailed'));
     }
 };
 
@@ -247,11 +245,15 @@ const handleReset = () => {
 
 //批量删除测点
 const handleBatchDelete = () => {
-    CvMessageBox.confirm(`确定要删除选中的 ${selectedCount.value} 条记录吗？`, '确认删除', {
-        confirmButtonText: '删除',
-        cancelButtonText: '取消',
-        type: 'warning',
-    })
+    CvMessageBox.confirm(
+        t('fw.capturePoint.confirmDeleteSelected').replace('{count}', String(selectedCount.value)),
+        t('fw.capturePoint.confirmDeleteTitle'),
+        {
+            confirmButtonText: t('fw.common.delete'),
+            cancelButtonText: t('fw.common.cancel'),
+            type: 'warning',
+        }
+    )
         .then(async () => {
             await collectRef.value?.batchDelete();
             selectedCount.value = 0;
@@ -326,7 +328,7 @@ const handleExport = () => {
 
 .main-contain {
     height: 100%;
-    border-radius: 12px;
+    border-radius: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -335,7 +337,7 @@ const handleExport = () => {
 
 .main-contain__header {
     height: 66px;
-    background: #fff;
+    background: transparent;
     border-bottom: 1px solid #ebebeb;
     padding: 16px;
     font-weight: bold;
@@ -346,7 +348,7 @@ const handleExport = () => {
 
 .main-contain__center {
     padding: 16px;
-    background: #fff;
+    background: transparent;
     height: calc(100% - 66px);
 }
 

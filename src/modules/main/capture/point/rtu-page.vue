@@ -3,53 +3,53 @@
     <cv-scrollbar height="100%">
       <cv-form ref="ruleFormRef" :rules="rules" :inline="true" :model="form">
         <div class="rtu-contain__header">
-          <span>RTU信息</span>
+          <span>{{ t('fw.capturePoint.rtuInfo') }}</span>
           <cv-form-item style="margin: 0">
-            <cv-button size="mini" @click="save">保存</cv-button>
+            <cv-button size="mini" @click="save">{{ t('fw.capturePoint.save') }}</cv-button>
           </cv-form-item>
         </div>
         <div class="rtu-contain__center">
-          <cv-form-item label="RTU名称" prop="name" required>
+          <cv-form-item :label="t('fw.capturePoint.rtuName')" prop="name" required>
             <cv-input v-model="form.name"></cv-input>
           </cv-form-item>
-          <cv-form-item label="RTU类型">
+          <cv-form-item :label="t('fw.capturePoint.rtuType')">
             <cv-select
                 v-model="form.type"
                 disabled
             >
               <cv-option
-                  v-for="item in RTUTYPE"
+                  v-for="item in rtuTypeOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
               />
             </cv-select>
           </cv-form-item>
-          <cv-form-item label="RTU ID">
+          <cv-form-item :label="t('fw.capturePoint.rtuId')">
             <cv-input v-model="form.id" disabled></cv-input>
           </cv-form-item>
-          <cv-form-item label="RTU地址" prop="rtuaddr">
+          <cv-form-item :label="t('fw.capturePoint.rtuAddr')" prop="rtuaddr">
             <cv-input v-model.trim="form.rtuaddr" disabled/>
           </cv-form-item>
-          <cv-form-item label="所属储能柜" prop="memofcabinet">
+          <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
             <cv-input v-model.trim="form.memofcabinet" :controls="false" class="w-cm"/>
           </cv-form-item>
-          <cv-form-item label="通道组 ID" prop="channelgroupid">
+          <cv-form-item :label="t('fw.capturePoint.channelGroupId')" prop="channelgroupid">
             <cv-input v-model.trim="form.channelgroupid" disabled/>
           </cv-form-item>
-          <cv-form-item label="通道组名称" prop="channelgroupname">
+          <cv-form-item :label="t('fw.capturePoint.channelGroupName')" prop="channelgroupname">
             <cv-input v-model.trim="form.channelgroupname" disabled/>
           </cv-form-item>
-          <cv-form-item label="是否转发厂站" prop="for_transfer">
+          <cv-form-item :label="t('fw.capturePoint.forTransfer')" prop="for_transfer">
             <cv-switch v-model="form.for_transfer" active-value="1" inactive-value="0"
                        style="width: 100px;"/>
           </cv-form-item>
           <div class="rtu-contain__header-sub">
-            <span>通道信息</span>
+            <span>{{ t('fw.capturePoint.channelInfo') }}</span>
           </div>
           <div class="rtu-contain__center">
             <cv-scrollbar height="100%">
-              <cv-form-item label="应用层协议">
+              <cv-form-item :label="t('fw.capturePoint.appProtocol')">
                 <cv-select
                     v-model="form.appPluginId"
                     filterable
@@ -63,18 +63,18 @@
                   />
                 </cv-select>
               </cv-form-item>
-              <cv-form-item label="通道名称" prop="channel.name">
+              <cv-form-item :label="t('fw.capturePoint.channelName')" prop="channel.name">
                 <cv-input v-model="form.channel.name" disabled></cv-input>
               </cv-form-item>
-              <cv-form-item label="通道ID">
+              <cv-form-item :label="t('fw.capturePoint.channelId')">
                 <cv-input v-model="form.channel.id" disabled></cv-input>
               </cv-form-item>
               <div>
                 <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
-                  <cv-table-column type="index" label="序号" width="80"/>
-                  <cv-table-column prop="name" label="参数"/>
-                  <cv-table-column label="数据类型"/>
-                  <cv-table-column prop="value" label="值">
+                  <cv-table-column type="index" :label="t('fw.common.number')" width="80"/>
+                  <cv-table-column prop="name" :label="t('fw.capturePoint.param')"/>
+                  <cv-table-column :label="t('fw.capturePoint.dataType')"/>
+                  <cv-table-column prop="value" :label="t('fw.capturePoint.value')">
                     <template #default="{row}">
                       <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
                       <cv-select v-else size="default" v-model="row.value">
@@ -87,12 +87,12 @@
                       </cv-select>
                     </template>
                   </cv-table-column>
-                  <cv-table-column label="取值范围"/>
-                  <cv-table-column label="备注"/>
+                  <cv-table-column :label="t('fw.capturePoint.valueRange')"/>
+                  <cv-table-column :label="t('fw.capturePoint.remark')"/>
                 </cv-table>
               </div>
               <div>
-                <cv-form-item label="链路层协议" style="margin-top: 16px ;">
+                <cv-form-item :label="t('fw.capturePoint.linkProtocol')" style="margin-top: 16px ;">
                   <cv-select
                       v-model="form.linkPluginId"
                       filterable
@@ -109,10 +109,10 @@
               </div>
               <div>
                 <cv-table :data="linkPluginTable?.parameters ?? []" style="width: 100%">
-                  <cv-table-column type="index" label="序号" width="80"/>
-                  <cv-table-column prop="name" label="参数"/>
-                  <cv-table-column label="数据类型"/>
-                  <cv-table-column prop="value" label="值">
+                  <cv-table-column type="index" :label="t('fw.common.number')" width="80"/>
+                  <cv-table-column prop="name" :label="t('fw.capturePoint.param')"/>
+                  <cv-table-column :label="t('fw.capturePoint.dataType')"/>
+                  <cv-table-column prop="value" :label="t('fw.capturePoint.value')">
                     <template #default="{row}">
                       <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
                       <cv-select v-else size="default" v-model="row.value">
@@ -125,8 +125,8 @@
                       </cv-select>
                     </template>
                   </cv-table-column>
-                  <cv-table-column label="取值范围"/>
-                  <cv-table-column label="备注"/>
+                  <cv-table-column :label="t('fw.capturePoint.valueRange')"/>
+                  <cv-table-column :label="t('fw.capturePoint.remark')"/>
                 </cv-table>
               </div>
             </cv-scrollbar>
@@ -138,10 +138,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import {ref, reactive, watch, onMounted} from 'vue';
+import {ref, reactive, watch, onMounted, computed} from 'vue';
 import _ from 'lodash';
+import {useLocale} from 'cloudview.ui-next';
 import {RTUTYPE} from '@/modules/main/capture/point/point.model';
 import {getPlugins,} from '@/modules/main/capture/channel/channel.service';
+
+const {t} = useLocale();
 
 const emit = defineEmits(['submit']);
 const props = defineProps<{
@@ -149,19 +152,26 @@ const props = defineProps<{
   data: any;
 }>();
 
+const rtuTypeOptions = computed(() =>
+  RTUTYPE.map(item => ({
+    ...item,
+    label: t(`fw.capturePoint.rtuTypeOption.${item.value}`),
+  }))
+);
+
 const ruleFormRef = ref();
 const rules = reactive({
   name: [
     {
       required: true,
-      message: '请输入',
+      message: t('fw.common.pleaseInput'),
       trigger: 'blur',
     },
   ],
   'channel.name': [
     {
       required: true,
-      message: '请输入',
+      message: t('fw.common.pleaseInput'),
       trigger: 'blur',
     },
   ]
@@ -279,28 +289,28 @@ watch(() => props.data, (values) => {
 .rtu-container {
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: transparent;
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
 }
 
 .rtu-contain__header {
   height: 48px;
-  background: #fff;
+  background: transparent;
   padding: 16px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #EBEBEB;
+  border-top: none;
   border-bottom: 1px solid #EBEBEB;
 }
 
 .rtu-contain__header-sub {
   height: 48px;
-  background: #fff;
+  background: transparent;
   padding: 16px;
   font-weight: bold;
   display: flex;
@@ -311,7 +321,7 @@ watch(() => props.data, (values) => {
 
 .rtu-contain__center {
   padding: 16px;
-  background: #fff;
+  background: transparent;
   height: calc(100% - 48px);
   overflow: hidden;
 }

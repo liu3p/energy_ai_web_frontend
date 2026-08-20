@@ -16,12 +16,15 @@
             })
         "
         bordered
-        :pagination="{showTotal: total => `共 ${total} 条`}"
+        :pagination="{showTotal: total => t('fw.capturePoint.totalItems').replace('{total}', String(total))}"
     />
 </template>
 <script setup lang="ts">
 import {Table} from 'ant-design-vue';
-import {h} from 'vue';
+import {computed, h} from 'vue';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 defineProps({
     direction: {
@@ -46,12 +49,7 @@ defineProps({
     },
 });
 
-const columns = [
-    //{
-    //dataIndex: 'name',
-    //title: '名称',
-    //  width: 150,
-    //},
+const columns = computed(() => [
     {
         dataIndex: 'path',
         title: 'path',
@@ -63,15 +61,10 @@ const columns = [
     },
     {
         dataIndex: 'aliasname',
-        title: '描述',
+        title: t('fw.capturePoint.description'),
         width: '30%',
     },
-    // {
-    //     dataIndex: 'value',
-    //     title: '值',
-    //     width: 150,
-    // },
-];
+]);
 const getRowSelection = ({disabled, selectedKeys, onItemSelectAll, onItemSelect}: Record<string, any>) => {
     return {
         onSelectAll(selected: boolean, selectedRows: Record<string, string | boolean>[]) {

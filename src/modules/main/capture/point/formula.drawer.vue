@@ -2,7 +2,7 @@
     <cv-drawer
         ref="drawerRef"
         v-model="visible"
-        title="编辑公式"
+        :title="t('fw.capturePoint.editFormula')"
         size="1300px"
         @close="handleClose"
     >
@@ -10,53 +10,53 @@
             <div class="drawer-content-left">
                 <div class="form-wrapper">
                     <cv-form ref="formRef" :inline="true" label-position="top" :model="formData" :rules="rules">
-                        <cv-form-item label="计算方式" prop="calctype">
+                        <cv-form-item :label="t('fw.capturePoint.calcType')" prop="calctype">
                             <cv-select v-model="formData.calctype" style="width: 160px;">
-                                <cv-option label="周期" value="0"></cv-option>
-                                <cv-option label="触发" value="1"></cv-option>
+                                <cv-option :label="t('fw.capturePoint.period')" value="0"></cv-option>
+                                <cv-option :label="t('fw.capturePoint.trigger')" value="1"></cv-option>
                             </cv-select>
                         </cv-form-item>
-                        <cv-form-item prop="calccycle" label="计算周期（秒）" v-if="formData.calctype === '0'">
+                        <cv-form-item prop="calccycle" :label="t('fw.capturePoint.calcCycle')" v-if="formData.calctype === '0'">
                             <cv-input v-model="formData.calccycle"
                                       style="width: 160px;"></cv-input>
                         </cv-form-item>
-                        <cv-form-item prop="triggerpoint" label="触发点位" v-if="formData.calctype === '1'">
+                        <cv-form-item prop="triggerpoint" :label="t('fw.capturePoint.triggerPoint')" v-if="formData.calctype === '1'">
                             <cv-select v-model="formData.triggerpoint" @click="pickPointRef.open(true,formData.triggerpoint)"
                                        style="width: 160px;">
                             </cv-select>
                         </cv-form-item>
-                        <cv-form-item prop="triggertype" label="触发方式" v-if="formData.calctype === '1'">
+                        <cv-form-item prop="triggertype" :label="t('fw.capturePoint.triggerType')" v-if="formData.calctype === '1'">
                             <cv-select v-model="formData.triggertype" style="width: 160px;">
-                                <cv-option label="变分" value="0"></cv-option>
-                                <cv-option label="变合" value="1"></cv-option>
-                                <cv-option label="变位" value="2"></cv-option>
+                                <cv-option :label="t('fw.capturePoint.changeOpen')" value="0"></cv-option>
+                                <cv-option :label="t('fw.capturePoint.changeClose')" value="1"></cv-option>
+                                <cv-option :label="t('fw.capturePoint.changeBoth')" value="2"></cv-option>
                             </cv-select>
                         </cv-form-item>
                     </cv-form>
                 </div>
                 <div style="height: calc(100% - 64px)">
                     <div class="block-header">
-                        <span>变量定义</span>
-                        <cv-button @click="addRow">添加变量</cv-button>
+                        <span>{{ t('fw.capturePoint.varDefine') }}</span>
+                        <cv-button @click="addRow">{{ t('fw.capturePoint.addVariable') }}</cv-button>
                     </div>
                     <cv-table :data="tableData" style="width: 100%">
-                        <cv-table-column prop="name" label="变量名" width="180px" />
-                        <cv-table-column prop="datasource" label="映射点位">
+                        <cv-table-column prop="name" :label="t('fw.capturePoint.varName')" width="180px" />
+                        <cv-table-column prop="datasource" :label="t('fw.capturePoint.mapPoint')">
                             <template #default="{row}">
                                 <cv-select v-model="row.datasource" @click="currentRow = row;pickPointRef.open(false,row.datasource)">
                                 </cv-select>
                             </template>
                         </cv-table-column>
-                        <cv-table-column prop="mockValue" label="模拟值" width="180px">
+                        <cv-table-column prop="mockValue" :label="t('fw.capturePoint.mockValue')" width="180px">
                             <template #default="{row}">
                                 <cv-input-number
                                     v-model="row.mockValue"
                                 />
                             </template>
                         </cv-table-column>
-                        <cv-table-column label="操作" width="100px">
+                        <cv-table-column :label="t('fw.common.operation')" width="100px">
                             <template #default="{$index}">
-                                <cv-button type="primary" link @click="delRow($index)">删除</cv-button>
+                                <cv-button type="primary" link @click="delRow($index)">{{ t('fw.common.delete') }}</cv-button>
                             </template>
 
                         </cv-table-column>
@@ -66,23 +66,23 @@
             <div class="drawer-content-right">
                 <div class="block-header">
                     <span>
-                        公式描述
+                        {{ t('fw.capturePoint.formulaDesc') }}
                         <span class="verify-success" v-if="checkResult.content">{{ checkResult.content }}</span>
                         <span class="verify-error" v-if="checkResult.err">{{ checkResult.err }}</span>
                     </span>
-                    <cv-button @click="check">校验公式</cv-button>
+                    <cv-button @click="check">{{ t('fw.capturePoint.verifyFormula') }}</cv-button>
                 </div>
                 <div>
                     <cv-input
                         v-model="formData.info"
                         :rows="4"
                         type="textarea"
-                        placeholder="在此处输入公式，请输入变量和计算符号"
+                        :placeholder="t('fw.capturePoint.formulaPlaceholder')"
                     />
                 </div>
                 <div class="block-header">
-                    <span>模拟计算</span>
-                    <cv-button>模拟计算</cv-button>
+                    <span>{{ t('fw.capturePoint.mockCalc') }}</span>
+                    <cv-button>{{ t('fw.capturePoint.mockCalc') }}</cv-button>
                 </div>
                 <div>
                     <cv-input
@@ -96,31 +96,34 @@
         </div>
         <template #footer>
             <div class="demo-drawer__footer">
-                <cv-button type="primary" @click="saveFormula">保存公式
+                <cv-button type="primary" @click="saveFormula">{{ t('fw.capturePoint.saveFormula') }}
                 </cv-button>
-                <cv-button @click="handleClose">关闭</cv-button>
+                <cv-button @click="handleClose">{{ t('fw.monitor.close') }}</cv-button>
             </div>
         </template>
     </cv-drawer>
     <pick-point ref="pickPointRef" @submit="handleSubmit" />
 </template>
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
+import {useLocale, CvMessage} from 'cloudview.ui-next';
 import PickPoint from '@/modules/main/capture/point/pick-point.vue';
 import {checkFormula, getFormula, updateFormula} from '@/modules/main/capture/point/point.service';
 
-const rules = {
+const {t} = useLocale();
+
+const rules = computed(() => ({
     calctype: {
         required: true,
         trigger: 'blur',
-        message: '计算方式不能为空',
+        message: t('fw.capturePoint.calcTypeRequired'),
     },
     calccycle: {
         required: true,
         trigger: 'blur',
-        message: '计算周期不能为空',
+        message: t('fw.capturePoint.calcCycleRequired'),
     },
-};
+}));
 const visible = ref(false);
 const pickPointRef = ref();
 const formData = ref<{
@@ -187,7 +190,7 @@ const check = () => {
         if (res.state) {
             if (!res.data.err) {
                 checkResult.value = {
-                    content: '公式有效',
+                    content: t('fw.capturePoint.formulaValid'),
                     result: res.data.result,
                     pass: true,
                 };
@@ -205,10 +208,10 @@ const check = () => {
 
 const saveFormula = () => {
     if (!checkResult.value.pass) {
-        return CvMessage.warning('请先校验公式');
+        return CvMessage.warning(t('fw.capturePoint.pleaseVerifyFormula'));
     }
     if (!tableData.value.every(item => item.datasource)) {
-        return CvMessage.warning('映射点位不能为空');
+        return CvMessage.warning(t('fw.capturePoint.mapPointRequired'));
     }
     formRef.value.validate((vali: boolean) => {
         if (vali) {
@@ -219,7 +222,7 @@ const saveFormula = () => {
             }).then(res => {
                 if (res.state) {
                     visible.value = false;
-                    CvMessage.success('操作成功');
+                    CvMessage.success(t('fw.common.operateSuccess'));
                 } else CvMessage.error(res.data.msg);
             });
         }

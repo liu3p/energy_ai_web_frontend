@@ -2,21 +2,27 @@
     <div class="main-contain">
         <div class="main-contain__center">
             <div class="form-wrapper">
-                <cv-form ref="ruleFormRef" :model="formData" :rules="rules">
-                    <cv-form-item prop="processId" label="进程名称：">
+                <cv-form ref="ruleFormRef" :model="formData" :rules="rules" inline>
+                    <cv-form-item prop="processId" :label="t('fw.systemPages.processName') + t('fw.common.colon')">
                         <cv-select v-model="formData.processId" style="width: 240px">
                             <cv-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id" />
                         </cv-select>
                     </cv-form-item>
+                    <cv-form-item>
+                        <cv-button v-if="!connected" type="primary" @click="start">
+                            {{ t('fw.systemPages.start') }}
+                        </cv-button>
+                        <cv-button v-else type="danger" @click="closeSocket">
+                            {{ t('fw.systemPages.stop') }}
+                        </cv-button>
+                        <cv-button @click="clear">{{ t('fw.common.clear') }}</cv-button>
+                    </cv-form-item>
                 </cv-form>
-                <cv-button v-if="!connected" type="primary" @click="start">启动</cv-button>
-                <cv-button v-else type="danger" @click="closeSocket">停止</cv-button>
-                <cv-button style="margin-left: 0" @click="clear">清空</cv-button>
             </div>
             <div class="content-report">
                 <div class="content-report__header">
-                    通道状态： <span v-if="connected" style="color: #1da500">已连接</span>
-                    <span v-else style="color: #ff4d4f">未连接</span>
+                    {{ t('fw.monitor.channelStatus') }}{{ t('fw.common.colon') }} <span v-if="connected" style="color: #1da500">{{ t('fw.monitor.connected') }}</span>
+                    <span v-else style="color: #ff4d4f">{{ t('fw.monitor.disconnected') }}</span>
                 </div>
                 <div class="content-report__content">
                     <cv-scrollbar id="scroll_id" ref="scrollerRef" height="100%">
@@ -32,12 +38,15 @@ import {initWebsocket} from '@/modules/main/system/log/log.service';
 import {initWebsocket as initProcessWebsocket} from '@/modules/main/system/process/process.service';
 import {onMounted, onUnmounted, ref} from 'vue';
 import {WebsocketClass} from '@/common/websocket/websocket.class';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 const rules = {
     processId: {
         required: true,
         trigger: 'change',
-        message: '请选择',
+        message: t('fw.common.pleaseSelect'),
     },
 };
 const socket = ref<WebsocketClass>();
@@ -103,10 +112,6 @@ onUnmounted(() => {
 });
 </script>
 <style scoped lang="scss">
-.cv-form-item {
-    margin-bottom: 0;
-}
-
 .main-contain {
     width: 100%;
     height: 100%;
@@ -132,7 +137,13 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
-    gap: 16px;
+
+    :deep(.cv-form-item),
+    :deep(.el-form-item) {
+        margin-bottom: 0;
+        margin-right: 16px;
+        vertical-align: middle;
+    }
 }
 
 .content-report {

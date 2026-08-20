@@ -2,7 +2,7 @@
     <cv-dialog-form
         v-model="visible"
         width="500"
-        title="新增节点"
+        :title="t('fw.modelManagement.addNode')"
         :draggable="true"
         :submit="submit"
         :form-model="formData"
@@ -11,7 +11,7 @@
         :rules="rules"
     >
         <div style="padding: 0 56px">
-            <cv-form-item label="类型" prop="type">
+            <cv-form-item :label="t('fw.modelManagement.type')" prop="type">
                 <cv-select :disabled="disabled" v-model="formData.type">
                     <cv-option
                         v-for="item in typeOptions"
@@ -21,7 +21,7 @@
                     />
                 </cv-select>
             </cv-form-item>
-            <cv-form-item label="名称" prop="name">
+            <cv-form-item :label="t('fw.modelManagement.name')" prop="name">
                 <cv-input v-model="formData.name"></cv-input>
             </cv-form-item>
         </div>
@@ -40,14 +40,14 @@ const rules = {
     type: [
         {
             required: true,
-            message: '类型不能为空',
+            message: t('fw.modelManagement.typeRequired'),
             trigger: 'blur',
         },
     ],
     name: [
         {
             required: true,
-            message: '名称不能为空',
+            message: t('fw.modelManagement.nameRequired'),
             trigger: 'blur',
         },
     ],
@@ -82,7 +82,7 @@ const submit = async () => {
     } = currentNode.value;
     res = await ModelManagementServiceApi.createAgcDevice(deviceName, {type, name});
     if (res.state) {
-        CvMessage.success('操作成功');
+        CvMessage.success(t('fw.common.operateSuccess'));
         emit('refresh');
         cancel();
     } else CvMessage.error(res.data.msg);

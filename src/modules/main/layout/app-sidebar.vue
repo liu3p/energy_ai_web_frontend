@@ -32,7 +32,7 @@
                             <cv-icon v-else-if="item.icon" :size="18" color="transparent" class="app-sidebar__icon">
                                 <component :is="item.icon" />
                             </cv-icon>
-                            <span>{{ item.title }}</span>
+                            <span>{{ t(item.titleKey) }}</span>
                         </template>
                         <template v-for="child in item.children" :key="child.key">
                             <div
@@ -43,14 +43,13 @@
                                 <button
                                     class="app-sidebar__action-btn"
                                     type="button"
-                                    :disabled="actionLoading"
                                 >
-                                    {{ child.title }}
+                                    {{ t(child.titleKey) }}
                                 </button>
                                 <span class="app-sidebar__action-warn">!</span>
                             </div>
                             <el-menu-item v-else :index="child.path">
-                                {{ child.title }}
+                                {{ t(child.titleKey) }}
                             </el-menu-item>
                         </template>
                     </el-sub-menu>
@@ -65,7 +64,7 @@
                         <cv-icon v-else-if="item.icon" :size="18" color="transparent" class="app-sidebar__icon">
                             <component :is="item.icon" />
                         </cv-icon>
-                        <template #title>{{ item.title }}</template>
+                        <template #title>{{ t(item.titleKey) }}</template>
                     </el-menu-item>
                 </template>
             </el-menu>
@@ -80,20 +79,21 @@
         >
             <img class="app-sidebar__toggle-icon" :src="toggleIconSrc" alt="toggle sidebar" width="16" height="16" />
         </button>
+        <param-enable-dialog ref="paramEnableDialogRef" />
     </aside>
 </template>
 
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue';
 import {useRoute} from 'vue-router';
-import {CvMessage, useLocale} from 'cloudview.ui-next';
+import {useLocale} from 'cloudview.ui-next';
 import {userInfo} from '@/common/user';
 import icFold from '@/assets/sidebar-icons/ic_fold.svg';
 import icFoldHover from '@/assets/sidebar-icons/ic_fold_hover.svg';
 import icUnfold from '@/assets/sidebar-icons/ic_unfold.svg';
 import icUnfoldHover from '@/assets/sidebar-icons/ic_unfold_hover.svg';
 import {filterSidebarMenus, isMenuItemActive, sidebarMenus, type SidebarMenuItem} from './sidebar-menu';
-import {enableParams} from './param-enable.service';
+import ParamEnableDialog from './param-enable.dialog.vue';
 import SidebarMenuIcon from './sidebar-menu-icon.vue';
 
 const EXPANDED_WIDTH = 220;
@@ -105,6 +105,7 @@ const route = useRoute();
 
 const collapsed = ref(localStorage.getItem(STORAGE_KEY) === '1');
 const toggleHovered = ref(false);
+const paramEnableDialogRef = ref<InstanceType<typeof ParamEnableDialog>>();
 
 const sidebarWidth = computed(() => `${collapsed.value ? COLLAPSED_WIDTH : EXPANDED_WIDTH}px`);
 
@@ -118,25 +119,12 @@ const toggleIconSrc = computed(() => {
 const visibleMenus = computed(() => filterSidebarMenus(sidebarMenus, userInfo.value?.usertype ?? ''));
 
 const activePath = computed(() => route.path);
-const actionLoading = ref(false);
 
-async function handleMenuAction(item: SidebarMenuItem) {
-    if (item.action !== 'param-enable' || actionLoading.value) {
+function handleMenuAction(item: SidebarMenuItem) {
+    if (item.action !== 'param-enable') {
         return;
     }
-    actionLoading.value = true;
-    try {
-        const res = await enableParams();
-        if (res.state) {
-            CvMessage.success(res.msg || '参数使能成功');
-        } else {
-            CvMessage.error(res.msg || '参数使能失败');
-        }
-    } catch {
-        CvMessage.error('参数使能失败');
-    } finally {
-        actionLoading.value = false;
-    }
+    paramEnableDialogRef.value?.open();
 }
 
 function toggleCollapsed() {
@@ -303,10 +291,10 @@ watch(collapsed, val => {
     &__action {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         height: 44px;
         margin: 2px 8px;
-        padding-left: 43px;
+        padding-left: 36px;
         box-sizing: border-box;
         cursor: pointer;
     }
@@ -314,14 +302,16 @@ watch(collapsed, val => {
     &__action-btn {
         display: inline-flex;
         align-items: center;
+        flex-shrink: 0;
         height: 28px;
-        padding: 0 10px;
+        padding: 0 12px;
         border: 1px solid #e6a23c;
         border-radius: 4px;
         background: transparent;
         color: #e6a23c;
         font-size: 14px;
         line-height: 1;
+        white-space: nowrap;
         cursor: pointer;
 
         &:hover:not(:disabled) {
@@ -390,14 +380,16 @@ watch(collapsed, val => {
 .el-menu--popup .app-sidebar__action-btn {
     display: inline-flex;
     align-items: center;
+    flex-shrink: 0;
     height: 28px;
-    padding: 0 10px;
+    padding: 0 12px;
     border: 1px solid #e6a23c;
     border-radius: 4px;
     background: transparent;
     color: #e6a23c;
     font-size: 14px;
     line-height: 1;
+    white-space: nowrap;
     cursor: pointer;
 }
 

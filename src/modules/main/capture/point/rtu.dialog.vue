@@ -2,34 +2,41 @@
     <cv-dialog-form
         v-model="visible"
         width="500"
-        title="新增RTU"
+        :title="t('fw.capturePoint.addRtu')"
         :draggable="true"
         :submit="submit"
         :form-model="formData"
-        submit-text="确定"
+        :submit-text="t('fw.common.sure')"
         label-width="130px"
         @close="close"
         :rules="rules"
     >
-        <cv-form-item label="RTU名称" prop="name">
+        <cv-form-item :label="t('fw.capturePoint.rtuName')" prop="name">
             <cv-input v-model.trim="formData.name" :controls="false" class="w-cm" />
         </cv-form-item>
-        <cv-form-item label="RTU类型" prop="type">
+        <cv-form-item :label="t('fw.capturePoint.rtuType')" prop="type">
             <cv-select v-model="formData.type" filterable style="width: 260px">
-                <cv-option v-for="item in RTUTYPE" :key="item.value" :label="item.label" :value="item.value" />
+                <cv-option v-for="item in rtuTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
             </cv-select>
         </cv-form-item>
-        <cv-form-item label="所属储能柜" prop="memofcabinet">
+        <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
             <cv-input v-model.trim="formData.memofcabinet" :controls="false" class="w-cm" />
         </cv-form-item>
     </cv-dialog-form>
 </template>
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
 import {RTUTYPE} from '@/modules/main/capture/point/point.model';
 
 const {t} = useLocale();
+
+const rtuTypeOptions = computed(() =>
+    RTUTYPE.map(item => ({
+        ...item,
+        label: t(`fw.capturePoint.rtuTypeOption.${item.value}`),
+    }))
+);
 
 const emit = defineEmits(['submit']);
 const rules = {

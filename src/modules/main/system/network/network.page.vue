@@ -2,38 +2,38 @@
     <div class="container">
         <div class="network-param">
             <div class="network-param__header">
-                <span>设备参数</span>
+                <span>{{ t('fw.systemPages.deviceParams') }}</span>
                 <span>
-                    <cv-button>编辑</cv-button>
+                    <cv-button>{{ t('fw.common.edit') }}</cv-button>
                 </span>
             </div>
             <div class="network-param__contain">
                 <div class="form-item">
-                    <div class="label">序列号</div>
+                    <div class="label">{{ t('fw.systemPages.serialNumber') }}</div>
                     <div class="form-wrap">
                         <cv-input />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">设备型号</div>
+                    <div class="label">{{ t('fw.systemPages.deviceModel') }}</div>
                     <div class="form-wrap">
                         <cv-input />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">主机名</div>
+                    <div class="label">{{ t('fw.systemPages.hostname') }}</div>
                     <div class="form-wrap">
                         <cv-input />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">当前时间</div>
+                    <div class="label">{{ t('fw.systemPages.currentTime') }}</div>
                     <div class="form-wrap">
                         <cv-input />
                     </div>
                 </div>
                 <div class="form-item">
-                    <div class="label">时区</div>
+                    <div class="label">{{ t('fw.systemPages.timezone') }}</div>
                     <div class="form-wrap">
                         <cv-input />
                     </div>
@@ -43,7 +43,9 @@
     </div>
 </template>
 <script setup lang="ts">
+import {useLocale} from 'cloudview.ui-next';
 
+const {t} = useLocale();
 </script>
 <style scoped lang="scss">
 .container {

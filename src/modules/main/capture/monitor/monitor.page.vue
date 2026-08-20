@@ -1,44 +1,43 @@
 <template>
     <div class="container">
-        <div class="side-tree__wrapper">
-            <collapse-slider v-model="collapse" :width="sliderProps.width" :collapse-width="sliderProps.collapseWidth">
-                <cv-tree ref="treeRef" node-key="key" :data="treeData" :props="{
-                    children: 'device',
-                    label: 'name',
-                }" default-expand-all @node-click="handleNodeClick">
-                    <template #default="{ node, data }">
-                        <div class="custom-tree-node">
-                            <span class="custom-tree-node-label">{{ node.label }}</span>
-                            <!-- <span v-if="node.level === 1" class="custom-tree-node-status"></span> -->
-                        </div>
-                    </template>
-                </cv-tree>
-            </collapse-slider>
-        </div>
-        <div class="main-contain">
-            <monitor-point :node="currentNode" v-if="currentNode?.level === 2" />
-            <empty class-name="empty" v-else />
+        <div class="panel">
+            <div class="side-tree">
+                <cv-scrollbar height="100%">
+                    <cv-tree
+                        ref="treeRef"
+                        class="device-tree"
+                        node-key="key"
+                        :data="treeData"
+                        :props="{
+                            children: 'device',
+                            label: 'name',
+                        }"
+                        :current-node-key="currentKey"
+                        :indent="18"
+                        highlight-current
+                        default-expand-all
+                        @node-click="handleNodeClick"
+                    />
+                </cv-scrollbar>
+            </div>
+            <div class="main-contain">
+                <monitor-point v-if="currentNode?.level === 2" :node="currentNode" />
+                <empty v-else class-name="empty" />
+            </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import CollapseSlider from '@/common/collapse-slider.vue';
-import MonitorReport from '@/modules/main/capture/monitor/monitor-report.vue';
-import { queryRtuListExceptPoints } from '@/modules/main/capture/point/point.service';
+import {nextTick, onMounted, ref} from 'vue';
+import {queryRtuListExceptPoints} from '@/modules/main/capture/point/point.service';
 import MonitorPoint from '@/modules/main/capture/monitor/monitor-point.vue';
 import Empty from '@/common/empty.vue';
 
-const sliderProps = {
-    collapseWidth: '48px',
-    width: '300px',
-};
-const sliderWidth = computed(() => {
-    return collapse.value ? sliderProps.collapseWidth : sliderProps.width;
-});
-const collapse = ref(false);
 const treeData = ref<any[]>([]);
 const currentNode = ref();
+const currentKey = ref('');
+const treeRef = ref();
+
 const initRtuList = () => {
     queryRtuListExceptPoints().then(res => {
         if (res.state) {
@@ -50,6 +49,18 @@ const initRtuList = () => {
                     key: dev.name + dev.id,
                 })),
             }));
+
+            const firstDevice = treeData.value.find(rtu => rtu.device?.length)?.device?.[0];
+            if (firstDevice) {
+                currentKey.value = firstDevice.key;
+                nextTick(() => {
+                    const node = treeRef.value?.getNode?.(firstDevice.key);
+                    if (node) {
+                        currentNode.value = node;
+                        treeRef.value?.setCurrentKey?.(firstDevice.key);
+                    }
+                });
+            }
         }
     });
 };
@@ -57,57 +68,89 @@ const initRtuList = () => {
 onMounted(() => {
     initRtuList();
 });
-const handleNodeClick = (_: any, node: any) => {
+
+const handleNodeClick = (_data: any, node: any) => {
     currentNode.value = node;
+    currentKey.value = node?.data?.key ?? '';
 };
 </script>
 <style scoped lang="scss">
-$sliderWidth: v-bind(sliderWidth);
-$gap: 24px;
-
 .container {
     width: 100%;
     height: 100%;
-    display: flex;
-    gap: $gap;
 }
 
-.custom-tree-node {
+.panel {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
     width: 100%;
-    padding-right: 8px;
-}
-
-.custom-tree-node-label {
-    flex: 1;
-}
-
-.custom-tree-node-status {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #ccc;
-}
-
-.side-tree__wrapper {
-    display: flex;
-    flex-direction: column;
     height: 100%;
+    background: #fff;
     border-radius: 12px;
+    overflow: hidden;
+}
+
+.side-tree {
+    flex: 0 0 240px;
+    width: 240px;
+    height: 100%;
+    padding: 16px 12px;
+    border-right: 1px solid #eef1f6;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.device-tree {
+    background: transparent;
+
+    :deep(.el-tree-node__content) {
+        height: 36px;
+        margin-bottom: 2px;
+        padding-right: 8px;
+        border-radius: 6px;
+        color: #35353e;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    :deep(.el-tree-node__content:hover) {
+        background-color: #f5f6f8;
+    }
+
+    :deep(.el-tree-node__expand-icon) {
+        margin-right: 4px;
+        font-size: 12px;
+        color: #98a3be;
+    }
+
+    :deep(.el-tree-node__expand-icon.is-leaf) {
+        color: transparent;
+        cursor: default;
+    }
+
+    :deep(.el-tree-node__label) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    :deep(.is-current > .el-tree-node__content) {
+        background-color: #f0f1f5 !important;
+        color: #35353e !important;
+        font-weight: 400 !important;
+    }
 }
 
 .main-contain {
+    flex: 1;
+    min-width: 0;
     height: 100%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
-    overflow: hidden;
-    width: calc(100% - $gap - $sliderWidth);
 }
 
 .empty {
-    background: #fff;
+    height: 100%;
+    background: transparent;
 }
 </style>

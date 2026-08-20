@@ -115,8 +115,8 @@ export const asyncRoutes = [
                     {
                         path: 'manage',
                         component: () => import('./modules/main/layout/placeholder.page.vue'),
-                        meta: { title: '告警管理' },
-                        props: () => ({ title: '告警管理' }),
+                        meta: { title: 'fw.sidebar.alarmManage' },
+                        props: () => ({ titleKey: 'fw.sidebar.alarmManage' }),
                     },
                 ],
             },
@@ -128,8 +128,8 @@ export const asyncRoutes = [
                     {
                         path: 'display',
                         component: () => import('./modules/main/agc/dashboard-management/dashboard-management.page.vue'),
-                        meta: { title: '展示配置' },
-                        props: () => ({ title: '展示配置' }),
+                        meta: { title: 'fw.sidebar.displayConfig' },
+                        props: () => ({ titleKey: 'fw.sidebar.displayConfig' }),
                     },
                 ],
             },

@@ -1,14 +1,27 @@
 <template>
     <div class="placeholder-page main-body">
-        <div class="placeholder-page__title">{{ title }}</div>
-        <div class="placeholder-page__desc">页面建设中，敬请期待。</div>
+        <div class="placeholder-page__title">{{ displayTitle }}</div>
+        <div class="placeholder-page__desc">{{ t('fw.layout.pageBuilding') }}</div>
     </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    title: string;
+import {computed} from 'vue';
+import {useLocale} from 'cloudview.ui-next';
+
+const props = defineProps<{
+    title?: string;
+    titleKey?: string;
 }>();
+
+const {t} = useLocale();
+
+const displayTitle = computed(() => {
+    if (props.titleKey) {
+        return t(props.titleKey);
+    }
+    return props.title || '';
+});
 </script>
 
 <style scoped lang="scss">

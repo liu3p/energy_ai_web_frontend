@@ -3,12 +3,12 @@
         <div class="main-contain">
             <cv-scrollbar style="height: 100%">
                 <div class="channel-header">
-                    <span class="title">策略管理</span>
+                    <span class="title">{{ t('fw.strategyManagement.title') }}</span>
                     <cv-button @click="strategicRef.open(strategyList)" style="float: right;" type="primary">
                         <cv-icon :size="16" color="transparent" style="cursor: pointer">
                             <icon-submit></icon-submit>
                         </cv-icon>
-                        <span>添加策略</span>
+                        <span>{{ t('fw.strategyManagement.addStrategy') }}</span>
                     </cv-button>
                 </div>
                 <div class="table-container">
@@ -55,6 +55,7 @@ import StrategicManagementDrawer from '@/modules/main/agc/strategy/strategic-man
 import StrategicManagementService from '@/modules/main/agc/strategy/strategic-management.service';
 import {h, onMounted, ref} from 'vue';
 
+const {t} = useLocale();
 const strategicRef = ref();
 const strategicDrawerRef = ref();
 const strategyList = ref<{name: string, active: number, desc: string}[]>([]);
@@ -75,12 +76,12 @@ const startStrategy = ({name, desc}: {name: string, desc: string}) => {
                 const data = res.data.map((item: {name: string, desc: string}) => item.desc).join(', ');
                 CvMessageBox.confirm(
                     h('p', null, [
-                        h('span', null, '该策略与已运行策略'),
+                        h('span', null, t('fw.strategyManagement.conflictPrefix')),
                         h('span', {style: 'color: #e13131'}, ` ${data} `),
-                        h('span', null, '互斥，是否确定切换到新策略 '),
+                        h('span', null, t('fw.strategyManagement.conflictSuffix')),
                         h('span', {style: 'color: #e13131'}, `${desc} ?`),
                     ]),
-                    '提示',
+                    t('fw.common.tips'),
                 ).then(() => {
                     Promise.all(res.data.map((item: {name: string}) => {
                         return new Promise(resolve => {
@@ -89,19 +90,19 @@ const startStrategy = ({name, desc}: {name: string, desc: string}) => {
                             });
                         });
                     })).then(() => {
-                        StrategicManagementService.startStrategy(name).then(res => {
-                            CvMessage.success('操作成功');
+                        StrategicManagementService.startStrategy(name).then(() => {
+                            CvMessage.success(t('fw.common.operateSuccess'));
                             queryStrategys();
                         });
                     });
                 });
             } else {
-                CvMessageBox.confirm('确定投入当前策略？', '投入策略', {
+                CvMessageBox.confirm(t('fw.strategyManagement.confirmStart'), t('fw.strategyManagement.startStrategy'), {
                     type: 'warning',
                 }).then(() => {
                     StrategicManagementService.startStrategy(name).then(res => {
                         if (res.state) {
-                            CvMessage.success('操作成功');
+                            CvMessage.success(t('fw.common.operateSuccess'));
                             queryStrategys();
                         } else CvMessage.error(res.data.msg);
                     });
@@ -111,21 +112,21 @@ const startStrategy = ({name, desc}: {name: string, desc: string}) => {
     });
 };
 const stopStrategy = (name: string) => {
-    CvMessageBox.confirm('确定退出当前策略？', '退出策略', {
+    CvMessageBox.confirm(t('fw.strategyManagement.confirmStop'), t('fw.strategyManagement.stopStrategy'), {
         type: 'warning',
     }).then(() => {
-        StrategicManagementService.stopStrategy(name).then(res => {
-            CvMessage.success('操作成功');
+        StrategicManagementService.stopStrategy(name).then(() => {
+            CvMessage.success(t('fw.common.operateSuccess'));
             queryStrategys();
         });
     });
 };
 const delStrategic = (name: string) => {
-    CvMessageBox.confirm('确定删除当前策略？', '删除策略', {
+    CvMessageBox.confirm(t('fw.strategyManagement.confirmDelete'), t('fw.strategyManagement.deleteStrategy'), {
         type: 'warning',
     }).then(() => {
-        StrategicManagementService.removeStrategy(name).then(res => {
-            CvMessage.success('操作成功');
+        StrategicManagementService.removeStrategy(name).then(() => {
+            CvMessage.success(t('fw.common.operateSuccess'));
             queryStrategys();
         });
     });

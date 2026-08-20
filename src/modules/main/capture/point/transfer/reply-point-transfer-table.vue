@@ -6,10 +6,14 @@
     })" :columns="columns" :data-source="filteredItems" size="small" :custom-row="({ key }) => ({
         onClick: () => onItemSelect(key, !selectedKeys.includes(key)),
     })
-        " bordered :pagination="{showTotal: total => `共 ${total} 条`}" />
+        " bordered :pagination="{showTotal: total => t('fw.capturePoint.totalItems').replace('{total}', String(total))}" />
 </template>
 <script setup lang="ts">
+import {computed} from 'vue';
 import {Table} from 'ant-design-vue';
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
 
 defineProps({
     direction: {
@@ -35,7 +39,7 @@ defineProps({
 
 });
 
-const columns = [
+const columns = computed(() => [
     {
         dataIndex: 'id',
         title: 'OID',
@@ -43,7 +47,7 @@ const columns = [
     },
     {
         dataIndex: 'name',
-        title: '原始名',
+        title: t('fw.capturePoint.originalName'),
         width: 150,
     },
     {
@@ -51,7 +55,7 @@ const columns = [
         title: 'MqttKey',
         width: 150,
     },
-];
+]);
 const getRowSelection = ({
                              disabled,
                              selectedKeys,

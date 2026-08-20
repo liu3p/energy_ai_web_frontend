@@ -1,5 +1,5 @@
 <template>
-    <cv-dialog v-model="visible" title="选择点位" width="1200" @close="onclose">
+    <cv-dialog v-model="visible" :title="t('fw.capturePoint.selectPoint')" width="1200" @close="onclose">
         <div class="pick-container">
             <div class="select-tree">
                 <cv-scrollbar height="100%">
@@ -19,7 +19,7 @@
             <div class="select-block">
                 <cv-scrollbar height="100%">
                     <cv-form :inline="true" :model="form">
-                        <cv-form-item label="原始名：">
+                        <cv-form-item :label="t('fw.capturePoint.originalName') + t('fw.common.colon')">
                             <cv-input v-model="form.name"></cv-input>
                         </cv-form-item>
                         <cv-form-item label="MqttKey：">
@@ -37,19 +37,21 @@
                             <div>{{ item.mqttkey || '-' }}</div>
                         </div>
                     </div>
-                    <div class="empty" v-else>暂无数据</div>
+                    <div class="empty" v-else>{{ t('fw.deviceManage.noData') }}</div>
                 </cv-scrollbar>
             </div>
         </div>
         <template #footer>
-            <cv-button @click="visible = false">关闭</cv-button>
+            <cv-button @click="visible = false">{{ t('fw.monitor.close') }}</cv-button>
         </template>
     </cv-dialog>
 </template>
 <script setup lang="ts">
 import {computed, ref} from 'vue';
+import {useLocale} from 'cloudview.ui-next';
 import {queryRtuListExceptPoints, queryDevicePoints} from '@/modules/main/capture/point/point.service';
 
+const {t} = useLocale();
 const emits = defineEmits(['submit']);
 const visible = ref(false);
 const trigger = ref(false);
@@ -78,7 +80,7 @@ const init = (isTrigger: boolean, isAgc?: boolean) => {
                     ...dev,
                     device: [
                         {
-                            name: '遥信',
+                            name: t('fw.monitor.pointType.digital'),
                             key: Math.random(),
                             type: 'digital',
                             rid: rtu.id,
@@ -89,7 +91,7 @@ const init = (isTrigger: boolean, isAgc?: boolean) => {
                             ? []
                             : [
                                   {
-                                      name: '遥测',
+                                      name: t('fw.monitor.pointType.analog'),
                                       key: Math.random(),
                                       type: 'analog',
                                       rid: rtu.id,
@@ -97,7 +99,7 @@ const init = (isTrigger: boolean, isAgc?: boolean) => {
                                       points: [],
                                   },
                                   {
-                                      name: '遥脉',
+                                      name: t('fw.monitor.pointType.pulse'),
                                       key: Math.random(),
                                       type: 'pulse',
                                       rid: rtu.id,
@@ -108,7 +110,7 @@ const init = (isTrigger: boolean, isAgc?: boolean) => {
                         ...(isAgc
                             ? [
                                   {
-                                      name: '遥调',
+                                      name: t('fw.monitor.pointType.regulate'),
                                       key: Math.random(),
                                       type: 'regulate',
                                       rid: rtu.id,
@@ -116,7 +118,7 @@ const init = (isTrigger: boolean, isAgc?: boolean) => {
                                       points: [],
                                   },
                                   {
-                                      name: '遥控',
+                                      name: t('fw.monitor.pointType.control'),
                                       key: Math.random(),
                                       type: 'control',
                                       rid: rtu.id,

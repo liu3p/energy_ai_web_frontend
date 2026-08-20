@@ -2,29 +2,34 @@
     <div class="main-contain__center">
         <div class="form-wrapper">
             <cv-form :rules="rules" ref="ruleFormRef" :model="formData" inline>
-                <cv-form-item label="通道：" prop="channelgroup">
+                <cv-form-item :label="t('fw.monitor.channel') + t('fw.common.colon')" prop="channelgroup">
                     <cv-select v-model="formData.channelgroup" style="width: 240px" size="large" @change="handleChange">
                         <cv-option v-for="item in channelOptions" :key="item.channelgroupid" :label="item.name"
                             :value="item.channelgroupid" />
                     </cv-select>
                 </cv-form-item>
-                <cv-form-item label="协议：" prop="plugin">
+                <cv-form-item :label="t('fw.monitor.protocol') + t('fw.common.colon')" prop="plugin">
                     <cv-select v-model="formData.plugin" style="width: 240px" size="large" @change="changePlugin">
                         <cv-option v-for="item in pluginOptions" :key="item.id" :label="item.name" :value="item.id" />
                     </cv-select>
                 </cv-form-item>
                 <cv-form-item>
-                    <cv-button v-if="!reportConnected" type="primary" @click="runReportSocket">启动</cv-button>
-                    <cv-button v-if="reportConnected" type="danger" @click="stop">停止</cv-button>
-                    <cv-button @click="clearBoard">清空</cv-button>
-                    <cv-button type="warning">重启</cv-button>
+                    <cv-button v-if="!reportConnected" type="primary" @click="runReportSocket">
+                        {{ t('fw.monitor.startListen') }}
+                    </cv-button>
+                    <cv-button v-if="reportConnected" type="danger" @click="stop">
+                        {{ t('fw.monitor.stopListen') }}
+                    </cv-button>
+                    <cv-button @click="clearBoard">{{ t('fw.monitor.clearMessage') }}</cv-button>
+                    <cv-button type="warning">{{ t('fw.monitor.restartChannel') }}</cv-button>
                 </cv-form-item>
             </cv-form>
         </div>
         <div class="content-report">
             <div class="content-report__header">
-                通道状态： <span style="color: #1da500" v-if="connected">已连接</span>
-                <span style="color: #ff4d4f" v-else>未连接</span>
+                {{ t('fw.monitor.channelStatus') + t('fw.common.colon') }}
+                <span style="color: #1da500" v-if="connected">{{ t('fw.monitor.connected') }}</span>
+                <span style="color: #ff4d4f" v-else>{{ t('fw.monitor.disconnected') }}</span>
             </div>
             <div class="content-report__content">
                 <cv-scrollbar id="scroll_id" ref="scrollerRef" height="100%" @scroll="onScroll">
@@ -36,6 +41,7 @@
 </template>
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useLocale } from 'cloudview.ui-next';
 import { WebsocketClass } from '@/common/websocket/websocket.class';
 import {
     getChannelByRtu,
@@ -44,20 +50,21 @@ import {
     getAllChannel
 } from '@/modules/main/capture/monitor/monitor.service';
 
+const { t } = useLocale();
 const props = defineProps<{ rid: string; node: any }>();
 
 const rules = {
     channelgroup: [
         {
             required: true,
-            message: '请选择',
+            message: t('fw.common.pleaseSelect'),
             trigger: 'change',
         },
     ],
     plugin: [
         {
             required: true,
-            message: '请选择',
+            message: t('fw.common.pleaseSelect'),
             trigger: 'change',
         },
     ],

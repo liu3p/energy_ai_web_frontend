@@ -1,13 +1,13 @@
 <template>
     <cv-drawer v-model="visible" :title="title" size="75%" @close="cancel" destroy-on-close>
         <cv-form :model="filters" class="transfer-form" inline style="margin-top: -16px">
-            <cv-form-item label="筛选方式：">
+            <cv-form-item :label="t('fw.capturePoint.filterType') + t('fw.common.colon')">
                 <cv-select v-model="filters.filterType" style="width: 180px" @change="handleFilterTypeChange">
-                    <cv-option label="agc策略" :value="1" />
-                    <cv-option label="agc模型" :value="2" />
+                    <cv-option :label="t('fw.capturePoint.agcStrategy')" :value="1" />
+                    <cv-option :label="t('fw.capturePoint.agcModel')" :value="2" />
                 </cv-select>
             </cv-form-item>
-            <cv-form-item label="agc策略：" v-if="filters.filterType === 1">
+            <cv-form-item :label="t('fw.capturePoint.agcStrategy') + t('fw.common.colon')" v-if="filters.filterType === 1">
                 <cv-select
                     v-model="agcDevCode"
                     style="width: 180px"
@@ -23,7 +23,7 @@
                     />
                 </cv-select>
             </cv-form-item>
-            <cv-form-item label="agc模型：" v-if="filters.filterType === 2">
+            <cv-form-item :label="t('fw.capturePoint.agcModel') + t('fw.common.colon')" v-if="filters.filterType === 2">
                 <cv-select-tree
                     v-model="agcDevCode"
                     :data="agcDeviceOptions"
@@ -34,7 +34,7 @@
                     default-expand-all
                 ></cv-select-tree>
             </cv-form-item>
-            <cv-form-item label="参数类型：">
+            <cv-form-item :label="t('fw.capturePoint.paraType') + t('fw.common.colon')">
                 <cv-select v-model="filters.paraType" style="width: 180px" @change="handleAgcDeviceChange" clearable>
                     <cv-option
                         v-for="item in paraTypeOptions"
@@ -44,7 +44,7 @@
                     />
                 </cv-select>
             </cv-form-item>
-            <cv-form-item label="数据类型：">
+            <cv-form-item :label="t('fw.capturePoint.dataType') + t('fw.common.colon')">
                 <cv-select v-model="filters.dataType" style="width: 180px" @change="handleAgcDeviceChange">
                     <cv-option
                         v-for="item in dataTypeOptions"
@@ -89,7 +89,6 @@ import {Transfer, Table} from 'ant-design-vue';
 import type {SelectAllLabel} from 'ant-design-vue/es/transfer';
 import {useLocale} from 'cloudview.ui-next';
 import _ from 'lodash';
-import {pointType} from '@/modules/main/capture/point/point.model';
 import {queryRtuList, queryAgcRtuPoints, queryAgcModelTree} from '@/modules/main/capture/point/point.service';
 import StrategicManagementService from '@/modules/main/agc/strategy/strategic-management.service';
 const {t} = useLocale();
@@ -120,21 +119,21 @@ const paraTypeOptions = computed(() => {
     return filters.filterType === 1
         ? [
               {
-                  label: '静态参数',
+                  label: t('fw.capturePoint.staticPara'),
                   value: 'para',
               },
               {
-                  label: '计算参数',
+                  label: t('fw.capturePoint.calcPara'),
                   value: 'calc_para',
               },
           ]
         : [
               {
-                  label: '静态参数',
+                  label: t('fw.capturePoint.staticPara'),
                   value: 'para',
               },
               {
-                  label: '动态参数',
+                  label: t('fw.capturePoint.dynPara'),
                   value: 'dyn_para',
               },
           ];
@@ -181,8 +180,8 @@ const filters = reactive({
 });
 const visible = ref(false);
 const title = computed(() => {
-    const text = pointType.find(point => point.name === props.type)?.label;
-    return `添加${text}`;
+    const text = t(`fw.monitor.pointType.${props.type}`);
+    return t('fw.capturePoint.addWithType').replace('{type}', text);
 });
 
 const cancel = () => {

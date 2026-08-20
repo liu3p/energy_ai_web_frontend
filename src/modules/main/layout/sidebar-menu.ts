@@ -17,7 +17,8 @@ import icNav7Pre from '@/assets/sidebar-icons/ic_nav7_pre.svg';
 
 export interface SidebarMenuItem {
     key: string;
-    title: string;
+    /** i18n key, e.g. fw.sidebar.home */
+    titleKey: string;
     path?: string;
     /** 点击后触发动作，不跳转页面 */
     action?: 'param-enable';
@@ -35,63 +36,72 @@ export interface SidebarMenuItem {
 export const sidebarMenus: SidebarMenuItem[] = [
     {
         key: 'dashboard',
-        title: '首页',
+        titleKey: 'fw.sidebar.home',
         path: '/main/dashboard/index',
         iconSrc: icNav1,
         iconActiveSrc: icNav1Pre,
     },
     {
         key: 'device-monitor',
-        title: '运行',
+        titleKey: 'fw.sidebar.operation',
         iconSrc: icNav2,
         iconActiveSrc: icNav2Pre,
         children: [
-            {key: 'device-manage', title: '设备监控', path: '/main/capture/device-manage'},
-            {key: 'operation-strategy', title: '运行策略', path: '/main/capture/operation-strategy'},
+            {key: 'device-manage', titleKey: 'fw.sidebar.deviceManage', path: '/main/capture/device-manage'},
+            {
+                key: 'operation-strategy',
+                titleKey: 'fw.sidebar.operationStrategy',
+                path: '/main/capture/operation-strategy',
+            },
         ],
     },
     {
         key: 'data',
-        title: '数据',
+        titleKey: 'fw.sidebar.data',
         iconSrc: icNav3,
         iconActiveSrc: icNav3Pre,
         children: [
-            {key: 'data-collection', title: '数据采集', path: '/main/data/collection'},
-            {key: 'channel-message', title: '通道报文', path: '/main/data/channel-message'},
+            {key: 'data-collection', titleKey: 'fw.sidebar.dataCollection', path: '/main/data/collection'},
+            {key: 'channel-message', titleKey: 'fw.sidebar.channelMessage', path: '/main/data/channel-message'},
         ],
     },
     // {
     //     key: 'alarm',
-    //     title: '告警',
+    //     titleKey: 'fw.sidebar.alarm',
     //     iconSrc: icNav4,
     //     iconActiveSrc: icNav4Pre,
-    //     children: [{key: 'alarm-manage', title: '告警管理', path: '/main/alarm/manage'}],
+    //     children: [{key: 'alarm-manage', titleKey: 'fw.sidebar.alarmManage', path: '/main/alarm/manage'}],
     // },
     {
         key: 'config',
-        title: '配置',
+        titleKey: 'fw.sidebar.config',
         iconSrc: icNav6,
         iconActiveSrc: icNav6Pre,
         children: [
-            {key: 'capture-config', title: '采集配置', path: '/main/capture/point'},
-            {key: 'model-config', title: '模型配置', path: '/main/agc/model'},
-            {key: 'strategy-config', title: '策略配置', path: '/main/agc/strategy-config'},
-            {key: 'network-config', title: '网络配置', path: '/main/system/network'},
-            {key: 'system-config', title: '系统配置', path: '/main/system/system'},
-            {key: 'display-config', title: '展示配置', path: '/main/config/display'},
-            {key: 'param-enable', title: '参数使能', action: 'param-enable'},
+            {key: 'capture-config', titleKey: 'fw.sidebar.captureConfig', path: '/main/capture/point'},
+            {key: 'model-config', titleKey: 'fw.sidebar.modelConfig', path: '/main/agc/model'},
+            {key: 'strategy-config', titleKey: 'fw.sidebar.strategyConfig', path: '/main/agc/strategy-config'},
+            {key: 'network-config', titleKey: 'fw.sidebar.networkConfig', path: '/main/system/network'},
+            {key: 'system-config', titleKey: 'fw.sidebar.systemConfig', path: '/main/system/system'},
+            {key: 'display-config', titleKey: 'fw.sidebar.displayConfig', path: '/main/config/display'},
+            {key: 'param-enable', titleKey: 'fw.sidebar.paramEnable', action: 'param-enable'},
         ],
     },
     {
         key: 'system',
-        title: '系统',
+        titleKey: 'fw.sidebar.system',
         iconSrc: icNav7,
         iconActiveSrc: icNav7Pre,
         children: [
-            {key: 'perf-monitor', title: '性能监控', path: '/main/system/monitor'},
-            {key: 'log-monitor', title: '日志监控', path: '/main/system/log'},
-            {key: 'process-manage', title: '进程管理', path: '/main/system/process'},
-            {key: 'account-manage', title: '账号管理', path: '/main/account/account', permission: 'admin'},
+            {key: 'perf-monitor', titleKey: 'fw.sidebar.perfMonitor', path: '/main/system/monitor'},
+            {key: 'log-monitor', titleKey: 'fw.sidebar.logMonitor', path: '/main/system/log'},
+            {key: 'process-manage', titleKey: 'fw.sidebar.processManage', path: '/main/system/process'},
+            {
+                key: 'account-manage',
+                titleKey: 'fw.sidebar.accountManage',
+                path: '/main/account/account',
+                permission: 'admin',
+            },
         ],
     },
 ];
@@ -106,15 +116,30 @@ export function filterSidebarMenus(menus: SidebarMenuItem[], usertype: string): 
         .filter(item => item.path || item.action || (item.children && item.children.length > 0));
 }
 
-export function findMenuTitleByPath(path: string, menus: SidebarMenuItem[] = sidebarMenus): string {
+export function findMenuTitleKeyByPath(path: string, menus: SidebarMenuItem[] = sidebarMenus): string {
     for (const item of menus) {
         if (item.path === path) {
-            return item.title;
+            return item.titleKey;
         }
         if (item.children) {
-            const childTitle = findMenuTitleByPath(path, item.children);
-            if (childTitle) {
-                return childTitle;
+            const childTitleKey = findMenuTitleKeyByPath(path, item.children);
+            if (childTitleKey) {
+                return childTitleKey;
+            }
+        }
+    }
+    return '';
+}
+
+export function findParentTitleKeyByPath(path: string, menus: SidebarMenuItem[] = sidebarMenus): string {
+    for (const item of menus) {
+        if (item.children?.some(child => child.path === path)) {
+            return item.titleKey;
+        }
+        if (item.children) {
+            const nested = findParentTitleKeyByPath(path, item.children);
+            if (nested) {
+                return nested;
             }
         }
     }

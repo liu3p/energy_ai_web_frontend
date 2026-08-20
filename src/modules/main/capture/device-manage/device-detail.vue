@@ -66,8 +66,7 @@ function formatValue(item: ParamCardItem): string {
     gap: 24px;
     height: 100%;
     padding: 24px;
-    background: #fff;
-    border-radius: 12px;
+    background: transparent;
     overflow: auto;
 }
 
