@@ -5,6 +5,12 @@ export function CloudViewResolver() {
             if (!name.startsWith('Cv')) {
                 return;
             }
+            if (name.startsWith('CvIcon') && name !== 'CvIcon') {
+                return {
+                    name,
+                    from: 'cloudview.ui-next-icon',
+                };
+            }
             return {
                 name,
                 from: 'cloudview.ui-next',

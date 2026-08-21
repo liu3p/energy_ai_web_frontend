@@ -25,7 +25,6 @@ import {
     ElTable,
     ElTableColumn,
     ElTabPane,
-    ElTabs,
     ElTag,
     ElTooltip,
     ElTree,
@@ -81,7 +80,7 @@ export const CvSwitch = ElSwitch;
 export const CvTable = ElTable;
 export const CvTableColumn = ElTableColumn;
 export const CvTabPane = ElTabPane;
-export const CvTabs = ElTabs;
+export {default as CvTabs} from './CvTabs.vue';
 export const CvTag = ElTag;
 export const CvTooltip = ElTooltip;
 export const CvTree = ElTree;

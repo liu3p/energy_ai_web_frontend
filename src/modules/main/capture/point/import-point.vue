@@ -1,7 +1,7 @@
 <template>
   <div class="main-contain">
     <div class="main-contain__header">
-      <cv-tabs v-model="activeName" :panes="panes" style="height: 46px"></cv-tabs>
+      <cv-tabs v-model="activeName" :panes="panes" class="point-type-tabs"></cv-tabs>
     </div>
     <div class="main-contain__center">
       <cv-scrollbar style="height: 40px">
@@ -126,10 +126,12 @@ const rowPointsData = ref<any>({});
 const renderCount = ref(-1);
 const loading = ref(false);
 const panes = computed(() =>
-  pointType.map(item => ({
-    ...item,
-    label: t(`fw.monitor.pointType.${item.name}`),
-  }))
+  pointType
+    .filter(item => item.name !== 'attribute')
+    .map(item => ({
+      ...item,
+      label: t(`fw.monitor.pointType.${item.name}`),
+    }))
 );
 
 const initDevicePoints = (init = true) => {
@@ -329,36 +331,53 @@ const handleExport = () => {
   box-shadow: none !important;
 }
 
-:deep(.el-tabs__header) {
-  margin: 0;
-}
+.point-type-tabs {
+  height: 100%;
+  width: 100%;
 
-:deep(.el-tabs__item.is-active) {
-  color: #1A2233;
-}
+  :deep(.el-tabs__header) {
+    margin: 0;
+    height: 100%;
+    border-bottom: none;
+  }
 
-:deep(.el-tabs__item:hover) {
-  color: #303133;
-}
+  :deep(.el-tabs__nav-wrap) {
+    height: 100%;
 
-:deep(.el-tabs__active-bar) {
-  background-color: #1A2233;
-}
-
-/*:deep(.el-tabs__nav) {
-    gap: 16px;
-
-    .el-tabs__item {
-        background: #e6e6e6;
-        border: none !important;
-        border-radius: 12px;
+    &::after {
+      display: none;
     }
+  }
 
-    .is-active {
-        background: #3162e1 !important;
-        color: #fff;
-    }
-}*/
+  :deep(.el-tabs__nav-scroll),
+  :deep(.el-tabs__nav) {
+    height: 100%;
+  }
+
+  :deep(.el-tabs__item) {
+    height: 48px;
+    padding: 0 20px;
+    line-height: 48px;
+    color: #5c6373;
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  :deep(.el-tabs__item.is-active) {
+    color: #1a2233;
+    font-weight: 600;
+  }
+
+  :deep(.el-tabs__item:hover) {
+    color: #1a2233;
+  }
+
+  :deep(.el-tabs__active-bar) {
+    height: 3px;
+    background-color: #1a2233;
+    border-radius: 2px;
+  }
+}
 
 :deep(.cv-upload__file-list) {
 }
@@ -380,11 +399,9 @@ const handleExport = () => {
   height: 48px;
   background: transparent;
   border-bottom: 1px solid #ebebeb;
-  padding: 16px;
-  font-weight: bold;
+  padding: 0 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .main-contain__center {
