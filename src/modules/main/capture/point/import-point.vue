@@ -12,11 +12,11 @@
           <cv-form-item :label="t('fw.capturePoint.originalName')">
             <cv-input v-model.trim="formData.name" class="w-cm"/>
           </cv-form-item>
-          <cv-button size="default" @click="handleReset" style="margin-left: 20px">
-            <span>{{ t('fw.common.clear') }}</span>
-          </cv-button>
           <cv-button size="default" type="primary" @click="handleSearch">
             <span>{{ t('fw.common.search') }}</span>
+          </cv-button>
+          <cv-button size="default" @click="handleReset" style="margin-left: 20px">
+            <span>{{ t('fw.common.clear') }}</span>
           </cv-button>
           <div class="extra">
             <cv-button size="mini" v-if="type === 2 || type === 3" @click="handleAdd">

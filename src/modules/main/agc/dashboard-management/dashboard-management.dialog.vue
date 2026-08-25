@@ -1,20 +1,15 @@
 <template>
-    <cv-dialog-form
+    <cv-dialog
         v-model="visible"
         width="700"
         :title="dialogType == 'add' ? t('fw.common.add') : t('fw.common.edit')"
         :draggable="true"
-        :submit="submit"
-        :form-model="formData"
-        label-width="80"
         :z-index="1000"
-        :submit-text="t('fw.common.confirm')"
         @close="cancel"
-        :rules="rules"
     >
-        <div style="padding: 0 56px">
+        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="80px" class="dialog-form">
             <cv-form-item :label="t('fw.dashboardManagement.showName')" prop="show_name">
-                <cv-input v-model="formData.show_name" :placeholder="t('fw.common.pleaseInput')"></cv-input>
+                <cv-input v-model="formData.show_name" :placeholder="t('fw.common.pleaseInput')" />
             </cv-form-item>
             <cv-form-item :label="t('fw.dashboardManagement.pointType')" prop="type">
                 <cv-select
@@ -36,8 +31,7 @@
                     v-model="formData.oid"
                     @click="replyPointRef.open()"
                     :placeholder="t('fw.common.pleaseSelect')"
-                >
-                </cv-input>
+                />
             </cv-form-item>
             <cv-form-item :label="t('fw.dashboardManagement.unit')" prop="unit" v-if="formData.type == '1'">
                 <cv-input v-model="formData.show_unit" :placeholder="t('fw.common.pleaseInput')" />
@@ -45,34 +39,31 @@
             <template v-if="formData.type == '2'">
                 <div class="enum-list" v-for="(domain, index) in formData.enumList" :key="domain.key">
                     <cv-form-item
+                        class="enum-list__number"
                         :label="t('fw.dashboardManagement.numberValue')"
-                        label-width="80"
-                        :prop="'enumList.' + index + '.value'"
+                        label-width="80px"
+                        :prop="'enumList.' + index + '.number'"
                     >
                         <cv-input
                             v-model="domain.number"
                             type="number"
-                            style="width: 90px"
+                            class="enum-list__number-input"
                             :placeholder="t('fw.common.pleaseInput')"
                         />
                     </cv-form-item>
                     <cv-form-item
+                        class="enum-list__name"
                         :label="t('fw.dashboardManagement.valueName')"
-                        label-width="70"
+                        label-width="70px"
                         :prop="'enumList.' + index + '.value'"
                     >
                         <cv-input
                             v-model="domain.value"
-                            style="width: 170px"
+                            class="enum-list__name-input"
                             :placeholder="t('fw.common.pleaseInput')"
                         />
                     </cv-form-item>
-                    <el-color-picker
-                        v-model="domain.color"
-                        size="large"
-                        style="margin-left: 5px"
-                        :predefine="predefineColors"
-                    />
+                    <el-color-picker v-model="domain.color" size="default" :predefine="predefineColors" />
                     <el-button class="enum-btn" @click="addEnum">＋</el-button>
                     <el-button class="enum-btn" v-if="formData.enumList.length != 1" @click="removeEnum(domain)">
                         —
@@ -86,8 +77,12 @@
             >
                 <cv-input v-model="formData.show_value" :placeholder="t('fw.common.pleaseInput')" />
             </cv-form-item>
-        </div>
-    </cv-dialog-form>
+        </cv-form>
+        <template #footer>
+            <cv-button @click="cancel">{{ t('fw.common.cancel') }}</cv-button>
+            <cv-button type="primary" @click="handleSubmit">{{ t('fw.common.sure') }}</cv-button>
+        </template>
+    </cv-dialog>
     <reply-point-dialog ref="replyPointRef" @selectPoint="selectPoint"></reply-point-dialog>
 </template>
 
@@ -109,6 +104,7 @@ const predefineColors = ref([
     '#c71585',
 ]);
 const replyPointRef = ref();
+const formRef = ref();
 const dialogType = ref('add');
 const rules = {
     type: [
@@ -215,6 +211,7 @@ const open = (data: any) => {
                           key: Date.now(),
                           number: '',
                           value: '',
+                          color: '#000000',
                       },
                   ],
         };
@@ -240,13 +237,18 @@ const selectPoint = (info: any) => {
     formData.value.oid = info.id;
 };
 
-const submit = async () => {
+const handleSubmit = async () => {
+    const valid = await formRef.value?.validate?.().catch(() => false);
+    if (!valid) {
+        return;
+    }
     emit('submit', formData.value, dialogType.value);
     cancel();
 };
 
 const cancel = () => {
     visible.value = false;
+    formRef.value?.resetFields?.();
     formData.value = {
         no: 0,
         type: '',
@@ -272,12 +274,85 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+.dialog-form {
+    padding: 0 40px;
+}
+
 .enum-list {
     display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin-bottom: 18px;
+
+    :deep(.el-form-item),
+    :deep(.cv-form-item) {
+        margin-bottom: 0;
+        margin-right: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    :deep(.el-form-item__label),
+    :deep(.cv-form-item__label) {
+        height: 32px;
+        line-height: 32px;
+        padding-bottom: 0;
+    }
+
+    :deep(.el-form-item__content),
+    :deep(.cv-form-item__content) {
+        display: flex;
+        align-items: center;
+        line-height: 32px;
+    }
+
+    :deep(.el-color-picker) {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        margin-left: 8px;
+        flex-shrink: 0;
+    }
+
+    :deep(.el-color-picker__trigger) {
+        width: 32px;
+        height: 32px;
+        padding: 2px;
+    }
+}
+
+.enum-list__number {
+    flex: 0 0 auto;
+
+    :deep(.el-form-item__label),
+    :deep(.cv-form-item__label) {
+        justify-content: flex-end;
+        text-align: right;
+    }
+}
+
+.enum-list__number-input {
+    width: 90px;
+}
+
+.enum-list__name {
+    flex: 0 0 auto;
+}
+
+.enum-list__name-input {
+    width: 170px;
 }
 
 .enum-btn {
-    margin-top: 5px;
-    margin-left: 5px;
+    margin-left: 4px;
+    margin-top: 0;
+    height: 32px;
+    width: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 </style>

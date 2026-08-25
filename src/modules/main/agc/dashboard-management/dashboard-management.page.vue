@@ -58,14 +58,14 @@
                         <cv-table-column prop="table" :label="t('fw.dashboardManagement.showValue')">
                             <template #default="{row}">
                                 <div v-if="row.type == 3">{{ row.show_value }}</div>
-                                <div v-else-if="row.table">
-                                    <div
+                                <div v-else-if="row.table" class="show-value-inline">
+                                    <span
                                         v-for="item in Object.keys(row.table)"
                                         :key="item"
                                         :style="`color:${row.table[item].split('_')[1] || '#000'}`"
                                     >
                                         {{ item }}：{{ row.table[item].split('_')[0] || '#000' }}
-                                    </div>
+                                    </span>
                                 </div>
                             </template>
                         </cv-table-column>
@@ -345,6 +345,13 @@ onMounted(() => {
     justify-content: flex-start;
     flex-wrap: nowrap;
     white-space: nowrap;
+}
+
+.show-value-inline {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 12px;
 }
 
 .select-point {

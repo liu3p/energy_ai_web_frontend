@@ -385,10 +385,6 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-:deep(.el-table td.el-table__cell) {
-  border-bottom: none !important;
-}
-
 .container {
     width: 100%;
     height: 100%;
@@ -403,5 +399,70 @@ defineExpose({
     width: 100%;
     height: calc(100% - 50px);
     border: none;
+    font-size: 14px;
+    color: #35353e;
+
+    :deep(.el-table) {
+        font-size: 14px;
+        color: #35353e;
+        --el-table-header-text-color: #5c6373;
+        --el-table-text-color: #35353e;
+        --el-table-border-color: #ebeef5;
+        --el-table-row-hover-bg-color: #f5f6f8;
+    }
+
+    :deep(.el-table__header .el-table__cell) {
+        height: 40px;
+        padding-top: 0;
+        padding-bottom: 0;
+        font-size: 14px;
+        font-weight: 500;
+        background: #fff !important;
+        border-bottom: 1px solid #ebeef5;
+    }
+
+    :deep(.el-table__row) {
+        height: 40px;
+    }
+
+    :deep(.el-table__cell) {
+        height: 40px;
+        padding-top: 0;
+        padding-bottom: 0;
+        font-size: 14px;
+        border-bottom: 1px solid #ebeef5;
+    }
+
+    :deep(.el-table__body tr) {
+        border-bottom: 1px solid #ebeef5;
+    }
+
+    :deep(.el-input),
+    :deep(.el-select) {
+        width: 100%;
+    }
+
+    :deep(.el-input__wrapper),
+    :deep(.el-select__wrapper) {
+        min-height: 28px;
+        height: 28px;
+        padding: 0 8px;
+        box-shadow: 0 0 0 1px #e5e6ea inset;
+        border-radius: 4px;
+    }
+
+    :deep(.el-input__inner),
+    :deep(.el-select__selected-item),
+    :deep(.el-select__placeholder) {
+        height: 28px;
+        line-height: 28px;
+        font-size: 13px;
+    }
+
+    :deep(.el-button.is-text) {
+        height: 28px;
+        padding: 0 4px;
+        font-size: 14px;
+    }
 }
 </style>
