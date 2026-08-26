@@ -59,6 +59,13 @@ const {t} = useLocale();
 const strategicRef = ref();
 const strategicDrawerRef = ref();
 const strategyList = ref<{name: string, active: number, desc: string}[]>([]);
+
+const strategyMessageBoxOptions = {
+    type: 'warning' as const,
+    customClass: 'strategy-message-box',
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+};
 onMounted(() => {
     queryStrategys();
 });
@@ -82,6 +89,7 @@ const startStrategy = ({name, desc}: {name: string, desc: string}) => {
                         h('span', {style: 'color: #e13131'}, `${desc} ?`),
                     ]),
                     t('fw.common.tips'),
+                    strategyMessageBoxOptions,
                 ).then(() => {
                     Promise.all(res.data.map((item: {name: string}) => {
                         return new Promise(resolve => {
@@ -97,9 +105,11 @@ const startStrategy = ({name, desc}: {name: string, desc: string}) => {
                     });
                 });
             } else {
-                CvMessageBox.confirm(t('fw.strategyManagement.confirmStart'), t('fw.strategyManagement.startStrategy'), {
-                    type: 'warning',
-                }).then(() => {
+                CvMessageBox.confirm(
+                    t('fw.strategyManagement.confirmStart'),
+                    t('fw.strategyManagement.startStrategy'),
+                    strategyMessageBoxOptions,
+                ).then(() => {
                     StrategicManagementService.startStrategy(name).then(res => {
                         if (res.state) {
                             CvMessage.success(t('fw.common.operateSuccess'));
@@ -112,9 +122,11 @@ const startStrategy = ({name, desc}: {name: string, desc: string}) => {
     });
 };
 const stopStrategy = (name: string) => {
-    CvMessageBox.confirm(t('fw.strategyManagement.confirmStop'), t('fw.strategyManagement.stopStrategy'), {
-        type: 'warning',
-    }).then(() => {
+    CvMessageBox.confirm(
+        t('fw.strategyManagement.confirmStop'),
+        t('fw.strategyManagement.stopStrategy'),
+        strategyMessageBoxOptions,
+    ).then(() => {
         StrategicManagementService.stopStrategy(name).then(() => {
             CvMessage.success(t('fw.common.operateSuccess'));
             queryStrategys();
@@ -122,9 +134,11 @@ const stopStrategy = (name: string) => {
     });
 };
 const delStrategic = (name: string) => {
-    CvMessageBox.confirm(t('fw.strategyManagement.confirmDelete'), t('fw.strategyManagement.deleteStrategy'), {
-        type: 'warning',
-    }).then(() => {
+    CvMessageBox.confirm(
+        t('fw.strategyManagement.confirmDelete'),
+        t('fw.strategyManagement.deleteStrategy'),
+        strategyMessageBoxOptions,
+    ).then(() => {
         StrategicManagementService.removeStrategy(name).then(() => {
             CvMessage.success(t('fw.common.operateSuccess'));
             queryStrategys();
@@ -229,5 +243,21 @@ const delStrategic = (name: string) => {
 .operate-button {
     cursor: pointer;
     color: #35353E;
+}
+</style>
+
+<style lang="scss">
+.strategy-message-box {
+    .el-message-box__btns {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        gap: 12px;
+
+        .el-button {
+            min-width: 88px;
+            margin-left: 0 !important;
+        }
+    }
 }
 </style>

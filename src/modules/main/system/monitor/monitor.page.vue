@@ -65,7 +65,7 @@
                                 <div class="chart-block-unit">{{ t('fw.systemPages.utilization') }}</div>
                             </div>
                             <div>
-                                <h2 class="chart-block-title">{{ memData?.memused }}/{{ memData?.memtotal }}GB</h2>
+                                <h2 class="chart-block-title">{{ memData?.memused }}/{{ memData?.memtotal }}MB</h2>
                                 <div class="chart-block-unit">{{ t('fw.systemPages.usedTotal') }}</div>
                             </div>
                         </div>
