@@ -314,6 +314,7 @@ export default {
             stopListen: 'Stop Listening',
             clearMessage: 'Clear Messages',
             restartChannel: 'Restart Channel',
+            channelStats: 'Channel Statistics',
             channelStatus: 'Channel Status',
             connected: 'Connected',
             disconnected: 'Disconnected',

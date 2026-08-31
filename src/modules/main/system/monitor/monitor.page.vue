@@ -4,15 +4,52 @@
             <div class="monitor-contain">
                 <div class="main-contain__left">
                     <div class="main-contain__left1">
-                        <h1 class="bold-text">{{ t('fw.systemPages.host') }}</h1>
-                        <div class="bold-text">{{ systemInfo?.hostname ?? '-' }}</div>
-                        <div>{{ t('fw.systemPages.hostname') }}</div>
-                        <div class="bold-text">{{ systemInfo?.sn ?? '-' }}</div>
-                        <div>{{ t('fw.systemPages.serialNumber') }}</div>
-                        <div class="bold-text">{{ systemInfo?.modelnum ?? '-' }}</div>
-                        <div>{{ t('fw.systemPages.deviceModel') }}</div>
-                        <div class="bold-text">{{ systemInfo?.version ?? '-' }}</div>
-                        <div>{{ t('fw.systemPages.softwareVersionNo') }}</div>
+                        <cv-scrollbar height="100%">
+                            <h1 class="bold-text">{{ t('fw.systemPages.host') }}</h1>
+                            <div class="bold-text">{{ systemInfo?.hostname ?? '-' }}</div>
+                            <div>{{ t('fw.systemPages.hostname') }}</div>
+                            <div class="bold-text">{{ systemInfo?.sn ?? '-' }}</div>
+                            <div>{{ t('fw.systemPages.serialNumber') }}</div>
+                            <div class="bold-text">{{ systemInfo?.modelnum ?? '-' }}</div>
+                            <div>{{ t('fw.systemPages.deviceModel') }}</div>
+                            <div class="bold-text">{{ systemInfo?.version ?? '-' }}</div>
+                            <div>{{ t('fw.systemPages.softwareVersionNo') }}</div>
+                        </cv-scrollbar>
+                    </div>
+                    <div class="main-contain__left3">
+                        <cv-scrollbar height="100%">
+                            <h1 class="bold-text">{{ t('fw.systemPages.systemDisk') }}</h1>
+                            <div class="disc-wrapper"><span style="font-weight: bold;">{{ sysDisk?.used ?? '-' }} /</span>
+                                {{ sysDisk?.total ?? '-' }}GB
+                            </div>
+                            <cv-progress :percentage="sysDisk?.ratio" :show-text="false" style="width: 100%;"
+                                         :stroke-width="8" />
+                        </cv-scrollbar>
+                    </div>
+                    <div class="main-contain__left4">
+                        <cv-scrollbar height="100%">
+                            <h1 class="bold-text">{{ t('fw.systemPages.network') }}</h1>
+                            <template v-for="(item,i) in networks" :key="i">
+                                <div class="network-block">
+                                    <div class="network-block-title">
+                                        <cv-icon color="transparent" size="22">
+                                            <icon-network v-if="item.type === 'wired'" />
+                                            <icon-wifi v-if="item.type === 'wireless'" />
+                                            <icon-signal v-if="item.type === 'cellular'" />
+                                        </cv-icon>
+                                        <span style="font-weight: bold;">{{ item.name }}</span>
+                                    </div>
+                                    <div class="network-block-second">{{ item.upspeed }}
+                                        <cv-icon size="10" color="#3162E1">
+                                            <cv-icon-up />
+                                        </cv-icon>
+                                    </div>
+                                    <div class="network-block-third">{{ item.ipv4 || '-' }}
+                                        <span>{{ item.downspeed }} <cv-icon size="10" color="#1DA500"><cv-icon-down /></cv-icon></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </cv-scrollbar>
                     </div>
                     <div class="main-contain__left2">
                         <cv-scrollbar height="100%">
@@ -69,50 +106,6 @@
                                 <div class="chart-block-unit">{{ t('fw.systemPages.usedTotal') }}</div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="main-contain__right">
-                    <div class="main-contain__right1">
-                        <h1 class="bold-text">{{ t('fw.systemPages.systemDisk') }}</h1>
-                        <div class="disc-wrapper"><span style="font-weight: bold;">{{ sysDisk?.used ?? '-' }} /</span>
-                            {{ sysDisk?.total ?? '-' }}GB
-                        </div>
-                        <cv-progress :percentage="sysDisk?.ratio" :show-text="false" style="width: 100%;"
-                                     :stroke-width="8" />
-                    </div>
-                    <!-- <div class="main-contain__right1">
-                        <h1 class="bold-text">{{ t('fw.systemPages.dataDisk') }}</h1>
-                        <div class="disc-wrapper"><span style="font-weight: bold;">{{ dataDisk?.used ?? '-' }} /</span>
-                            {{ dataDisk?.total ?? '-' }}GB
-                        </div>
-                        <cv-progress color="#1DA500" :percentage="dataDisk?.ratio" :show-text="false"
-                                     style="width: 100%;" :stroke-width="8" />
-                    </div> -->
-                    <div class="main-contain__right2">
-                        <cv-scrollbar height="100%">
-                            <h1 class="bold-text">{{ t('fw.systemPages.network') }}</h1>
-                            <template v-for="(item,i) in networks" :key="i">
-                                <div class="network-block">
-                                    <div class="network-block-title">
-                                        <cv-icon color="transparent" size="22">
-                                            <icon-network v-if="item.type === 'wired'" />
-                                            <icon-wifi v-if="item.type === 'wireless'" />
-                                            <icon-signal v-if="item.type === 'cellular'" />
-                                        </cv-icon>
-                                        <span style="font-weight: bold;">{{ item.name }}</span>
-                                    </div>
-                                    <div class="network-block-second">{{ item.upspeed }}
-                                        <cv-icon size="10" color="#3162E1">
-                                            <cv-icon-up />
-                                        </cv-icon>
-                                    </div>
-                                    <div class="network-block-third">{{ item.ipv4 || '-' }}
-                                        <span>{{ item.downspeed }} <cv-icon size="10" color="#1DA500"><cv-icon-down /></cv-icon></span>
-                                    </div>
-                                </div>
-                            </template>
-                        </cv-scrollbar>
-
                     </div>
                 </div>
             </div>
@@ -280,7 +273,8 @@ $gap: 24px;
 }
 
 .main-contain__left {
-    width: 286px;
+    width: 320px;
+    flex-shrink: 0;
     height: 100%;
     padding: 16px;
     display: flex;
@@ -290,64 +284,49 @@ $gap: 24px;
     font-size: 12px;
     font-style: normal;
     line-height: 12px;
+    overflow: hidden;
 }
 
 .main-contain__center {
-    flex-grow: 1;
+    flex: 1;
+    min-width: 0;
     padding: 16px;
-    border-inline: 1px solid #EBEBEB;
+    border-left: 1px solid #EBEBEB;
     display: flex;
     flex-direction: column;
     gap: 32px;
 }
 
-.main-contain__right {
-    width: 286px;
-    padding: 16px;
+.main-contain__left1,
+.main-contain__left2,
+.main-contain__left3,
+.main-contain__left4 {
     display: flex;
+    padding: 16px;
     flex-direction: column;
-    gap: 12px;
+    border-radius: 6px;
+    background: #EFF1F4;
+    overflow: hidden;
 }
 
 .main-contain__left1 {
-    height: 254px;
-    border-radius: 6px;
-    background: #EFF1F4;
-    display: flex;
-    padding: 16px;
-    gap: 2px;
-    flex-direction: column;
+    flex-shrink: 0;
+    height: 240px;
 }
 
 .main-contain__left2 {
-    height: calc(100% - 256px);
-    display: flex;
-    padding: 16px;
-    flex-direction: column;
-    gap: 12px;
-    border-radius: 6px;
-    background: #EFF1F4;
-}
-
-.main-contain__right1 {
-    height: 108px;
-    display: flex;
-    padding: 16px;
-    flex-direction: column;
-    gap: 12px;
-    border-radius: 6px;
-    background: #EFF1F4;
-}
-
-.main-contain__right2 {
     flex: 1;
-    height: 200px;
-    display: flex;
-    padding: 16px;
-    flex-direction: column;
-    gap: 12px;
-    border-radius: 6px;
-    background: #EFF1F4;
+    min-height: 0;
+}
+
+.main-contain__left3 {
+    flex-shrink: 0;
+    height: 108px;
+}
+
+.main-contain__left4 {
+    flex: 1;
+    min-height: 0;
 }
 
 .bold-text {

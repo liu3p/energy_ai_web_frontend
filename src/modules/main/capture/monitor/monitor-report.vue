@@ -1,7 +1,7 @@
 <template>
     <div class="main-contain__center">
         <div class="form-wrapper">
-            <cv-form :rules="rules" ref="ruleFormRef" :model="formData" inline>
+            <cv-form class="report-form" :rules="rules" ref="ruleFormRef" :model="formData" inline>
                 <cv-form-item :label="t('fw.monitor.channel') + t('fw.common.colon')" prop="channelgroup">
                     <cv-select v-model="formData.channelgroup" style="width: 240px" size="large" @change="handleChange">
                         <cv-option v-for="item in channelOptions" :key="item.channelgroupid" :label="item.name"
@@ -23,6 +23,9 @@
                     <cv-button @click="clearBoard">{{ t('fw.monitor.clearMessage') }}</cv-button>
                     <cv-button type="warning">{{ t('fw.monitor.restartChannel') }}</cv-button>
                 </cv-form-item>
+                <cv-form-item class="channel-stats-item">
+                    <cv-button type="danger" @click="statsVisible = true">{{ t('fw.monitor.channelStats') }}</cv-button>
+                </cv-form-item>
             </cv-form>
         </div>
         <div class="content-report">
@@ -37,6 +40,19 @@
                 </cv-scrollbar>
             </div>
         </div>
+        <cv-dialog
+            v-model="statsVisible"
+            class="channel-stats-el-dialog"
+            :title="t('fw.monitor.channelStats')"
+            width="1400"
+            top="40px"
+            destroy-on-close
+            @close="statsVisible = false"
+        >
+            <div class="channel-stats-dialog">
+                <monitor-page v-if="statsVisible" />
+            </div>
+        </cv-dialog>
     </div>
 </template>
 <script setup lang="ts">
@@ -49,10 +65,12 @@ import {
     initChannelStatusWebsocket,
     getAllChannel
 } from '@/modules/main/capture/monitor/monitor.service';
+import MonitorPage from '@/modules/main/system/monitor/monitor.page.vue';
 
 const { t } = useLocale();
 const props = defineProps<{ rid: string; node: any }>();
 
+const statsVisible = ref(false);
 const rules = {
     channelgroup: [
         {
@@ -216,7 +234,23 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
-    gap: 16px;
+    width: 100%;
+}
+
+.report-form {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+}
+
+.channel-stats-item {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+.channel-stats-dialog {
+    height: 100%;
 }
 
 .content-report {
@@ -245,6 +279,21 @@ onUnmounted(() => {
         p {
             min-height: 26px;
         }
+    }
+}
+</style>
+
+<style lang="scss">
+.channel-stats-el-dialog.el-dialog {
+    height: 1000px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+
+    .el-dialog__body {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
     }
 }
 </style>

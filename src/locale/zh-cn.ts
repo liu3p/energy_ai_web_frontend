@@ -315,6 +315,7 @@ export default {
             stopListen: '停止监听',
             clearMessage: '清空报文',
             restartChannel: '重启通道',
+            channelStats: '通道统计',
             channelStatus: '通道状态',
             connected: '已连接',
             disconnected: '未连接',

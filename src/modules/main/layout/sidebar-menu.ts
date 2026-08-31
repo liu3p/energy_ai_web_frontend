@@ -82,7 +82,6 @@ export const sidebarMenus: SidebarMenuItem[] = [
             {key: 'model-config', titleKey: 'fw.sidebar.modelConfig', path: '/main/agc/model'},
             {key: 'strategy-config', titleKey: 'fw.sidebar.strategyConfig', path: '/main/agc/strategy-config'},
             {key: 'network-config', titleKey: 'fw.sidebar.networkConfig', path: '/main/system/network'},
-            {key: 'system-config', titleKey: 'fw.sidebar.systemConfig', path: '/main/system/system'},
             {key: 'display-config', titleKey: 'fw.sidebar.displayConfig', path: '/main/config/display'},
             {key: 'param-enable', titleKey: 'fw.sidebar.paramEnable', action: 'param-enable'},
         ],
@@ -93,6 +92,7 @@ export const sidebarMenus: SidebarMenuItem[] = [
         iconSrc: icNav7,
         iconActiveSrc: icNav7Pre,
         children: [
+            {key: 'system-config', titleKey: 'fw.sidebar.systemConfig', path: '/main/system/system'},
             {key: 'perf-monitor', titleKey: 'fw.sidebar.perfMonitor', path: '/main/system/monitor'},
             {key: 'log-monitor', titleKey: 'fw.sidebar.logMonitor', path: '/main/system/log'},
             {key: 'process-manage', titleKey: 'fw.sidebar.processManage', path: '/main/system/process'},

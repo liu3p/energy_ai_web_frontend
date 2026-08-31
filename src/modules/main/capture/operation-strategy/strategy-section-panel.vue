@@ -119,7 +119,7 @@ function indexMethod(index: number) {
     gap: 8px;
     height: 56px;
     padding: 0 20px;
-    background: #edf3ff;
+    background: #E0EBFF;
     cursor: pointer;
     user-select: none;
 }
@@ -151,6 +151,7 @@ function indexMethod(index: number) {
     font-weight: 600;
 
     &.is-active {
+        font-size: 16px;
         color: #3162e1;
         background: #fff;
     }
