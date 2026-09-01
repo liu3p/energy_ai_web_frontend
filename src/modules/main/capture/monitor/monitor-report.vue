@@ -44,13 +44,13 @@
             v-model="statsVisible"
             class="channel-stats-el-dialog"
             :title="t('fw.monitor.channelStats')"
-            width="1400"
+            width="480"
             top="40px"
             destroy-on-close
             @close="statsVisible = false"
         >
             <div class="channel-stats-dialog">
-                <monitor-page v-if="statsVisible" />
+                <device-stats v-if="statsVisible" />
             </div>
         </cv-dialog>
     </div>
@@ -65,7 +65,7 @@ import {
     initChannelStatusWebsocket,
     getAllChannel
 } from '@/modules/main/capture/monitor/monitor.service';
-import MonitorPage from '@/modules/main/system/monitor/monitor.page.vue';
+import DeviceStats from '@/modules/main/capture/monitor/device-stats.vue';
 
 const { t } = useLocale();
 const props = defineProps<{ rid: string; node: any }>();
@@ -250,7 +250,7 @@ onUnmounted(() => {
 }
 
 .channel-stats-dialog {
-    height: 100%;
+    height: 360px;
 }
 
 .content-report {
@@ -285,14 +285,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 .channel-stats-el-dialog.el-dialog {
-    height: 1000px;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0;
-
     .el-dialog__body {
-        flex: 1;
-        min-height: 0;
         overflow: hidden;
     }
 }

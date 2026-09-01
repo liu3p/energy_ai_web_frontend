@@ -51,7 +51,7 @@
                             </template>
                         </cv-scrollbar>
                     </div>
-                    <div class="main-contain__left2">
+                    <!-- <div class="main-contain__left2">
                         <cv-scrollbar height="100%">
                             <h1 class="bold-text">{{ t('fw.systemPages.deviceStats') }}</h1>
                             <div class="bold-text">{{ systemDevice.connectCount ?? '-' }} /
@@ -70,7 +70,7 @@
                             </div>
                             <div style="margin-top: 8px;">{{ t('fw.systemPages.offlineDevices') }}</div>
                         </cv-scrollbar>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="main-contain__center">
                     <div class="chart-block">
