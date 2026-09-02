@@ -152,7 +152,7 @@ p {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: url('../../assets/login-bg.png') no-repeat center center;
+    background: #f5f7fa url('/login-bg.webp') no-repeat center center;
     background-size: cover;
     display: flex;
     align-items: center;
