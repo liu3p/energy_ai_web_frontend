@@ -420,6 +420,7 @@ export default {
             importTips: 'Import note: only .xls and .xlsx files are supported',
             downloadTemplate: 'Download Template',
             importWarn: 'Note: After a successful import, all existing points under this device will be cleared.',
+            selectFile: 'Select File',
             addWithType: 'Add {type}',
             device: 'Device',
             mqttIdNotEmpty: 'MQTT_ID is not empty:',

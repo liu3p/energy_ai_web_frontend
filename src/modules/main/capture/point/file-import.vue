@@ -10,6 +10,7 @@
             </div>
         </div>
         <cv-upload
+            class="file-upload"
             ref="uploadRef"
             action="#"
             :limit="1"
@@ -17,6 +18,7 @@
             accept=".xls,.xlsx"
             :on-change="changeFile"
         >
+            <cv-button type="primary">{{ t('fw.capturePoint.selectFile') }}</cv-button>
         </cv-upload>
         <template #footer>
             <span class="dialog-footer">
@@ -92,5 +94,9 @@ defineExpose({open});
     border: 1px solid #3162e1;
     color: #3162e1;
     font-weight: normal;
+}
+
+.file-upload {
+    padding-left: 12px;
 }
 </style>

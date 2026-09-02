@@ -421,6 +421,7 @@ export default {
             importTips: '导入说明：只支持上传 .xls .xlsx 文件',
             downloadTemplate: '下载模版',
             importWarn: '注意：导入成功后，将清空该设备下原有的所有点位数据。',
+            selectFile: '选择文件',
             addWithType: '添加{type}',
             device: '设备',
             mqttIdNotEmpty: 'MQTT_ID值不为空：',
