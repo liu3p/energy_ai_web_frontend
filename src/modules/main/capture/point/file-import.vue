@@ -18,7 +18,7 @@
             accept=".xls,.xlsx"
             :on-change="changeFile"
         >
-            <cv-button type="primary">{{ t('fw.capturePoint.selectFile') }}</cv-button>
+            <cv-button class="select-file-btn" type="primary">{{ t('fw.capturePoint.selectFile') }}</cv-button>
         </cv-upload>
         <template #footer>
             <span class="dialog-footer">
@@ -97,6 +97,16 @@ defineExpose({open});
 }
 
 .file-upload {
-    padding-left: 12px;
+    width: 100%;
+
+    :deep(.cv-upload),
+    :deep(.el-upload) {
+        width: 100%;
+        display: block;
+    }
+}
+
+.select-file-btn {
+    width: 100%;
 }
 </style>
