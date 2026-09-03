@@ -434,11 +434,11 @@ export default {
             calcPara: 'Calculated Parameter',
             dynPara: 'Dynamic Parameter',
             rtuTypeOption: {
-                '1': 'Collect',
-                '2': 'Forward',
-                '3': 'agc',
-                '4': 'System Monitor',
-                '5': 'Calculated',
+                '0': 'Collect',
+                '500': 'Forward',
+                '700': 'agc',
+                '800': 'System Monitor',
+                '900': 'Calculated',
             },
             col: {
                 oid: 'OID',

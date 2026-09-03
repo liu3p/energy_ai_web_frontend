@@ -1,64 +1,65 @@
 <template>
-    <cv-dialog-form
+    <cv-dialog
         v-model="visible"
         width="560"
         :title="t('fw.capturePoint.batchEdit')"
         :draggable="true"
-        :submit="submit"
-        :form-model="formData"
-        :submit-text="t('fw.common.confirm')"
-        label-width="130px"
-        :rules="rules"
         @close="cancel"
     >
-        <div class="tips">
-            {{ t('fw.capturePoint.batchTips') }}
-        </div>
-        <cv-form-item :label="t('fw.capturePoint.selectRows')" prop="lines" style="margin-bottom: 24px;">
-            <cv-input v-model.trim="formData.lines" class="w-cm" :placeholder="t('fw.common.pleaseInput')">
-                <template #append>
-                    <cv-select v-model="formData.unit" style="width: 80px" :disabled="formData.mode === 1">
-                        <cv-option
-                            v-for="item in lineUnitOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        />
-                    </cv-select>
-                </template>
-            </cv-input>
-        </cv-form-item>
-        <cv-form-item v-if="type === 'text'" :label="t('fw.capturePoint.replaceMode')" prop="mode" style="margin-bottom: 24px;">
-            <cv-select v-model.trim="formData.mode" :placeholder="t('fw.common.pleaseSelect')" class="w-cm" @change="modeChange">
-                <cv-option
-                    v-for="item in replaceModeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                />
-            </cv-select>
-        </cv-form-item>
-        <cv-form-item v-if="formData.mode === 0 || type !== 'text'" :label="t('fw.capturePoint.replaceValue')" prop="value" style="margin-bottom: 24px;">
-            <cv-input v-if="type === 'text'" v-model.trim="formData.value" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
-            <cv-switch v-if="type === 'switch'" v-model.trim="formData.value" :active-value="1" :inactive-value="0" />
-            <cv-select v-if="type === 'select'" v-model.trim="formData.value" :placeholder="t('fw.common.pleaseSelect')" class="w-cm">
-                <cv-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                />
-            </cv-select>
-        </cv-form-item>
-        <template v-else>
-            <cv-form-item :label="t('fw.capturePoint.startValue')" prop="startValue" style="margin-bottom: 24px;">
-                <cv-input v-model.trim="formData.startValue" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
+        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="130px">
+            <div class="tips">
+                {{ t('fw.capturePoint.batchTips') }}
+            </div>
+            <cv-form-item :label="t('fw.capturePoint.selectRows')" prop="lines" style="margin-bottom: 24px;">
+                <cv-input v-model.trim="formData.lines" class="w-cm" :placeholder="t('fw.common.pleaseInput')">
+                    <template #append>
+                        <cv-select v-model="formData.unit" style="width: 80px" :disabled="formData.mode === 1">
+                            <cv-option
+                                v-for="item in lineUnitOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </cv-select>
+                    </template>
+                </cv-input>
             </cv-form-item>
-            <cv-form-item :label="t('fw.capturePoint.step')" prop="step" style="margin-bottom: 24px;">
-                <cv-input v-model.trim="formData.step" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
+            <cv-form-item v-if="type === 'text'" :label="t('fw.capturePoint.replaceMode')" prop="mode" style="margin-bottom: 24px;">
+                <cv-select v-model.trim="formData.mode" :placeholder="t('fw.common.pleaseSelect')" class="w-cm" @change="modeChange">
+                    <cv-option
+                        v-for="item in replaceModeOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </cv-select>
             </cv-form-item>
+            <cv-form-item v-if="formData.mode === 0 || type !== 'text'" :label="t('fw.capturePoint.replaceValue')" prop="value" style="margin-bottom: 24px;">
+                <cv-input v-if="type === 'text'" v-model.trim="formData.value" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
+                <cv-switch v-if="type === 'switch'" v-model.trim="formData.value" :active-value="1" :inactive-value="0" />
+                <cv-select v-if="type === 'select'" v-model.trim="formData.value" :placeholder="t('fw.common.pleaseSelect')" class="w-cm">
+                    <cv-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </cv-select>
+            </cv-form-item>
+            <template v-else>
+                <cv-form-item :label="t('fw.capturePoint.startValue')" prop="startValue" style="margin-bottom: 24px;">
+                    <cv-input v-model.trim="formData.startValue" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
+                </cv-form-item>
+                <cv-form-item :label="t('fw.capturePoint.step')" prop="step" style="margin-bottom: 24px;">
+                    <cv-input v-model.trim="formData.step" :placeholder="t('fw.common.pleaseInput')" class="w-cm" />
+                </cv-form-item>
+            </template>
+        </cv-form>
+        <template #footer>
+            <cv-button @click="cancel">{{ t('fw.common.cancel') }}</cv-button>
+            <cv-button type="primary" @click="handleConfirm">{{ t('fw.common.confirm') }}</cv-button>
         </template>
-    </cv-dialog-form>
+    </cv-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -76,6 +77,7 @@ const replaceModeOptions = computed(() => [
     {label: t('fw.capturePoint.increment'), value: 1},
 ]);
 
+const formRef = ref();
 const options = ref<any[]>([]);
 const key = ref();
 const type = ref();
@@ -189,6 +191,15 @@ const submit = () => {
     emit('submit', key.value,map,value);
     cancel();
 };
+
+const handleConfirm = () => {
+    formRef.value?.validate((valid: boolean) => {
+        if (valid) {
+            submit();
+        }
+    });
+};
+
 const cancel = () => {
     visible.value = false;
     type.value = null;
@@ -200,6 +211,7 @@ const cancel = () => {
         unit: 1,
         mode: 0,
     };
+    formRef.value?.clearValidate?.();
 };
 defineExpose({
     open,

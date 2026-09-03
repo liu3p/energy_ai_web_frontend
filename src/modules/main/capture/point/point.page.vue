@@ -73,12 +73,12 @@
                     @submit="handleSubmitRtu"
                 />
                 <import-point
-                    v-else-if="currentNode?.level === 2 && currentNode?.parent?.data?.type !== 3"
+                    v-else-if="currentNode?.level === 2 && !isAgcRtu(currentNode?.parent?.data?.id)"
                     :node="currentNode"
                     :deviceOption="treeData"
                 />
                 <acg-import-point
-                    v-else-if="currentNode?.level === 2 && currentNode?.parent?.data?.type === 3"
+                    v-else-if="currentNode?.level === 2 && isAgcRtu(currentNode?.parent?.data?.id)"
                     :node="currentNode"
                 />
                 <empty v-else class-name="empty" />
@@ -89,7 +89,7 @@
         <formula-drawer />
         <device-dialog
             ref="deviceRef"
-            :type="currentNode?.data?.type"
+            :rtu-id="currentNode?.level === 1 ? currentNode?.data?.id : currentNode?.parent?.data?.id"
             :deviceOption="treeData"
             @submit="handleSubmitDevice"
         />
@@ -117,6 +117,7 @@ import {
     delDevicePoints,
     createTransDevice,
 } from '@/modules/main/capture/point/point.service';
+import {isAgcRtu, isTransferRtu} from '@/modules/main/capture/point/point.model';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
 
 const {t} = useLocale();
@@ -180,7 +181,7 @@ const handleSubmitDevice = async (form: any) => {
     let res: any;
     if (id || id === 0) {
         res = await updateDevice(currentNode.value.parent.data.id, id, form);
-    } else if (currentNode.value?.data?.type === 2) {
+    } else if (isTransferRtu(currentNode.value?.data?.id)) {
         const rtuId = form.rtuId === '' ? -1 : form.rtuId;
         const deviceId = form.deviceId === '' ? -1 : form.deviceId;
 

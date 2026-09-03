@@ -13,17 +13,7 @@
             <cv-input v-model="form.name"></cv-input>
           </cv-form-item>
           <cv-form-item :label="t('fw.capturePoint.rtuType')">
-            <cv-select
-                v-model="form.type"
-                disabled
-            >
-              <cv-option
-                  v-for="item in rtuTypeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-              />
-            </cv-select>
+            <cv-input :model-value="rtuTypeLabel" disabled />
           </cv-form-item>
           <cv-form-item :label="t('fw.capturePoint.rtuId')">
             <cv-input v-model="form.id" disabled></cv-input>
@@ -34,15 +24,15 @@
           <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
             <cv-input v-model.trim="form.memofcabinet" :controls="false" class="w-cm"/>
           </cv-form-item>
-          <cv-form-item :label="t('fw.capturePoint.channelGroupId')" prop="channelgroupid">
+          <!-- <cv-form-item :label="t('fw.capturePoint.channelGroupId')" prop="channelgroupid">
             <cv-input v-model.trim="form.channelgroupid" disabled/>
           </cv-form-item>
           <cv-form-item :label="t('fw.capturePoint.channelGroupName')" prop="channelgroupname">
             <cv-input v-model.trim="form.channelgroupname" disabled/>
-          </cv-form-item>
+          </cv-form-item> -->
           <cv-form-item :label="t('fw.capturePoint.forTransfer')" prop="for_transfer">
             <cv-switch v-model="form.for_transfer" active-value="1" inactive-value="0"
-                       style="width: 100px;"/>
+                       style="width: 100px;" disabled/>
           </cv-form-item>
           <div class="rtu-contain__header-sub">
             <span>{{ t('fw.capturePoint.channelInfo') }}</span>
@@ -141,7 +131,7 @@
 import {ref, reactive, watch, onMounted, computed} from 'vue';
 import _ from 'lodash';
 import {useLocale} from 'cloudview.ui-next';
-import {RTUTYPE} from '@/modules/main/capture/point/point.model';
+import {getRtuTypeById} from '@/modules/main/capture/point/point.model';
 import {getPlugins,} from '@/modules/main/capture/channel/channel.service';
 
 const {t} = useLocale();
@@ -152,12 +142,11 @@ const props = defineProps<{
   data: any;
 }>();
 
-const rtuTypeOptions = computed(() =>
-  RTUTYPE.map(item => ({
-    ...item,
-    label: t(`fw.capturePoint.rtuTypeOption.${item.value}`),
-  }))
-);
+const rtuTypeLabel = computed(() => {
+  // 仅按 RTU id 判定，不用接口 type 字段（type=2 不等于转发，id 在 0-499 仍为采集）
+  const matched = getRtuTypeById(form.value?.id);
+  return matched ? t(`fw.capturePoint.rtuTypeOption.${matched.value}`) : '';
+});
 
 const ruleFormRef = ref();
 const rules = reactive({
@@ -264,8 +253,20 @@ const handleAppChange = (id: string) => {
 };
 
 watch(() => props.data, (values) => {
-  console.log(values);
-  form.value = _.cloneDeep(values);
+  const cloned = _.cloneDeep(values) ?? {
+    name: '',
+    type: '',
+    id: '',
+    memofcabinet: '',
+    rtuaddr: '',
+    appPluginId: '',
+    linkPluginId: '',
+  };
+  form.value = {
+    ...cloned,
+    // 保留原始 type，展示时用字符串匹配，避免 number/string 不一致
+    type: cloned?.type ?? '',
+  };
   const plugins = values?.channel?.plugins ?? [];
   appPluginTable.value = {};
   linkPluginTable.value = {};

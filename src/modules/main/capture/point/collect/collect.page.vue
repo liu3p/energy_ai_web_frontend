@@ -65,7 +65,7 @@
                 </template>
             </cv-table-column>
 
-            <cv-table-column v-if="type === 5" :label="t('fw.common.operation')" min-width="160" fixed="right">
+            <cv-table-column v-if="isCalcRtu(rid)" :label="t('fw.common.operation')" min-width="160" fixed="right">
                 <template #default="{row}">
                     <cv-button
                         type="primary"
@@ -109,11 +109,11 @@ import {tableConfigs, ColumnConfig} from '@/modules/main/capture/point/collect/c
 import FormulaDrawer from '../formula.drawer.vue';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
 import {delPointById} from '@/modules/main/capture/point/point.service';
+import {isCalcRtu, isTransferRtu} from '@/modules/main/capture/point/point.model';
 
 const {t} = useLocale();
 
 const props = defineProps<{
-    type: number;
     active: string;
     rid: string;
     did: string;
@@ -145,7 +145,7 @@ const currentTableData = computed(() => {
     return props.points[props.active as keyof typeof props.points] ?? [];
 });
 
-const isTransfer = computed(() => props.type === 2);
+const isTransfer = computed(() => isTransferRtu(props.rid));
 
 const tableConfig = computed(() => tableConfigs[props.active]);
 

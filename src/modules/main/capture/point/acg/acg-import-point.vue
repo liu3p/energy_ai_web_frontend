@@ -3,7 +3,7 @@
         <div class="main-contain__header">
             <cv-tabs v-model="activeName" :panes="panes" class="point-type-tabs"></cv-tabs>
             <div class="extra">
-                <cv-button v-if="type === 2 || type === 3" @click="acgTransferRef.open(rowPointsData[activeName])">
+                <cv-button v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="acgTransferRef.open(rowPointsData[activeName])">
                     <span>{{ t('fw.capturePoint.add') }}</span>
                 </cv-button>
                 <cv-button v-else @click="fileImportRef.open()">
@@ -55,7 +55,6 @@
                     ref="collectRef"
                     :active="activeName"
                     :points="pointsData"
-                    :type="type"
                     :rid="rid"
                     :did="did"
                     @update-points="initDevicePoints"
@@ -82,7 +81,7 @@ import {
     importExcelPoints,
 } from '@/modules/main/capture/point/point.service';
 // import {pointType} from '@/modules/main/capture/point/point.model';
-import {acgPointType} from '@/modules/main/capture/point/point.model';
+import {acgPointType, isAgcRtu, isTransferRtu} from '@/modules/main/capture/point/point.model';
 import axios from 'axios';
 import _ from 'lodash';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
@@ -93,8 +92,7 @@ const props = defineProps<{
     node: any;
 }>();
 
-//RTU类型
-const type = computed(() => props.node.parent?.data?.type);
+//RTU 父节点 id（类型按 id 判定，不用 data.type）
 const rid = computed(() => props.node.parent?.data?.id);
 const did = computed(() => props.node.data?.id);
 const activeName = ref('analog');

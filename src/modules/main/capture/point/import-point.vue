@@ -19,7 +19,7 @@
             <span>{{ t('fw.common.clear') }}</span>
           </cv-button>
           <div class="extra">
-            <cv-button size="mini" v-if="type === 2 || type === 3" @click="handleAdd">
+            <cv-button size="mini" v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="handleAdd">
               <span>{{ t('fw.capturePoint.add') }}</span>
             </cv-button>
             <cv-button class="primary-btn" size="mini" v-else @click="fileImportRef.open()">
@@ -63,7 +63,6 @@
             ref="collectRef"
             :active="activeName"
             :points="pointsData"
-            :type="type"
             :rid="rid"
             :did="did"
             @update-points="initDevicePoints"
@@ -98,6 +97,7 @@ import {pointType} from '@/modules/main/capture/point/point.model';
 import axios from 'axios';
 import _ from 'lodash';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
+import {isAgcRtu, isTransferRtu} from '@/modules/main/capture/point/point.model';
 
 const {t} = useLocale();
 
@@ -106,9 +106,7 @@ const props = defineProps<{
   deviceOption: any;
 }>();
 
-//RTU类型
-const type = computed(() => props.node.parent?.data?.type);
-
+//RTU 父节点 id（类型按 id 区间判定，不用 data.type）
 const rid = computed(() => props.node.parent?.data?.id);
 const did = computed(() => props.node.data?.id);
 const activeName = ref('analog');

@@ -28,23 +28,6 @@
                     @input="(value: any) => (formData.devaddr = value.replace(/[^\d]/g, '') + '')"
                 />
             </cv-form-item>
-            <cv-form-item v-if="type === 2" :label="t('fw.capturePoint.transferDevice')" prop="deviceId">
-                <cv-select-tree
-                    v-model="formData.deviceId"
-                    :data="filteredDeviceOption"
-                    :props="{
-                        label: 'name',
-                        value: 'id',
-                        children: 'device',
-                    }"
-                    class="w-full"
-                    clearable
-                    only-child
-                    default-expand-all
-                    @change="handleTreeChange"
-                    @clear="handleTreeClear"
-                />
-            </cv-form-item>
             <cv-form-item label="MqttDeviceId" prop="mqttkey">
                 <cv-input
                     v-model.trim="formData.mqttkey"
@@ -65,13 +48,14 @@
 import {ref, computed} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
 import _ from 'lodash';
+import {isTransferRtu} from '@/modules/main/capture/point/point.model';
 
 const {t} = useLocale();
 
 const props = defineProps({
-    type: {
-        type: Number,
-        default: 0,
+    rtuId: {
+        type: [Number, String],
+        default: '',
     },
     deviceOption: {
         type: Array,
@@ -83,7 +67,7 @@ const emit = defineEmits(['submit']);
 const formRef = ref();
 
 const filteredDeviceOption = computed(() => {
-    return props.deviceOption.filter((item: any) => item.type !== 2);
+    return props.deviceOption.filter((item: any) => !isTransferRtu(item.id));
 });
 
 const rules = {

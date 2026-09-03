@@ -1,25 +1,53 @@
+/**
+ * RTU 类型按 RTU id 判定（不使用接口返回的 type 字段 1/2/3/4/5）：
+ * - 0–499：采集
+ * - 500–699：转发
+ * - 700：agc（仅 id === 700）
+ * - 800：系统监视（仅 id === 800）
+ * - 900：计算量（仅 id === 900）
+ */
 export const RTUTYPE = [
-    {
-        label: '采集',
-        value: 1
-    },
-    {
-        label: '转发',
-        value: 2
-    },
-    {
-        label: 'agc',
-        value: 3
-    },
-    {
-        label: '系统监视',
-        value: 4
-    },
-    {
-        label: '计算量',
-        value: 5
-    }
-]
+    {label: '采集', value: 0},
+    {label: '转发', value: 500},
+    {label: 'agc', value: 700},
+    {label: '系统监视', value: 800},
+    {label: '计算量', value: 900},
+] as const;
+
+export type RtuTypeItem = (typeof RTUTYPE)[number];
+
+/** 根据 RTU id 解析类型 */
+export function getRtuTypeById(id: number | string | null | undefined): RtuTypeItem | undefined {
+    if (id === null || id === undefined || id === '') return undefined;
+    const n = Number(id);
+    if (Number.isNaN(n)) return undefined;
+    if (n >= 0 && n <= 499) return RTUTYPE[0];
+    if (n >= 500 && n <= 699) return RTUTYPE[1];
+    if (n === 700) return RTUTYPE[2];
+    if (n === 800) return RTUTYPE[3];
+    if (n === 900) return RTUTYPE[4];
+    return undefined;
+}
+
+export function isCollectRtu(id: number | string | null | undefined) {
+    return getRtuTypeById(id)?.value === 0;
+}
+
+export function isTransferRtu(id: number | string | null | undefined) {
+    return getRtuTypeById(id)?.value === 500;
+}
+
+export function isAgcRtu(id: number | string | null | undefined) {
+    return getRtuTypeById(id)?.value === 700;
+}
+
+export function isMonitorRtu(id: number | string | null | undefined) {
+    return getRtuTypeById(id)?.value === 800;
+}
+
+export function isCalcRtu(id: number | string | null | undefined) {
+    return getRtuTypeById(id)?.value === 900;
+}
 
 export const dataTypeDict = [
     { label: 'SPECIAL', value: '0' },
