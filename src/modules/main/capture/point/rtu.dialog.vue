@@ -50,15 +50,15 @@
 <script setup lang="ts">
 import {ref, computed} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
-import {RTUTYPE} from '@/modules/main/capture/point/point.model';
+import { RTUADDTYPE } from '@/modules/main/capture/point/point.model';
 
 const {t} = useLocale();
 
 const formRef = ref();
 const rtuTypeOptions = computed(() =>
-    RTUTYPE.map(item => ({
+    RTUADDTYPE.map(item => ({
         ...item,
-        label: t(`fw.capturePoint.rtuTypeOption.${item.value}`),
+        label: t(`fw.capturePoint.rtuAddTypeOption.${item.value}`),
     }))
 );
 

@@ -1,3 +1,25 @@
+export const RTUADDTYPE = [
+    {
+        label: '采集',
+        value: 1
+    },
+    {
+        label: '转发',
+        value: 2
+    },
+    {
+        label: 'agc',
+        value: 3
+    },
+    {
+        label: '系统监视',
+        value: 4
+    },
+    {
+        label: '计算量',
+        value: 5
+    }
+]
 /**
  * RTU 类型按 RTU id 判定（不使用接口返回的 type 字段 1/2/3/4/5）：
  * - 0–499：采集
