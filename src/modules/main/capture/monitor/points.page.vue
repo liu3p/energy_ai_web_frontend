@@ -55,39 +55,48 @@
         >
         </cv-pagination>
     </div>
-    <cv-dialog-form
+    <cv-dialog
         v-model="visible"
         :title="title"
-        ref="dialogForm"
-        v-model:form-model="formData"
-        :rules="rules"
-        :submit="submit"
-        width="428px"
-        :submitText="t('fw.common.sure')"
-        label-position="top"
-        style="padding: 0 24px"
+        width="480px"
+        class="dispatch-dialog"
+        align-center
+        @close="cancel"
     >
-        <cv-form-item :label="t('fw.monitor.deviceName') + t('fw.common.colon')" prop="deviceName">
-            <cv-input disabled v-model="props.deviceName"></cv-input>
-        </cv-form-item>
-        <cv-form-item :label="t('fw.monitor.paramName') + t('fw.common.colon')" prop="name">
-            <cv-input disabled v-model="formData.name"></cv-input>
-        </cv-form-item>
-        <cv-form-item :label="t('fw.monitor.dispatchValue') + t('fw.common.colon')" prop="value">
-            <cv-input-number
-                v-if="active === 'regulate'"
-                v-model="formData.value"
-                style="width: 100%"
-            ></cv-input-number>
-            <cv-select v-if="active === 'control'" v-model="formData.value">
-                <cv-option :value="1">{{ t('fw.monitor.controlClose') }}</cv-option>
-                <cv-option :value="0">{{ t('fw.monitor.controlOpen') }}</cv-option>
-            </cv-select>
-        </cv-form-item>
-        <cv-form-item :label="t('fw.monitor.loginPassword') + t('fw.common.colon')" prop="checkpwd">
-            <cv-input type="password" show-password v-model="formData.checkpwd"></cv-input>
-        </cv-form-item>
-    </cv-dialog-form>
+        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="100px" class="dialog-form">
+            <cv-form-item :label="t('fw.monitor.deviceName')" prop="deviceName">
+                <cv-input disabled v-model="props.deviceName" />
+            </cv-form-item>
+            <cv-form-item :label="t('fw.monitor.paramName')" prop="name">
+                <cv-input disabled v-model="formData.name" />
+            </cv-form-item>
+            <cv-form-item :label="t('fw.monitor.dispatchValue')" prop="value">
+                <cv-input-number
+                    v-if="active === 'regulate'"
+                    v-model="formData.value"
+                    style="width: 100%"
+                />
+                <cv-select v-else-if="active === 'control'" v-model="formData.value" style="width: 100%">
+                    <cv-option :value="1">{{ t('fw.monitor.controlClose') }}</cv-option>
+                    <cv-option :value="0">{{ t('fw.monitor.controlOpen') }}</cv-option>
+                </cv-select>
+            </cv-form-item>
+            <cv-form-item :label="t('fw.monitor.loginPassword')" prop="checkpwd">
+                <cv-input
+                    type="password"
+                    show-password
+                    v-model="formData.checkpwd"
+                    :placeholder="t('fw.common.pleaseInput')"
+                />
+            </cv-form-item>
+        </cv-form>
+        <template #footer>
+            <div class="dialog-footer">
+                <cv-button class="cancel-btn" @click="cancel">{{ t('fw.common.cancel') }}</cv-button>
+                <cv-button type="primary" @click="handleSubmit">{{ t('fw.common.sure') }}</cv-button>
+            </div>
+        </template>
+    </cv-dialog>
     <cv-dialog-form v-model="historyVisible" :title="t('fw.monitor.historyData')" :z-index="1000" width="1000">
         <div class="history-header">
             <el-radio-group v-model="tabPosition" style="margin-bottom: 30px">
@@ -183,10 +192,11 @@ const historyChartData = ref<chartParams>({
     data: [],
 });
 const historyTableData = ref<any>([]);
+const formRef = ref();
 const formData = ref<
     Partial<{
         pid: string;
-        value: string;
+        value: string | number;
         name: string;
         checkpwd: string;
     }>
@@ -198,10 +208,13 @@ const title = computed(() => {
 
 const monitor = (records: any) => {
     const {pointID, ctlvalue, name} = records;
+    formData.value = {
+        value: ctlvalue,
+        name,
+        pid: pointID,
+        checkpwd: '',
+    };
     visible.value = true;
-    formData.value.value = ctlvalue;
-    formData.value.name = name;
-    formData.value.pid = pointID;
 };
 
 const history = (records: any) => {
@@ -275,9 +288,14 @@ const initPage = (pageInfo?: {currentPage?: number; pageSize?: number}) => {
 };
 const cancel = () => {
     visible.value = false;
+    formRef.value?.resetFields?.();
     formData.value = {};
 };
-const submit = async () => {
+const handleSubmit = async () => {
+    const valid = await formRef.value?.validate?.().catch(() => false);
+    if (!valid) {
+        return;
+    }
     const {did, rid} = props;
     const {checkpwd, pid, value} = formData.value;
     const data = {value, checkpwd};
@@ -287,6 +305,8 @@ const submit = async () => {
     if (res.state) {
         CvMessage.success(t('fw.common.operateSuccess'));
         cancel();
+    } else {
+        CvMessage.error(res.data?.msg || t('fw.common.operateFailed'));
     }
 };
 
@@ -296,10 +316,6 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.cv-form-item {
-    margin-bottom: 12px !important;
-}
-
 .container {
     width: 100%;
     height: 100%;
@@ -324,5 +340,74 @@ defineExpose({
 .history-header {
     display: flex;
     justify-content: space-between;
+}
+
+.dialog-form {
+    padding: 8px 24px 0;
+
+    :deep(.el-form-item) {
+        margin-bottom: 22px;
+    }
+
+    :deep(.el-form-item__label) {
+        color: #1a2233;
+    }
+
+    :deep(.el-input__wrapper),
+    :deep(.el-select__wrapper),
+    :deep(.el-input-number) {
+        min-height: 36px;
+        border-radius: 6px;
+    }
+
+    :deep(.el-input-number) {
+        width: 100%;
+    }
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.cancel-btn {
+    color: #3162e1;
+    border-color: #3162e1;
+    background: #fff;
+
+    &:hover,
+    &:focus {
+        color: #3162e1;
+        border-color: #3162e1;
+        background: rgb(49 98 225 / 6%);
+    }
+}
+</style>
+
+<style lang="scss">
+.dispatch-dialog.el-dialog {
+    border-radius: 12px;
+    overflow: hidden;
+
+    .el-dialog__header {
+        padding: 20px 24px 12px;
+        margin-right: 0;
+    }
+
+    .el-dialog__title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a2233;
+    }
+
+    .el-dialog__body {
+        padding: 8px 16px 12px;
+    }
+
+    .el-dialog__footer {
+        padding: 12px 24px 20px;
+    }
 }
 </style>

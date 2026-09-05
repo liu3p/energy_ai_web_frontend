@@ -7,7 +7,8 @@
             </div>
             <div style="margin-top: 8px;">{{ t('fw.systemPages.rtuOnlineTotal') }}</div>
             <div class="bold-text">
-                <p v-for="(item, i) in systemDevice.device" :key="i">{{ item.rtuname }}
+                <p v-for="(item, i) in systemDevice.onlineDevices" :key="`online-${i}`">
+                    {{ item.rtuname }}
                     <span v-if="item.device?.length">（
                         <span v-for="(dev, ci) in item.device" :key="ci">{{ dev }}
                             <i v-if="ci !== item.device.length - 1">、</i>
@@ -16,6 +17,16 @@
                 </p>
             </div>
             <div style="margin-top: 8px;">{{ t('fw.systemPages.offlineDevices') }}</div>
+            <div class="bold-text">
+                <p v-for="(item, i) in systemDevice.offlineDevices" :key="`offline-${i}`">
+                    {{ item.rtuname }}
+                    <span v-if="item.device?.length">（
+                        <span v-for="(dev, ci) in item.device" :key="ci">{{ dev }}
+                            <i v-if="ci !== item.device.length - 1">、</i>
+                        </span>
+                    ）</span>
+                </p>
+            </div>
         </cv-scrollbar>
     </div>
 </template>
@@ -31,29 +42,33 @@ const deviceSocket = ref<WebsocketClass>();
 const systemDevice = ref<{
     connectCount: number;
     deviceTotal: number;
-    device: any[];
+    onlineDevices: any[];
+    offlineDevices: any[];
 }>({
     connectCount: 0,
-    device: [],
     deviceTotal: 0,
+    onlineDevices: [],
+    offlineDevices: [],
 });
 
 function onDeviceMessage(data: any) {
     if (data) {
         const response = JSON.parse(data) ?? [];
-        const deviceAccount = {
-            connectCount: 0,
-            deviceTotal: response.length ?? 0,
-            device: [] as any[],
-        };
-        response.map(rtu => {
-            if (rtu.connected === 1) {
-                deviceAccount.connectCount += 1;
-            } else if (rtu.connected === 0) {
-                deviceAccount.device.push(rtu);
+        const onlineDevices: any[] = [];
+        const offlineDevices: any[] = [];
+        response.forEach((rtu: any) => {
+            if (rtu.connected === 0) {
+                onlineDevices.push(rtu);
+            } else {
+                offlineDevices.push(rtu);
             }
         });
-        systemDevice.value = deviceAccount;
+        systemDevice.value = {
+            connectCount: onlineDevices.length,
+            deviceTotal: response.length ?? 0,
+            onlineDevices,
+            offlineDevices,
+        };
     }
 }
 

@@ -18,6 +18,8 @@
                 :label="col.label"
                 :width="col.width"
                 :fixed="col.fixed"
+                :class-name="isHighlightColumn(col.prop) ? 'col-highlight' : ''"
+                :label-class-name="isHighlightColumn(col.prop) ? 'col-highlight' : ''"
             >
                 <template v-if="col.prop === 'index'" #default="{row, $index}">
                     <span>{{ $index + 1 }}</span>
@@ -146,6 +148,9 @@ const currentTableData = computed(() => {
 });
 
 const isTransfer = computed(() => isTransferRtu(props.rid));
+
+const highlightColumnProps = new Set(['datatype', 'code', 'bitoffset']);
+const isHighlightColumn = (prop: string) => highlightColumnProps.has(prop);
 
 const tableConfig = computed(() => tableConfigs[props.active]);
 
@@ -419,6 +424,11 @@ defineExpose({
         font-weight: 500;
         background: #fff !important;
         border-bottom: 1px solid #ebeef5;
+    }
+
+    :deep(.el-table__header .el-table__cell.col-highlight),
+    :deep(.el-table__body .el-table__cell.col-highlight) {
+        background: #e8f3ff !important;
     }
 
     :deep(.el-table__row) {

@@ -21,7 +21,7 @@
                         {{ t('fw.monitor.stopListen') }}
                     </cv-button>
                     <cv-button @click="clearBoard">{{ t('fw.monitor.clearMessage') }}</cv-button>
-                    <cv-button type="warning">{{ t('fw.monitor.restartChannel') }}</cv-button>
+                    <cv-button type="warning" @click="restartChannel">{{ t('fw.monitor.restartChannel') }}</cv-button>
                 </cv-form-item>
                 <cv-form-item class="channel-stats-item">
                     <cv-button type="danger" @click="statsVisible = true">{{ t('fw.monitor.channelStats') }}</cv-button>
@@ -63,9 +63,11 @@ import {
     getChannelByRtu,
     initChannelReportWebsocket,
     initChannelStatusWebsocket,
-    getAllChannel
+    getAllChannel,
+    restartChannels,
 } from '@/modules/main/capture/monitor/monitor.service';
 import DeviceStats from '@/modules/main/capture/monitor/device-stats.vue';
+import {CvMessage, CvMessageBox} from 'cloudview.ui-next';
 
 const { t } = useLocale();
 const props = defineProps<{ rid: string; node: any }>();
@@ -184,6 +186,37 @@ const clearBoard = () => {
 const stop = () => {
     reportConnected.value = false;
     closeReportSocket();
+};
+
+const restartChannel = () => {
+    ruleFormRef.value.validate(async (valid: boolean) => {
+        if (!valid) {
+            return;
+        }
+        try {
+            await CvMessageBox.confirm(t('fw.systemPages.confirmRestart'), t('fw.monitor.restartChannel'), {
+                type: 'warning',
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+            });
+        } catch {
+            return;
+        }
+        const row = channelOptions.value!.find(
+            channelgroup => channelgroup.channelgroupid === formData.value.channelgroup
+        )!;
+        const res = await restartChannels([
+            {
+                channel_group_id: Number(formData.value.channelgroup),
+                channel_ids: [Number(row.id)],
+            },
+        ]);
+        if (res.state) {
+            CvMessage.success(t('fw.common.operateSuccess'));
+        } else {
+            CvMessage.error(res.data?.msg || t('fw.common.operateFailed'));
+        }
+    });
 };
 
 function close() {

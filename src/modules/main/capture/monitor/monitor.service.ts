@@ -76,6 +76,12 @@ export const getAllChannel = (): Promise<Response<any>> => {
     return http.get(`/log/dbcfg/channels`);
 };
 
+export const restartChannels = (
+    data: {channel_group_id: number | string; channel_ids: Array<number | string>}[]
+): Promise<Response<any>> => {
+    return http.post(`/log/fecfg/channels/restart`, data);
+};
+
 
 export const monitorControl = (rid: string, did: string, pid: string, data: any): Promise<Response<any>> => {
     return http.post(`/log/datamonitor/rtu/${rid}/device/${did}/point/${pid}/control`, data);
