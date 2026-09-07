@@ -7,7 +7,18 @@ export const queryRtuList = (): Promise<Response<any>> => {
 };
 //获取所有rtu信息（不包含测点）
 export const queryRtuListExceptPoints = (): Promise<Response<any>> => {
-    return http.get('/log/dbcfg/rtus/except_points');
+    return http.get('/log/dbcfg/rtus/except_points').then(res => {
+        if (res.state && Array.isArray(res.data)) {
+            res.data = res.data.map((item: any) => ({
+                ...item,
+                possibleowner: {
+                    ...(item.possibleowner || {}),
+                    id: 1,
+                },
+            }));
+        }
+        return res;
+    });
 };
 
 //查询全部rtu信息

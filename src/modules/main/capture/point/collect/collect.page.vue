@@ -149,7 +149,7 @@ const currentTableData = computed(() => {
 
 const isTransfer = computed(() => isTransferRtu(props.rid));
 
-const highlightColumnProps = new Set(['datatype', 'code', 'bitoffset']);
+const highlightColumnProps = new Set(['register', 'datatype', 'code', 'bitoffset']);
 const isHighlightColumn = (prop: string) => highlightColumnProps.has(prop);
 
 const tableConfig = computed(() => tableConfigs[props.active]);

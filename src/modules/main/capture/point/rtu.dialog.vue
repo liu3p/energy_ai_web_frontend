@@ -31,13 +31,6 @@
                     />
                 </cv-select>
             </cv-form-item>
-            <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
-                <cv-input
-                    v-model.trim="formData.memofcabinet"
-                    :placeholder="t('fw.common.pleaseInput')"
-                    class="w-full"
-                />
-            </cv-form-item>
         </cv-form>
         <template #footer>
             <div class="dialog-footer">
