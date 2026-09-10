@@ -19,7 +19,10 @@
             <span>{{ t('fw.common.clear') }}</span>
           </cv-button>
           <div class="extra">
-            <cv-button size="mini" v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="handleAdd">
+            <cv-button class="primary-btn add-btn" size="mini" v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="handleAdd">
+              <svg class="add-btn__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
               <span>{{ t('fw.capturePoint.add') }}</span>
             </cv-button>
             <cv-button class="primary-btn" size="mini" v-else @click="fileImportRef.open()">
@@ -93,11 +96,10 @@ import {
   updatePoint,
   importExcelPoints,
 } from '@/modules/main/capture/point/point.service';
-import {pointType} from '@/modules/main/capture/point/point.model';
+import {pointType, isAgcRtu, isTransferRtu, isCalcRtu} from '@/modules/main/capture/point/point.model';
 import axios from 'axios';
 import _ from 'lodash';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
-import {isAgcRtu, isTransferRtu} from '@/modules/main/capture/point/point.model';
 
 const {t} = useLocale();
 
@@ -125,7 +127,7 @@ const renderCount = ref(-1);
 const loading = ref(false);
 const panes = computed(() =>
   pointType
-    .filter(item => item.name !== 'attribute')
+    // .filter(item => item.name !== 'attribute')
     .map(item => ({
       ...item,
       label: t(`fw.monitor.pointType.${item.name}`),
@@ -136,7 +138,7 @@ const initDevicePoints = (init = true) => {
   const rid = props.node.parent.data.id;
   const did = props.node.data.id;
   const type = activeName.value;
-  queryDevicePoints(rid, did, type).then(res => {
+  return queryDevicePoints(rid, did, type).then(res => {
     if (res.state) {
       rowPointsData.value = res.data || {};
       pointsData.value = {...rowPointsData.value};
@@ -145,8 +147,23 @@ const initDevicePoints = (init = true) => {
       selectedCount.value = 0;
       collectRef.value?.clearSelection();
     }
+    return res;
   });
 };
+
+/** 计算量 RTU(900)：检查导入后测点计算点是否均为 1 */
+const hasInvalidCalculatedPoint = async (rtuId: string | number, deviceId: string | number) => {
+  const types = ['analog', 'digital', 'pulse'] as const;
+  const results = await Promise.all(types.map(type => queryDevicePoints(String(rtuId), String(deviceId), type)));
+  return results.some(res => {
+    if (!res.state) return false;
+    return types.some(type => {
+      const list = res.data?.[type] ?? [];
+      return list.some((point: any) => String(point?.calculated) !== '1');
+    });
+  });
+};
+
 watch(
     () => props.node,
     node => {
@@ -172,8 +189,18 @@ const handleImportPoints = async (file: File) => {
   const did = props.node.data.id;
   const res = await importExcelPoints(rid, did, file);
   if (res.state) {
-    initDevicePoints(false);
-    CvMessage.success(t('fw.capturePoint.importSuccess'));
+    await initDevicePoints(false);
+    // 计算量 RTU(id=900)：计算点必须为 1；不满足时提示，但点表仍继续导入
+    if (isCalcRtu(rid) || String(rid) === '900') {
+      const invalid = await hasInvalidCalculatedPoint(rid, did);
+      if (invalid) {
+        CvMessage.warning(t('fw.capturePoint.calculatedMustBeOne'));
+      } else {
+        CvMessage.success(t('fw.capturePoint.importSuccess'));
+      }
+    } else {
+      CvMessage.success(t('fw.capturePoint.importSuccess'));
+    }
     renderCount.value = 1;
   } else {
     CvMessage.error(res.data.msg || t('fw.capturePoint.importFailed'));
@@ -448,5 +475,19 @@ const handleExport = () => {
 .primary-btn {
   color: #2978FF;
   border-color: #2978FF;
+}
+
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+
+  &__icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+    color: #2978FF;
+    transform: translateY(-1px);
+    flex-shrink: 0;
+  }
 }
 </style>

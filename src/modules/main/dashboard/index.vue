@@ -3,7 +3,7 @@
         <div class="container-top">
             <div class="card-contain card1">
                 <div class="card-contain__header">
-                    监控数据
+                    {{ t('fw.dashboard.monitorData') }}
                 </div>
                 <div class="card-contain__body  ">
                     <monitor v-if="configData" :topology="configData.topology" />
@@ -11,9 +11,9 @@
             </div>
             <div class="card-contain card2">
                 <div class="card-contain__header">
-                    实时功率
+                    {{ t('fw.dashboard.realtimePower') }}
                     <div class="header-select">
-                        <el-select v-model="value" placeholder="Select" style="width: 100px">
+                        <el-select v-model="value" :placeholder="t('fw.common.pleaseSelect')" style="width: 140px">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
@@ -29,7 +29,7 @@
         <div class="container-middle">
             <div class="card-contain  card3">
                 <div class="card-contain__header">
-                    基本信息
+                    {{ t('fw.dashboard.basicInfo') }}
                 </div>
                 <div class="card-contain__body">
                     <div class="baseInfo-content" v-if="configData">
@@ -42,7 +42,7 @@
             </div>
             <div class="card-contain card4">
                 <div class="card-contain__header">
-                    实时数据
+                    {{ t('fw.dashboard.realtimeData') }}
                 </div>
                 <div class="card-contain__body ">
                     <div class="realtimeData-content" v-if="configData">
@@ -57,7 +57,7 @@
         <div class="container-bottom">
             <div class="card-contain card5">
                 <div class="card-contain__header">
-                    充放电量与效率
+                    {{ t('fw.dashboard.chargeDischargeEfficiency') }}
                     <div class="header-select">
                         <el-date-picker v-model="powerLevelDate" @change="getPowerLevel" type="month" :editable="false"
                             :clearable='false' style="width: 120px;" />
@@ -71,12 +71,15 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted } from 'vue';
+import { ref, computed, onUnmounted, onMounted } from 'vue';
+import { useLocale } from 'cloudview.ui-next';
 import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
 import charts from '@/modules/main/dashboard/charts.vue';
 import monitor from '@/modules/main/dashboard/monitor.vue';
 import { webSocket } from '@/common/websocket/websocket';
 import moment from 'moment';
+
+const { t } = useLocale();
 
 type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar', color?: string, data: (number | string)[] }[] };
 const configData = ref();
@@ -88,15 +91,15 @@ const powerLevelData = ref<chartParams>({
     xAxis: [],
     data: []
 });
-const value = ref('全站')
-const powerLevelDate = ref(new Date())
-const realTimeDate = ref(new Date())
-const options = [
+const value = ref('all');
+const powerLevelDate = ref(new Date());
+const realTimeDate = ref(new Date());
+const options = computed(() => [
     {
-        value: '全站',
-        label: '全站',
+        value: 'all',
+        label: t('fw.dashboard.wholeStation'),
     },
-]
+]);
 const getRealTime = async () => {
     realTimeData.value = {
         xAxis: [],
@@ -316,6 +319,11 @@ $gap: 24px;
     padding: 0px 16px;
     height: 100%;
     overflow-y: auto;
+}
+
+.card2 .card-contain__body,
+.card5 .card-contain__body {
+    padding: 12px 16px 16px;
 }
 
 .baseInfo-content {

@@ -11,18 +11,29 @@
                 {{ t('fw.capturePoint.batchTips') }}
             </div>
             <cv-form-item :label="t('fw.capturePoint.selectRows')" prop="lines" style="margin-bottom: 24px;">
-                <cv-input v-model.trim="formData.lines" class="w-cm" :placeholder="t('fw.common.pleaseInput')">
-                    <template #append>
-                        <cv-select v-model="formData.unit" style="width: 80px" :disabled="formData.mode === 1">
-                            <cv-option
-                                v-for="item in lineUnitOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </cv-select>
-                    </template>
-                </cv-input>
+                <div class="lines-row">
+                    <cv-input v-model.trim="formData.lines" class="w-cm" :placeholder="t('fw.common.pleaseInput')">
+                        <template #append>
+                            <cv-select v-model="formData.unit" style="width: 80px" :disabled="formData.mode === 1">
+                                <cv-option
+                                    v-for="item in lineUnitOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                            </cv-select>
+                        </template>
+                    </cv-input>
+                    <cv-button
+                        v-if="formData.unit === 1"
+                        type="primary"
+                        plain
+                        :disabled="totalRows <= 0"
+                        @click="selectAllRows"
+                    >
+                        {{ t('fw.capturePoint.selectAll') }}
+                    </cv-button>
+                </div>
             </cv-form-item>
             <cv-form-item v-if="type === 'text'" :label="t('fw.capturePoint.replaceMode')" prop="mode" style="margin-bottom: 24px;">
                 <cv-select v-model.trim="formData.mode" :placeholder="t('fw.common.pleaseSelect')" class="w-cm" @change="modeChange">
@@ -81,6 +92,7 @@ const formRef = ref();
 const options = ref<any[]>([]);
 const key = ref();
 const type = ref();
+const totalRows = ref(0);
 const emit = defineEmits(['submit']);
 const visible = ref(false);
 // 默认mode为相同值
@@ -153,18 +165,26 @@ const modeChange = (e: number) => {
     }
 };
 
-const open = (keywords: string,inputType: string,data?: any) => {
+const selectAllRows = () => {
+    if (totalRows.value <= 0) return;
+    formData.value.unit = 1;
+    formData.value.lines = `1-${totalRows.value}`;
+    formRef.value?.clearValidate?.('lines');
+};
+
+const open = (keywords: string, inputType: string, data?: any, total?: number) => {
     if(inputType === 'switch') formData.value.value = 1;
     type.value = inputType;
     key.value = keywords;
     options.value = data;
+    totalRows.value = Number(total) > 0 ? Number(total) : 0;
     visible.value = true;
 };
 
 const submit = () => {
     const {unit,lines,mode,value,startValue,step} = formData.value;
-    const map: Map<number, unknown> = new Map();
-    const ranges = [];
+    const map: Map<number, string> = new Map();
+    const ranges: number[] = [];
     if(unit === 0) {
         const list = lines.split(',');
         [...new Set(list)].forEach(line => {
@@ -177,18 +197,20 @@ const submit = () => {
         }
     }
     if(mode === 0) {
+        const strValue = value === undefined || value === null ? '' : String(value);
         ranges.forEach(item => {
-            map.set(item,value);
+            map.set(item, strValue);
         });
+        emit('submit', key.value, map, strValue);
     } else {
-        let current = parseInt(startValue as string)
-        let gap = parseInt(step as string)
+        let current = parseInt(startValue as string);
+        let gap = parseInt(step as string);
         ranges.forEach(item => {
-            map.set(item,current)
+            map.set(item, String(current));
             current += gap;
         });
+        emit('submit', key.value, map, String(value ?? ''));
     }
-    emit('submit', key.value,map,value);
     cancel();
 };
 
@@ -205,6 +227,7 @@ const cancel = () => {
     type.value = null;
     key.value = null;
     options.value = [];
+    totalRows.value = 0;
     formData.value = {
         lines: '',
         value: '',
@@ -222,6 +245,12 @@ defineExpose({
 <style lang="scss" scoped>
 .w-cm {
     width: 320px;
+}
+
+.lines-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .tips {

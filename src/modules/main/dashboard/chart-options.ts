@@ -56,7 +56,7 @@ export const initOptions = (options?: chartParams): LineOption & {
         legend: {
             data: legendData,
             right: 10,
-            top: 0,
+            top: 4,
             itemWidth: 10,
             itemGap: 20,
             textStyle: {
@@ -66,8 +66,8 @@ export const initOptions = (options?: chartParams): LineOption & {
         grid: {
             left: '20px',
             right: '24px',
-            top: '30px',
-            bottom: '8px',
+            top: '38px',
+            bottom: '12px',
             containLabel: true,
         },
         xAxis: {

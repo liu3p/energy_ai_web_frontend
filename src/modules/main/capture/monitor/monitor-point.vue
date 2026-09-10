@@ -58,7 +58,7 @@ const formData = ref<{
 }>({});
 const panes = computed(() =>
     pointType
-        .filter(item => item.name !== 'attribute')
+        // .filter(item => item.name !== 'attribute')
         .map(item => ({
             ...item,
             label: t(`fw.monitor.pointType.${item.name}`),

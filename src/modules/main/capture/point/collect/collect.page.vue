@@ -34,7 +34,7 @@
                     <cv-icon
                         color="#fff"
                         style="cursor: pointer; margin-left: 4px"
-                        @click="batchRef.open(col.prop, 'select', col.selectOptions)"
+                        @click="batchRef.open(col.prop, 'select', col.selectOptions, currentTableData.length)"
                     >
                         <icon-edit></icon-edit>
                     </cv-icon>
@@ -45,7 +45,7 @@
                     <cv-icon
                         color="#fff"
                         style="cursor: pointer; margin-left: 4px"
-                        @click="batchRef.open(col.prop, 'text')"
+                        @click="batchRef.open(col.prop, 'text', undefined, currentTableData.length)"
                     >
                         <icon-edit></icon-edit>
                     </cv-icon>
@@ -268,10 +268,11 @@ const handleToggleRowChange = () => {
     });
 }
 
-const handleSubmit = (key: string, map: Map<number, string>, value: any) => {
+const handleSubmit = (key: string, map: Map<number, string>) => {
     currentTableData.value.forEach((item: any, index) => {
         if (map.has(index + 1)) {
-            item[key] = map.get(index + 1);
+            const next = map.get(index + 1);
+            item[key] = next === undefined || next === null ? '' : String(next);
         }
     });
 };

@@ -3,96 +3,88 @@
         ref="drawerRef"
         v-model="visible"
         :title="t('fw.capturePoint.editFormula')"
-        size="1300px"
+        size="720px"
         @close="handleClose"
     >
         <div class="drawer-content">
-            <div class="drawer-content-left">
-                <div class="form-wrapper">
-                    <cv-form ref="formRef" :inline="true" label-position="top" :model="formData" :rules="rules">
-                        <cv-form-item :label="t('fw.capturePoint.calcType')" prop="calctype">
-                            <cv-select v-model="formData.calctype" style="width: 160px;">
-                                <cv-option :label="t('fw.capturePoint.period')" value="0"></cv-option>
-                                <cv-option :label="t('fw.capturePoint.trigger')" value="1"></cv-option>
-                            </cv-select>
-                        </cv-form-item>
-                        <cv-form-item prop="calccycle" :label="t('fw.capturePoint.calcCycle')" v-if="formData.calctype === '0'">
-                            <cv-input v-model="formData.calccycle"
-                                      style="width: 160px;"></cv-input>
-                        </cv-form-item>
-                        <cv-form-item prop="triggerpoint" :label="t('fw.capturePoint.triggerPoint')" v-if="formData.calctype === '1'">
-                            <cv-select v-model="formData.triggerpoint" @click="pickPointRef.open(true,formData.triggerpoint)"
-                                       style="width: 160px;">
-                            </cv-select>
-                        </cv-form-item>
-                        <cv-form-item prop="triggertype" :label="t('fw.capturePoint.triggerType')" v-if="formData.calctype === '1'">
-                            <cv-select v-model="formData.triggertype" style="width: 160px;">
-                                <cv-option :label="t('fw.capturePoint.changeOpen')" value="0"></cv-option>
-                                <cv-option :label="t('fw.capturePoint.changeClose')" value="1"></cv-option>
-                                <cv-option :label="t('fw.capturePoint.changeBoth')" value="2"></cv-option>
-                            </cv-select>
-                        </cv-form-item>
-                    </cv-form>
-                </div>
-                <div style="height: calc(100% - 64px)">
-                    <div class="block-header">
-                        <span>{{ t('fw.capturePoint.varDefine') }}</span>
-                        <cv-button @click="addRow">{{ t('fw.capturePoint.addVariable') }}</cv-button>
-                    </div>
-                    <cv-table :data="tableData" style="width: 100%">
-                        <cv-table-column prop="name" :label="t('fw.capturePoint.varName')" width="180px" />
-                        <cv-table-column prop="datasource" :label="t('fw.capturePoint.mapPoint')">
-                            <template #default="{row}">
-                                <cv-select v-model="row.datasource" @click="currentRow = row;pickPointRef.open(false,row.datasource)">
-                                </cv-select>
-                            </template>
-                        </cv-table-column>
-                        <cv-table-column prop="mockValue" :label="t('fw.capturePoint.mockValue')" width="180px">
-                            <template #default="{row}">
-                                <cv-input-number
-                                    v-model="row.mockValue"
-                                />
-                            </template>
-                        </cv-table-column>
-                        <cv-table-column :label="t('fw.common.operation')" width="100px">
-                            <template #default="{$index}">
-                                <cv-button type="primary" link @click="delRow($index)">{{ t('fw.common.delete') }}</cv-button>
-                            </template>
-
-                        </cv-table-column>
-                    </cv-table>
-                </div>
+            <div class="form-wrapper">
+                <cv-form ref="formRef" :inline="true" label-position="top" :model="formData" :rules="rules">
+                    <cv-form-item :label="t('fw.capturePoint.calcType')" prop="calctype">
+                        <cv-select v-model="formData.calctype" style="width: 160px;" @change="onCalcTypeChange">
+                            <cv-option :label="t('fw.capturePoint.period')" value="0"></cv-option>
+                            <cv-option :label="t('fw.capturePoint.trigger')" value="1"></cv-option>
+                        </cv-select>
+                    </cv-form-item>
+                    <cv-form-item prop="calccycle" :label="t('fw.capturePoint.calcCycle')" v-if="formData.calctype === '0'">
+                        <cv-input
+                            v-model="formData.calccycle"
+                            style="width: 160px;"
+                            @blur="normalizeCalcCycle"
+                        />
+                    </cv-form-item>
+                    <cv-form-item prop="triggerpoint" :label="t('fw.capturePoint.triggerPoint')" v-if="formData.calctype === '1'">
+                        <cv-select v-model="formData.triggerpoint" @click="pickPointRef.open(true,formData.triggerpoint)"
+                                   style="width: 160px;">
+                        </cv-select>
+                    </cv-form-item>
+                    <cv-form-item prop="triggertype" :label="t('fw.capturePoint.triggerType')" v-if="formData.calctype === '1'">
+                        <cv-select v-model="formData.triggertype" style="width: 160px;">
+                            <cv-option :label="t('fw.capturePoint.changeOpen')" value="0"></cv-option>
+                            <cv-option :label="t('fw.capturePoint.changeClose')" value="1"></cv-option>
+                            <cv-option :label="t('fw.capturePoint.changeBoth')" value="2"></cv-option>
+                        </cv-select>
+                    </cv-form-item>
+                </cv-form>
             </div>
-            <div class="drawer-content-right">
-                <div class="block-header">
-                    <span>
-                        {{ t('fw.capturePoint.formulaDesc') }}
-                        <span class="verify-success" v-if="checkResult.content">{{ checkResult.content }}</span>
-                        <span class="verify-error" v-if="checkResult.err">{{ checkResult.err }}</span>
-                    </span>
-                    <cv-button @click="check">{{ t('fw.capturePoint.verifyFormula') }}</cv-button>
-                </div>
-                <div>
-                    <cv-input
-                        v-model="formData.info"
-                        :rows="4"
-                        type="textarea"
-                        :placeholder="t('fw.capturePoint.formulaPlaceholder')"
-                    />
-                </div>
-                <div class="block-header">
-                    <span>{{ t('fw.capturePoint.mockCalc') }}</span>
-                    <cv-button>{{ t('fw.capturePoint.mockCalc') }}</cv-button>
-                </div>
-                <div>
-                    <cv-input
-                        v-model="checkResult.result"
-                        disabled
-                        :rows="4"
-                        type="textarea"
-                    />
-                </div>
+            <div class="block-header">
+                <span>{{ t('fw.capturePoint.varDefine') }}</span>
+                <cv-button @click="addRow">{{ t('fw.capturePoint.addVariable') }}</cv-button>
             </div>
+            <cv-table :data="tableData" style="width: 100%">
+                <cv-table-column prop="name" :label="t('fw.capturePoint.varName')" width="140px" />
+                <cv-table-column prop="datasource" :label="t('fw.capturePoint.mapPoint')">
+                    <template #default="{row}">
+                        <cv-select v-model="row.datasource" @click="currentRow = row;pickPointRef.open(false,row.datasource)">
+                        </cv-select>
+                    </template>
+                </cv-table-column>
+                <cv-table-column prop="mockValue" :label="t('fw.capturePoint.mockValue')" width="160px">
+                    <template #default="{row}">
+                        <cv-input-number
+                            v-model="row.mockValue"
+                        />
+                    </template>
+                </cv-table-column>
+                <cv-table-column :label="t('fw.common.operation')" width="80px">
+                    <template #default="{$index}">
+                        <cv-button type="primary" link @click="delRow($index)">{{ t('fw.common.delete') }}</cv-button>
+                    </template>
+                </cv-table-column>
+            </cv-table>
+            <div class="block-header">
+                <span>
+                    {{ t('fw.capturePoint.formulaDesc') }}
+                    <span class="verify-success" v-if="checkResult.content">{{ checkResult.content }}</span>
+                    <span class="verify-error" v-if="checkResult.err">{{ checkResult.err }}</span>
+                </span>
+                <cv-button @click="check">{{ t('fw.capturePoint.verifyFormula') }}</cv-button>
+            </div>
+            <cv-input
+                v-model="formData.info"
+                :rows="4"
+                type="textarea"
+                :placeholder="t('fw.capturePoint.formulaPlaceholder')"
+            />
+            <div class="block-header">
+                <span>{{ t('fw.capturePoint.mockCalc') }}</span>
+                <cv-button>{{ t('fw.capturePoint.mockCalc') }}</cv-button>
+            </div>
+            <cv-input
+                v-model="checkResult.result"
+                disabled
+                :rows="4"
+                type="textarea"
+            />
         </div>
         <template #footer>
             <div class="demo-drawer__footer">
@@ -112,17 +104,55 @@ import {checkFormula, getFormula, updateFormula} from '@/modules/main/capture/po
 
 const {t} = useLocale();
 
+const DEFAULT_CALC_CYCLE = '5';
+const MIN_CALC_CYCLE = 1;
+const MAX_CALC_CYCLE = 100000;
+
+const isValidCalcCycle = (value: string | number | undefined | null) => {
+    if (value === undefined || value === null || value === '') return false;
+    const num = Number(value);
+    return Number.isInteger(num) && num >= MIN_CALC_CYCLE && num <= MAX_CALC_CYCLE;
+};
+
+const normalizeCalcCycle = () => {
+    if (formData.value.calctype !== '0') return;
+    if (!isValidCalcCycle(formData.value.calccycle)) {
+        formData.value.calccycle = DEFAULT_CALC_CYCLE;
+        CvMessage.warning(t('fw.capturePoint.calcCycleRange'));
+    } else {
+        formData.value.calccycle = String(Number(formData.value.calccycle));
+    }
+};
+
+const onCalcTypeChange = (value: string) => {
+    if (value === '0' && !isValidCalcCycle(formData.value.calccycle)) {
+        formData.value.calccycle = DEFAULT_CALC_CYCLE;
+    }
+};
+
 const rules = computed(() => ({
     calctype: {
         required: true,
         trigger: 'blur',
         message: t('fw.capturePoint.calcTypeRequired'),
     },
-    calccycle: {
-        required: true,
-        trigger: 'blur',
-        message: t('fw.capturePoint.calcCycleRequired'),
-    },
+    calccycle: [
+        {
+            required: true,
+            trigger: 'blur',
+            message: t('fw.capturePoint.calcCycleRequired'),
+        },
+        {
+            trigger: 'blur',
+            validator: (_rule: unknown, value: string, callback: (error?: Error) => void) => {
+                if (!isValidCalcCycle(value)) {
+                    callback(new Error(t('fw.capturePoint.calcCycleRange')));
+                    return;
+                }
+                callback();
+            },
+        },
+    ],
 }));
 const visible = ref(false);
 const pickPointRef = ref();
@@ -134,6 +164,7 @@ const formData = ref<{
     info?: string
 }>({
     calctype: '0',
+    calccycle: DEFAULT_CALC_CYCLE,
 });
 const tableData = ref<Partial<{name: string, datasource: string, mockValue: string}>[]>([]);
 const currentRow = ref();
@@ -207,6 +238,9 @@ const check = () => {
 };
 
 const saveFormula = () => {
+    if (formData.value.calctype === '0') {
+        normalizeCalcCycle();
+    }
     if (!checkResult.value.pass) {
         return CvMessage.warning(t('fw.capturePoint.pleaseVerifyFormula'));
     }
@@ -231,11 +265,22 @@ const saveFormula = () => {
 
 defineExpose({
     open(ids) {
+        formData.value = {
+            calctype: '0',
+            calccycle: DEFAULT_CALC_CYCLE,
+        };
+        tableData.value = [];
         if (ids.pid) {
             const {rid, did, pid} = ids;
             getFormula(rid, did, pid).then(res => {
                 if (res.state) {
-                    formData.value = res.data.formula;
+                    formData.value = {
+                        ...res.data.formula,
+                        calctype: res.data.formula?.calctype ?? '0',
+                        calccycle: isValidCalcCycle(res.data.formula?.calccycle)
+                            ? String(Number(res.data.formula.calccycle))
+                            : DEFAULT_CALC_CYCLE,
+                    };
                     tableData.value = res.data.factors;
                 }
             });
@@ -252,20 +297,8 @@ defineExpose({
 
 .drawer-content {
     width: 100%;
-    height: 100%;
     display: flex;
-    gap: 16px;
-    flex-direction: row;
-
-    &-left {
-        width: 700px;
-        height: 100%;
-    }
-
-    &-right {
-        width: calc(100% - 700px);
-        height: 100%;
-    }
+    flex-direction: column;
 }
 
 .block-header {
@@ -274,11 +307,11 @@ defineExpose({
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 16px 0;
+    margin: 20px 0 12px;
 }
 
 .form-wrapper {
-    height: 64px;
+    margin-bottom: 8px;
 }
 
 .verify-success {

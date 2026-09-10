@@ -54,7 +54,7 @@
             </div>
             <div class="main-contain">
                 <div class="main-contain__header">
-                    <span>{{ modelName }}</span>
+                    <span>{{ deviceTypeLabel }}</span>
                     <cv-button type="primary" :disabled="renderCount <= 0" @click="handleSubmit">
                         <cv-icon :size="16" color="transparent" style="cursor: pointer">
                             <icon-submit></icon-submit>
@@ -158,7 +158,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import {CvMessageBox, useLocale} from 'cloudview.ui-next';
 import ModelManagementDialog from './model-management.dialog.vue';
 import ModelManagementServiceApi from '@/modules/main/agc/model-management/model-management.service';
@@ -182,13 +182,26 @@ const treeRef = ref();
 const modelManageRef = ref();
 const pickPointRef = ref();
 const treeData = ref([]);
-const options = ref([]);
+const options = ref<string[]>([]);
 const formData = ref<any>({});
 const currentNode = ref<any>();
 const currentKey = ref('');
 const modelName = ref();
 const bindRecords = ref();
 const renderCount = ref(-1);
+
+/** 页头展示设备类型：走 i18n，未翻译时回退为大写英文 */
+const deviceTypeLabel = computed(() => {
+    const type = formData.value?.type;
+    if (!type) return '';
+    const upper = String(type).toUpperCase();
+    const matched = options.value.find(item => String(item).toUpperCase() === upper);
+    const keyType = matched ?? upper;
+    const i18nKey = `fw.modelManagement.deviceType.${keyType}`;
+    const label = t(i18nKey);
+    // 无对应文案时 vue-i18n 会回传 key 本身，此时用大写英文
+    return label === i18nKey ? keyType : label;
+});
 
 watch(
     () => formData.value,

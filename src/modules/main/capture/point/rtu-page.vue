@@ -5,7 +5,7 @@
         <div class="rtu-contain__header">
           <span>{{ t('fw.capturePoint.rtuInfo') }}</span>
           <cv-form-item style="margin: 0">
-            <cv-button size="mini" @click="save">{{ t('fw.capturePoint.save') }}</cv-button>
+            <cv-button type="primary" size="mini" @click="save">{{ t('fw.capturePoint.save') }}</cv-button>
           </cv-form-item>
         </div>
         <div class="rtu-contain__center">
@@ -21,9 +21,9 @@
           <cv-form-item :label="t('fw.capturePoint.rtuAddr')" prop="rtuaddr">
             <cv-input v-model.trim="form.rtuaddr" disabled/>
           </cv-form-item>
-          <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
+          <!-- <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
             <cv-input v-model.trim="form.memofcabinet" :controls="false" class="w-cm"/>
-          </cv-form-item>
+          </cv-form-item> -->
           <!-- <cv-form-item :label="t('fw.capturePoint.channelGroupId')" prop="channelgroupid">
             <cv-input v-model.trim="form.channelgroupid" disabled/>
           </cv-form-item>
@@ -57,7 +57,7 @@
                 <cv-input v-model="form.channel.name" disabled></cv-input>
               </cv-form-item>
               <cv-form-item :label="t('fw.capturePoint.channelId')">
-                <cv-input v-model="form.channel.id" disabled></cv-input>
+                <cv-input :model-value="form.channel?.id ?? form.channelgroupid" disabled></cv-input>
               </cv-form-item>
               <div>
                 <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
@@ -173,6 +173,10 @@ const form = ref<any>({
   rtuaddr: '',
   appPluginId: '',
   linkPluginId: '',
+  channel: {
+    name: '',
+    id: '',
+  },
 });
 
 const appPluginOptions = ref();
@@ -266,6 +270,12 @@ watch(() => props.data, (values) => {
     ...cloned,
     // 保留原始 type，展示时用字符串匹配，避免 number/string 不一致
     type: cloned?.type ?? '',
+    // 计算量等 RTU 可能没有 channel，避免访问 form.channel.name 报错
+    channel: {
+      name: '',
+      id: '',
+      ...(cloned?.channel ?? {}),
+    },
   };
   const plugins = values?.channel?.plugins ?? [];
   appPluginTable.value = {};

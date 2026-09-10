@@ -111,7 +111,7 @@ const renderCount = ref(-1);
 const loading = ref(false);
 const panes = computed(() =>
     acgPointType
-        .filter(item => item.name !== 'attribute')
+        // .filter(item => item.name !== 'attribute')
         .map(item => ({
             ...item,
             label: t(`fw.monitor.pointType.${item.name}`),

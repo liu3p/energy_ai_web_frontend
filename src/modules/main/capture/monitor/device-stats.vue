@@ -57,7 +57,7 @@ function onDeviceMessage(data: any) {
         const onlineDevices: any[] = [];
         const offlineDevices: any[] = [];
         response.forEach((rtu: any) => {
-            if (rtu.connected === 0) {
+            if (rtu.connected !== 0) {
                 onlineDevices.push(rtu);
             } else {
                 offlineDevices.push(rtu);
