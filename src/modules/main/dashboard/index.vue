@@ -34,7 +34,7 @@
                 <div class="card-contain__body">
                     <div class="baseInfo-content" v-if="configData">
                         <div class="baseInfo-content-item" v-for="item, index in configData.basic_info" :key="index">
-                            <div class="item-name">{{ item.show_name }}</div>
+                            <div class="item-name">{{ getDisplayName(item) }}</div>
                             <div class="item-value" :style="`color:${item.color}`">{{ item.show_text }}</div>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                 <div class="card-contain__body ">
                     <div class="realtimeData-content" v-if="configData">
                         <div class="realtimeData-content-item" v-for="item, index in configData.realtime" :key="index">
-                            <div class="item-name">{{ item.show_name }}</div>
+                            <div class="item-name">{{ getDisplayName(item) }}</div>
                             <div class="item-value" :style="`color:${item.color}`">{{ item.show_text }}</div>
                         </div>
                     </div>
@@ -73,6 +73,7 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted, onMounted } from 'vue';
 import { useLocale } from 'cloudview.ui-next';
+import { currentLocale } from '@/common/locale';
 import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
 import charts from '@/modules/main/dashboard/charts.vue';
 import monitor from '@/modules/main/dashboard/monitor.vue';
@@ -80,6 +81,14 @@ import { webSocket } from '@/common/websocket/websocket';
 import moment from 'moment';
 
 const { t } = useLocale();
+
+/** 中文用 show_name，英文用 show_name_en（为空时回退中文名） */
+const getDisplayName = (item?: { show_name?: string; show_name_en?: string }) => {
+    if (!item) return '';
+    const isZh = currentLocale.value.startsWith('zh-');
+    if (isZh) return item.show_name || '';
+    return item.show_name_en || item.show_name || '';
+};
 
 type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar', color?: string, data: (number | string)[] }[] };
 const configData = ref();
@@ -139,7 +148,7 @@ const getRealTime = async () => {
                 });
             }
             realTimeData.value.data.push({
-                name: n1.show_name,
+                name: getDisplayName(n1),
                 type: "line",
                 data: result[i1].data.data.map((n3) => { return n3.data[n1.oid] }),
             })
@@ -185,7 +194,7 @@ const getPowerLevel = async () => {
                 });
             }
             powerLevelData.value.data.push({
-                name: n1.show_name,
+                name: getDisplayName(n1),
                 type: "bar",
                 data: result[i1].data.data.map((n3) => { return n3.data[n1.oid] }),
             })

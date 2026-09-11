@@ -1,11 +1,15 @@
 <template>
     <div class="empty" :class="className">
         <img src="../assets/empty.svg" alt="" :style="{height}" />
-        <div>暂无数据</div>
+        <div>{{ t('fw.common.noData') }}</div>
     </div>
 </template>
 
 <script setup lang="ts">
+import {useLocale} from 'cloudview.ui-next';
+
+const {t} = useLocale();
+
 defineProps({
     className: {
         type: String,

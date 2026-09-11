@@ -12,7 +12,7 @@
                     <cv-icon :size="14" style="margin-right: 3px" color="#062b45">
                         <icon-international></icon-international>
                     </cv-icon>
-                    {{ Locale.localeName === 'zh-CN' ? '中文' : 'English' }}
+                    {{ currentLocale.startsWith('zh-') ? '中文' : 'English' }}
                     <cv-icon-arrow-down class="arrow"></cv-icon-arrow-down>
                 </div>
                 <template #dropdown>
@@ -76,7 +76,7 @@ import {reactive, ref} from 'vue';
 import {CvMessage, useLocale} from 'cloudview.ui-next';
 import {User, Lock} from '@element-plus/icons-vue';
 import authService from '@/common/auth.service';
-import {Locale} from '@/common/locale';
+import {currentLocale, Locale} from '@/common/locale';
 import {IconInternational} from '@/icons/index';
 import router from '@/router';
 import {Token} from '@/common/token';

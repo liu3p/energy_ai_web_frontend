@@ -26,13 +26,13 @@
                     <cv-dropdown-menu>
                         <cv-dropdown-item
                             command="zh-CN"
-                            :class="{'is-selected': Locale.localeName === 'zh-CN'}"
+                            :class="{'is-selected': currentLocale.startsWith('zh-')}"
                         >
                             中文
                         </cv-dropdown-item>
                         <cv-dropdown-item
                             command="en-US"
-                            :class="{'is-selected': Locale.localeName !== 'zh-CN'}"
+                            :class="{'is-selected': !currentLocale.startsWith('zh-')}"
                         >
                             English
                         </cv-dropdown-item>
@@ -67,7 +67,7 @@
 import {computed, ref} from 'vue';
 import {useRoute} from 'vue-router';
 import {useLocale} from 'cloudview.ui-next';
-import {Locale} from '@/common/locale';
+import {currentLocale, Locale} from '@/common/locale';
 import router from '@/router';
 import {clearUserInfo, userInfo} from '@/common/user';
 import {Token} from '@/common/token';

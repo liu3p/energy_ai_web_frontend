@@ -283,7 +283,7 @@ onUnmounted(() => {
 }
 
 .channel-stats-dialog {
-    height: 360px;
+    height: auto;
 }
 
 .content-report {
@@ -319,7 +319,8 @@ onUnmounted(() => {
 <style lang="scss">
 .channel-stats-el-dialog.el-dialog {
     .el-dialog__body {
-        overflow: hidden;
+        overflow: visible;
+        max-height: none;
     }
 }
 </style>
