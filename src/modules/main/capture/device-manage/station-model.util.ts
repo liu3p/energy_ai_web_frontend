@@ -55,15 +55,15 @@ function getDispatchMode(type: string): DispatchMode | undefined {
 }
 
 /**
- * 12 种 type → 设备图（共用 7 张资源图）
- * 充电桩 / 光伏 / 并网点 / 空调 / 柴发 / PCS / BMS
+ * 12 种 type → 设备图
+ * 充电桩 / 光伏 / 空调 / 柴发 / PCS / BMS
  */
 const TYPE_ICON_MAP: Record<string, string> = {
     CHARGER: iconCharging,
     PVPCS: iconSolar,
-    INLINE: iconGrid,
-    STATION: iconGrid,
-    TRANSFORMER: iconGrid,
+    INLINE: iconSolar,
+    STATION: iconSolar,
+    TRANSFORMER: iconSolar,
     LIQUIDCOOL: iconAc,
     AIRCOOL: iconAc,
     LOAD: iconAc,
