@@ -223,7 +223,8 @@ const save = () => {
         channel: {
           ...restChannel,
           possibleowner: normalizePossibleOwnerIds(restChannel?.possibleowner),
-          plugins: [appplugin, linkplugin],
+          // 与 except_points 一致：只提交实际存在的插件，避免塞入 null
+          plugins: [appplugin, linkplugin].filter((plugin): plugin is NonNullable<typeof plugin> => plugin != null),
         },
       });
     }
