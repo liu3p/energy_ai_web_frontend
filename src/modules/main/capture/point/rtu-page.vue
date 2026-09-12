@@ -57,7 +57,7 @@
                 <cv-input v-model="form.channel.name" disabled></cv-input>
               </cv-form-item>
               <cv-form-item :label="t('fw.capturePoint.channelId')">
-                <cv-input :model-value="form.channel?.id ?? form.channelgroupid" disabled></cv-input>
+                <cv-input :model-value="form.channelgroupid" disabled></cv-input>
               </cv-form-item>
               <div>
                 <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
@@ -132,6 +132,7 @@ import {ref, reactive, watch, onMounted, computed} from 'vue';
 import _ from 'lodash';
 import {useLocale} from 'cloudview.ui-next';
 import {getRtuTypeById} from '@/modules/main/capture/point/point.model';
+import {normalizePossibleOwnerIds} from '@/modules/main/capture/point/point.service';
 import {getPlugins,} from '@/modules/main/capture/channel/channel.service';
 
 const {t} = useLocale();
@@ -221,6 +222,7 @@ const save = () => {
         ...restForm,
         channel: {
           ...restChannel,
+          possibleowner: normalizePossibleOwnerIds(restChannel?.possibleowner),
           plugins: [appplugin, linkplugin],
         },
       });

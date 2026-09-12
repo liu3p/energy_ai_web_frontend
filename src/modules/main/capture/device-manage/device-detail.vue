@@ -52,7 +52,7 @@ const emit = defineEmits<{
 }>();
 
 const typeLabel = computed(() => getTypeLabel(props.node.type));
-const deviceIcon = computed(() => getDeviceIcon(props.node.type, props.node.name));
+const deviceIcon = computed(() => getDeviceIcon(props.node.type));
 const paramGroups = computed(() => buildParamCardGroups(props.node.para, props.node.dyn_para));
 
 function formatValue(item: ParamCardItem): string {

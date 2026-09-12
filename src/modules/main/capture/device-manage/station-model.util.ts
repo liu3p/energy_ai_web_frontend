@@ -7,9 +7,23 @@ import iconPcs from '@/assets/device-manage-icons/img_PCS.png';
 import iconBms from '@/assets/device-manage-icons/img_BMS.png';
 import iconSolar from '@/assets/device-manage-icons/img_guangfu.png';
 import iconAc from '@/assets/device-manage-icons/img_kongtiao.png';
-import iconFire from '@/assets/device-manage-icons/img_xiaofang.png';
 
-const CHILD_KEYS = ['INLINE', 'TRANSFORMER', 'PCS', 'BMS', 'DEVICE', 'LIQUIDCOOL'];
+/** 设备树子节点容器 key（含 DEVICE 结构容器，实际节点 type 仍为 12 种之一） */
+const CHILD_KEYS = [
+    'AIRCOOL',
+    'BMS',
+    'CHARGER',
+    'DIESEL',
+    'DEVICE',
+    'INLINE',
+    'LIQUIDCOOL',
+    'LOAD',
+    'PCS',
+    'PVPCS',
+    'STATION',
+    'TRANSFORMER',
+    'TURBINE',
+];
 
 const PARAM_UNITS: Record<string, string> = {
     SOCHigh: '%',
@@ -40,36 +54,28 @@ function getDispatchMode(type: string): DispatchMode | undefined {
     return undefined;
 }
 
+/**
+ * 12 种 type → 设备图（共用 7 张资源图）
+ * 充电桩 / 光伏 / 并网点 / 空调 / 柴发 / PCS / BMS
+ */
 const TYPE_ICON_MAP: Record<string, string> = {
-    STATION: iconGrid,
+    CHARGER: iconCharging,
+    PVPCS: iconSolar,
     INLINE: iconGrid,
+    STATION: iconGrid,
     TRANSFORMER: iconGrid,
+    LIQUIDCOOL: iconAc,
+    AIRCOOL: iconAc,
+    LOAD: iconAc,
+    DIESEL: iconGenerator,
+    TURBINE: iconGenerator,
     PCS: iconPcs,
     BMS: iconBms,
-    LIQUIDCOOL: iconAc,
-    DEVICE: iconAc,
 };
 
-export function getDeviceIcon(type: string, name = ''): string {
-    const normalizedName = name.toLowerCase();
-
-    if (/充电桩|充电/.test(name)) {
-        return iconCharging;
-    }
-    if (/柴油|发电机|fadianji/.test(name) || normalizedName.includes('generator')) {
-        return iconGenerator;
-    }
-    if (/逆变|光伏|guangfu|inverter|pv/.test(name) || normalizedName.includes('inverter')) {
-        return iconSolar;
-    }
-    if (/消防|xiaofang/.test(name)) {
-        return iconFire;
-    }
-    if (/空调|水冷|kongtiao|负载|fuzai|load/.test(name)) {
-        return iconAc;
-    }
-
-    return TYPE_ICON_MAP[type] ?? iconGrid;
+export function getDeviceIcon(type: string): string {
+    const normalizedType = (type || '').toUpperCase();
+    return TYPE_ICON_MAP[normalizedType] ?? iconGrid;
 }
 
 export function extractStationPayload(data: unknown): StationNode | null {

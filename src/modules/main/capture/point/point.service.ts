@@ -5,16 +5,35 @@ import type {Response} from 'cloudview.ui-next';
 export const queryRtuList = (): Promise<Response<any>> => {
     return http.get('/log/dbcfg/rtus');
 };
+/** 将 possibleowner（数组或对象）中的 id 统一写死为 1，保持原结构 */
+export function normalizePossibleOwnerIds(possibleowner: unknown) {
+    if (Array.isArray(possibleowner)) {
+        return possibleowner.map((owner: any) => ({
+            ...(owner && typeof owner === 'object' ? owner : {}),
+            id: 1,
+        }));
+    }
+    if (possibleowner && typeof possibleowner === 'object') {
+        return {
+            ...(possibleowner as Record<string, unknown>),
+            id: 1,
+        };
+    }
+    return possibleowner;
+}
+
 //获取所有rtu信息（不包含测点）
 export const queryRtuListExceptPoints = (): Promise<Response<any>> => {
     return http.get('/log/dbcfg/rtus/except_points').then(res => {
         if (res.state && Array.isArray(res.data)) {
             res.data = res.data.map((item: any) => ({
                 ...item,
-                possibleowner: {
-                    ...(item.possibleowner || {}),
-                    id: 1,
-                },
+                channel: item.channel
+                    ? {
+                          ...item.channel,
+                          possibleowner: normalizePossibleOwnerIds(item.channel.possibleowner),
+                      }
+                    : item.channel,
             }));
         }
         return res;

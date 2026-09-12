@@ -90,8 +90,8 @@ async function loadTree(preserveSelection = false) {
             return;
         }
 
-        // 与设计稿一致：树从厂站下级设备开始展示
-        treeData.value = root.children.length ? root.children : [root];
+        // 树从厂站 STATION 根节点开始展示
+        treeData.value = [root];
         const previousKey = preserveSelection ? currentKey.value : '';
         const targetNode =
             (previousKey ? findInForest(treeData.value, previousKey) : null) ??
