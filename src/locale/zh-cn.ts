@@ -609,6 +609,7 @@ export default {
         dashboardManagement: {
             basicInfoConfig: '电站基本属性配置',
             realtimeConfig: '实时数据配置',
+            realPowerConfig: '实时功率配置',
             topologyConfig: '拓扑图配置',
             powerLevelConfig: '充放电配置',
             addAttribute: '＋ 添加属性',

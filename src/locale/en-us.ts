@@ -608,6 +608,7 @@ export default {
         dashboardManagement: {
             basicInfoConfig: 'Station Basic Attributes',
             realtimeConfig: 'Realtime Data Config',
+            realPowerConfig: 'Realtime Power Config',
             topologyConfig: 'Topology Config',
             powerLevelConfig: 'Charge/Discharge Config',
             addAttribute: '+ Add Attribute',

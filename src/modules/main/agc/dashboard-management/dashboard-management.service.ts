@@ -19,6 +19,10 @@ export default class dashboardManagementServiceApi {
     static async editRealtimeConfig(data: { no: string; type: string; oid: string; show_value: string; show_name: string; show_unit: string }): Promise<Response<any>> {
         return http.post(`log/homepage/config/realtime`, data);
     }
+    // 修改实时功率配置
+    static async editRealPowerConfig(data: { no: string; type: string; oid: string; show_value: string; show_name: string; show_unit: string }): Promise<Response<any>> {
+        return http.post(`log/homepage/config/real_power`, data);
+    }
     // 修改基础配置信息
     static async editBasicInfoConfig(data: { no: string; type: string; oid: string; show_value: string; show_name: string; show_unit: string }): Promise<Response<any>> {
         return http.post(`log/homepage/config/basic_info`, data);

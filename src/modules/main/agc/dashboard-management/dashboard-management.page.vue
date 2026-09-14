@@ -17,6 +17,13 @@
             </el-button>
             <el-button
                 size="large"
+                :type="modelType == 'real_power' ? 'primary' : ''"
+                @click="btnClick('real_power')"
+            >
+                {{ t('fw.dashboardManagement.realPowerConfig') }}
+            </el-button>
+            <el-button
+                size="large"
                 :type="modelType == 'topology' ? 'primary' : ''"
                 @click="btnClick('topology')"
             >
@@ -154,6 +161,9 @@ const btnClick = (type: string) => {
         case 'realtime':
             modelName.value = t('fw.dashboardManagement.realtimeConfig');
             break;
+        case 'real_power':
+            modelName.value = t('fw.dashboardManagement.realPowerConfig');
+            break;
         case 'topology':
             modelName.value = t('fw.dashboardManagement.topologyConfig');
             break;
@@ -165,7 +175,15 @@ const btnClick = (type: string) => {
 const initData = () => {
     dashboardManagementServiceApi.getConfig().then(res => {
         if (res.state) {
-            configData.value = res.data.data;
+            const data = res.data.data ?? {};
+            configData.value = {
+                ...data,
+                basic_info: data.basic_info ?? [],
+                realtime: data.realtime ?? [],
+                real_power: data.real_power ?? [],
+                topology: data.topology ?? [],
+                power_level: data.power_level ?? [],
+            };
         }
     });
 };
@@ -243,7 +261,7 @@ const submit = (
         configData.value[modelType.value].splice(index, 0, data);
         saveConfig(configData.value[modelType.value]);
     } else {
-        saveConfig([...configData.value[modelType.value], data]);
+        saveConfig([...(configData.value[modelType.value] ?? []), data]);
     }
 };
 
@@ -261,6 +279,9 @@ const saveConfig = async (data: any) => {
             break;
         case 'realtime':
             res = await dashboardManagementServiceApi.editRealtimeConfig(saveData);
+            break;
+        case 'real_power':
+            res = await dashboardManagementServiceApi.editRealPowerConfig(saveData);
             break;
         case 'power_level':
             res = await dashboardManagementServiceApi.editPowerLevelConfig(saveData);
