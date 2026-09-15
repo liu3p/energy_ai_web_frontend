@@ -114,9 +114,10 @@ const getRealTime = async () => {
         xAxis: [],
         data: []
     };
-    let dataList = configData.value.topology.filter((item) => {
-        return item.used == 1;
-    })
+    const dataList = configData.value?.real_power ?? [];
+    if (!dataList.length) {
+        return;
+    }
     let requistList: any[] = [];
     dataList.forEach((n, i) => {
         const params = {
@@ -206,11 +207,15 @@ const getPowerLevel = async () => {
 function onMessage(data: any) {
     if (data) {
         const res = JSON.parse(data);
-        Object.keys(configData.value).forEach((item, index) => {
-            configData.value[item].forEach((n1, i1) => {
+        Object.keys(configData.value).forEach((item) => {
+            const list = configData.value[item];
+            if (!Array.isArray(list)) {
+                return;
+            }
+            list.forEach((n1, i1) => {
                 if (n1.type != 3) {//不是固定值
                     configData.value[item][i1].show_text = "--";
-                    const info = res.content.find((n2, i2) => {
+                    const info = res.content.find((n2) => {
                         return n2.oid == n1.oid
                     })
                     if (info) {
@@ -229,13 +234,25 @@ function onMessage(data: any) {
 const initData = () => {
     dashboardServiceApi.getConfig().then(res => {
         if (res.state) {
-            configData.value = res.data.data
+            const data = res.data.data ?? {};
+            configData.value = {
+                ...data,
+                basic_info: data.basic_info ?? [],
+                realtime: data.realtime ?? [],
+                real_power: data.real_power ?? [],
+                topology: data.topology ?? [],
+                power_level: data.power_level ?? [],
+            };
             getPowerLevel();
             getRealTime();
             webSocket.send(JSON.stringify({ topic: "homepage_subscribe" }))
             webSocket.onMessage(onMessage);
-            Object.keys(configData.value).forEach((item, index) => {
-                configData.value[item].forEach((n1, i1) => {
+            Object.keys(configData.value).forEach((item) => {
+                const list = configData.value[item];
+                if (!Array.isArray(list)) {
+                    return;
+                }
+                list.forEach((n1, i1) => {
                     configData.value[item][i1].show_text = "--";
                     if (n1.type == 3) {//固定值
                         configData.value[item][i1].show_text = n1.show_value

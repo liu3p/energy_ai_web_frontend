@@ -1,20 +1,21 @@
 <template>
-    <cv-dialog-form
-        v-model="visible"
-        :title="title"
-        ref="dialogForm"
-        v-model:form-model="formData"
-        :rules="rules"
-        :submit="submit"
-        width="428px"
-        :submitText="t('fw.common.sure')"
-        label-position="top"
-    >
+    <cv-dialog v-model="visible" :title="title" width="428px" @close="close">
         <div class="tips">{{ t('fw.systemPages.confirmRestart') }}</div>
-        <cv-form-item :label="t('fw.monitor.loginPassword') + t('fw.common.colon')" prop="password">
-            <cv-input type="password" show-password v-model="formData.password"></cv-input>
-        </cv-form-item>
-    </cv-dialog-form>
+        <cv-form ref="formRef" :model="formData" :rules="rules" label-position="top">
+            <cv-form-item :label="t('fw.monitor.loginPassword') + t('fw.common.colon')" prop="password">
+                <cv-input
+                    v-model="formData.password"
+                    type="password"
+                    show-password
+                    :placeholder="t('fw.deviceManage.dispatch.pleaseInputLoginPwd')"
+                />
+            </cv-form-item>
+        </cv-form>
+        <template #footer>
+            <cv-button @click="close">{{ t('fw.common.cancel') }}</cv-button>
+            <cv-button type="primary" @click="handleSubmit">{{ t('fw.common.sure') }}</cv-button>
+        </template>
+    </cv-dialog>
 </template>
 <script setup lang="ts">
 import {ref} from 'vue';
@@ -23,14 +24,14 @@ import {useLocale} from 'cloudview.ui-next';
 const {t} = useLocale();
 
 defineProps<{
-    title: string
+    title: string;
 }>();
 const emit = defineEmits(['submit']);
-const initFormData = () => {
-    return {
-        password: '',
-    };
-};
+
+const formRef = ref();
+const initFormData = () => ({
+    password: '',
+});
 const id = ref();
 const formData = ref(initFormData());
 const rules = {
@@ -44,7 +45,18 @@ const rules = {
 };
 const visible = ref(false);
 
-const submit = async () => {
+const close = () => {
+    visible.value = false;
+    id.value = null;
+    formData.value = initFormData();
+    formRef.value?.resetFields?.();
+};
+
+const handleSubmit = async () => {
+    const valid = await formRef.value?.validate?.().catch(() => false);
+    if (!valid) {
+        return;
+    }
     emit('submit', {
         password: formData.value.password,
         id: id.value,
@@ -54,12 +66,10 @@ const submit = async () => {
 defineExpose({
     open(key: string) {
         id.value = key;
+        formData.value = initFormData();
         visible.value = true;
     },
-    close() {
-        visible.value = false;
-        id.value = null;
-    },
+    close,
 });
 </script>
 <style scoped lang="scss">

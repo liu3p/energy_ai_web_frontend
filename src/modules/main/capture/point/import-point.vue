@@ -12,43 +12,46 @@
           <cv-form-item :label="t('fw.capturePoint.originalName')">
             <cv-input v-model.trim="formData.name" class="w-cm"/>
           </cv-form-item>
-          <cv-button size="default" type="primary" @click="handleSearch">
-            <span>{{ t('fw.common.search') }}</span>
-          </cv-button>
-          <cv-button size="default" @click="handleReset" style="margin-left: 20px">
-            <span>{{ t('fw.common.clear') }}</span>
-          </cv-button>
+          <div class="filter-actions">
+            <cv-button class="filter-btn" size="default" type="primary" @click="handleSearch">
+              <span>{{ t('fw.common.search') }}</span>
+            </cv-button>
+            <cv-button class="filter-btn" size="default" @click="handleReset">
+              <span>{{ t('fw.common.clear') }}</span>
+            </cv-button>
+          </div>
           <div class="extra">
-            <cv-button class="primary-btn add-btn" size="mini" v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="handleAdd">
+            <cv-button class="primary-btn add-btn action-btn" size="default" v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="handleAdd">
               <svg class="add-btn__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
               <span>{{ t('fw.capturePoint.add') }}</span>
             </cv-button>
-            <cv-button class="primary-btn" size="mini" v-else @click="fileImportRef.open()">
+            <cv-button class="primary-btn action-btn" size="default" v-else @click="fileImportRef.open()">
               <cv-icon :size="16" color="transparent">
                 <icon-ic-import/>
               </cv-icon>
               <span>{{ t('fw.common.import') }}</span>
             </cv-button>
-            <cv-button class="primary-btn" size="mini" @click="handleExport">
+            <cv-button class="primary-btn action-btn" size="default" @click="handleExport">
               <cv-icon :size="16" color="transparent">
                 <icon-ic-export/>
               </cv-icon>
               <span>{{ t('fw.capturePoint.export') }}</span>
             </cv-button>
-            <cv-button size="mini" type="danger" :disabled="selectedCount === 0" @click="handleBatchDelete">
+            <cv-button class="action-btn" size="default" type="danger" :disabled="selectedCount === 0" @click="handleBatchDelete">
               <cv-icon size="16">
                 <cv-icon-delete/>
               </cv-icon>
               <span>{{ t('fw.capturePoint.batchDeleteWithCount').replace('{count}', String(selectedCount)) }}</span>
             </cv-button>
             <cv-button
+                class="action-btn"
                 :loading="loading"
                 :disabled="renderCount <= 0 || loading"
                 type="primary"
                 @click="handleSubmit"
-                size="mini"
+                size="default"
             >
               <cv-icon :size="16" color="transparent" style="cursor: pointer">
                 <icon-submit></icon-submit>
@@ -438,12 +441,37 @@ const handleExport = () => {
 .form-container {
   display: flex;
   flex-wrap: nowrap;
+  align-items: center;
+}
+
+.filter-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 8px;
+}
+
+.filter-btn {
+  min-width: 80px;
+  height: 32px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  justify-content: center;
 }
 
 .extra {
   display: flex;
+  align-items: center;
   gap: 10px;
   margin-left: auto;
+}
+
+.action-btn {
+  min-width: 112px;
+  height: 32px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  justify-content: center;
 }
 
 .divider {

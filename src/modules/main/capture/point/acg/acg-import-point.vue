@@ -2,35 +2,6 @@
     <div class="main-contain">
         <div class="main-contain__header">
             <cv-tabs v-model="activeName" :panes="panes" class="point-type-tabs"></cv-tabs>
-            <div class="extra">
-                <cv-button v-if="isTransferRtu(rid) || isAgcRtu(rid)" @click="acgTransferRef.open(rowPointsData[activeName])">
-                    <span>{{ t('fw.capturePoint.add') }}</span>
-                </cv-button>
-                <cv-button v-else @click="fileImportRef.open()">
-                    <cv-icon :size="16" color="transparent" style="cursor: pointer">
-                        <icon-download></icon-download>
-                    </cv-icon>
-                    <span>{{ t('fw.common.import') }}</span>
-                </cv-button>
-
-                <cv-button @click="handleExport">
-                    <span>{{ t('fw.capturePoint.export') }}</span>
-                </cv-button>
-                <cv-button type="danger" :disabled="selectedCount === 0" @click="handleBatchDelete">
-                    <span>{{ t('fw.capturePoint.batchDeleteWithCount').replace('{count}', String(selectedCount)) }}</span>
-                </cv-button>
-                <cv-button
-                    :loading="loading"
-                    :disabled="renderCount <= 0 || loading"
-                    type="primary"
-                    @click="handleSubmit"
-                >
-                    <cv-icon :size="16" color="transparent" style="cursor: pointer">
-                        <icon-submit></icon-submit>
-                    </cv-icon>
-                    <span>{{ t('fw.common.submit') }}</span>
-                </cv-button>
-            </div>
         </div>
         <div class="main-contain__center">
             <cv-scrollbar style="height: 40px">
@@ -41,12 +12,64 @@
                     <cv-form-item :label="t('fw.capturePoint.originalName')">
                         <cv-input v-model.trim="formData.name" class="w-cm" />
                     </cv-form-item>
-                    <cv-button size="default" @click="handleReset" style="margin-left: 20px">
-                        <span>{{ t('fw.common.clear') }}</span>
-                    </cv-button>
-                    <cv-button size="default" type="primary" @click="handleSearch">
-                        <span>{{ t('fw.common.search') }}</span>
-                    </cv-button>
+                    <div class="filter-actions">
+                        <cv-button class="filter-btn" size="default" type="primary" @click="handleSearch">
+                            <span>{{ t('fw.common.search') }}</span>
+                        </cv-button>
+                        <cv-button class="filter-btn" size="default" @click="handleReset">
+                            <span>{{ t('fw.common.clear') }}</span>
+                        </cv-button>
+                    </div>
+                    <div class="extra">
+                        <cv-button
+                            class="primary-btn add-btn action-btn"
+                            size="default"
+                            v-if="isTransferRtu(rid) || isAgcRtu(rid)"
+                            @click="acgTransferRef.open(rowPointsData[activeName])"
+                        >
+                            <svg class="add-btn__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span>{{ t('fw.capturePoint.add') }}</span>
+                        </cv-button>
+                        <cv-button class="primary-btn action-btn" size="default" v-else @click="fileImportRef.open()">
+                            <cv-icon :size="16" color="transparent">
+                                <icon-ic-import/>
+                            </cv-icon>
+                            <span>{{ t('fw.common.import') }}</span>
+                        </cv-button>
+                        <cv-button class="primary-btn action-btn" size="default" @click="handleExport">
+                            <cv-icon :size="16" color="transparent">
+                                <icon-ic-export/>
+                            </cv-icon>
+                            <span>{{ t('fw.capturePoint.export') }}</span>
+                        </cv-button>
+                        <cv-button
+                            class="action-btn"
+                            size="default"
+                            type="danger"
+                            :disabled="selectedCount === 0"
+                            @click="handleBatchDelete"
+                        >
+                            <cv-icon size="16">
+                                <cv-icon-delete/>
+                            </cv-icon>
+                            <span>{{ t('fw.capturePoint.batchDeleteWithCount').replace('{count}', String(selectedCount)) }}</span>
+                        </cv-button>
+                        <cv-button
+                            class="action-btn"
+                            :loading="loading"
+                            :disabled="renderCount <= 0 || loading"
+                            type="primary"
+                            size="default"
+                            @click="handleSubmit"
+                        >
+                            <cv-icon :size="16" color="transparent" style="cursor: pointer">
+                                <icon-submit></icon-submit>
+                            </cv-icon>
+                            <span>{{ t('fw.common.submit') }}</span>
+                        </cv-button>
+                    </div>
                 </cv-form>
             </cv-scrollbar>
             <div class="divider"></div>
@@ -70,7 +93,7 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue';
 import FileImport from '@/modules/main/capture/point/file-import.vue';
-import {IconSubmit, IconDownload} from '@/icons';
+import {IconSubmit, IconIcExport, IconIcImport} from '@/icons';
 import Collect from '@/modules/main/capture/point/collect/collect.page.vue';
 import AcgReplyPointTransfer from '@/modules/main/capture/point/acg/acg-reply-point-transfer.vue';
 import {
@@ -302,8 +325,7 @@ const handleExport = () => {
 <style scoped lang="scss">
 .point-type-tabs {
     height: 100%;
-    flex: 1;
-    min-width: 0;
+    width: 100%;
 
     :deep(.el-tabs__header) {
         margin: 0;
@@ -372,8 +394,6 @@ const handleExport = () => {
     padding: 0 16px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
 }
 
 .main-contain__center {
@@ -385,12 +405,37 @@ const handleExport = () => {
 .form-container {
     display: flex;
     flex-wrap: nowrap;
+    align-items: center;
+}
+
+.filter-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 8px;
+}
+
+.filter-btn {
+    min-width: 80px;
+    height: 32px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    justify-content: center;
 }
 
 .extra {
     display: flex;
+    align-items: center;
     gap: 10px;
     margin-left: auto;
+}
+
+.action-btn {
+    min-width: 112px;
+    height: 32px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    justify-content: center;
 }
 
 .divider {
@@ -417,5 +462,24 @@ const handleExport = () => {
 .table-container {
     height: calc(100% - 40px - 24px);
     width: 100%;
+}
+
+.primary-btn {
+    color: #2978FF;
+    border-color: #2978FF;
+}
+
+.add-btn {
+    display: inline-flex;
+    align-items: center;
+
+    &__icon {
+        width: 12px;
+        height: 12px;
+        margin-right: 4px;
+        color: #2978FF;
+        transform: translateY(-1px);
+        flex-shrink: 0;
+    }
 }
 </style>

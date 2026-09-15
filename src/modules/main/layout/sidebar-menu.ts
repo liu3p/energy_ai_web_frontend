@@ -81,7 +81,7 @@ export const sidebarMenus: SidebarMenuItem[] = [
             {key: 'capture-config', titleKey: 'fw.sidebar.captureConfig', path: '/main/capture/point'},
             {key: 'model-config', titleKey: 'fw.sidebar.modelConfig', path: '/main/agc/model'},
             {key: 'strategy-config', titleKey: 'fw.sidebar.strategyConfig', path: '/main/agc/strategy-config'},
-            {key: 'network-config', titleKey: 'fw.sidebar.networkConfig', path: '/main/system/network'},
+            // {key: 'network-config', titleKey: 'fw.sidebar.networkConfig', path: '/main/system/network'},
             {key: 'display-config', titleKey: 'fw.sidebar.displayConfig', path: '/main/config/display'},
             {key: 'param-enable', titleKey: 'fw.sidebar.paramEnable', action: 'param-enable'},
         ],
