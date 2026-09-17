@@ -1,5 +1,11 @@
 import { LineOption } from '@/common/echarts/type';
-type chartParams = { xAxis: (number | string)[]; data: { name: string; type: 'line' | 'bar'; color: string; data: (number | string)[] }[]; unit?: string };
+type chartParams = {
+    xAxis: (number | string)[];
+    data: { name: string; type: 'line' | 'bar'; color: string; data: (number | string)[] }[];
+    unit?: string;
+    /** 为 true 时横轴仅展示整点标签（如 00:00、01:00） */
+    xAxisLabelHourly?: boolean;
+};
 export const initOptions = (options?: chartParams): LineOption & {
     xAxis: echarts.XAXisComponentOption & { data: Array<number | string | null> };
     series: echarts.SeriesOption[];
@@ -83,12 +89,18 @@ export const initOptions = (options?: chartParams): LineOption & {
             axisLabel: {
                 show: true,
                 color: 'rgba(0,0,0,0.6)',
+                ...(propsData.xAxisLabelHourly
+                    ? {
+                          interval: (_index: number, value: string) => String(value).endsWith(':00'),
+                          hideOverlap: true,
+                      }
+                    : {}),
             },
             data: propsData.xAxis,
         },
         yAxis: [
             {
-                name: propsData.unit || "kW",
+                name: propsData.unit ?? "kW",
                 type: 'value',
                 boundaryGap: [0, 0.1],
                 axisLabel: {

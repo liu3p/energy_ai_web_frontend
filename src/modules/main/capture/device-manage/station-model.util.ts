@@ -166,14 +166,37 @@ export function getParamUnit(name: string): string {
     return translateDeviceManage(`paramUnit.${name}`, '');
 }
 
-function mapToCard(item: StationParam | DynParam, keyPrefix: string, dispatchable: boolean): ParamCardItem {
+function isEmptyParamValue(value: unknown): boolean {
+    return value === null || value === undefined || value === '' || value === '--';
+}
+
+function mapToCard(
+    item: StationParam | DynParam,
+    keyPrefix: string,
+    dispatchable: boolean,
+    relatedValueByName?: Map<string, string | number>,
+): ParamCardItem {
     const dispatchMode = dispatchable ? getDispatchMode(item.type) : undefined;
+    let value: string | number | null;
+
+    if (dispatchable) {
+        // 遥控/遥调：空值不落 "--"，优先展示同名遥信/遥测关联值
+        value = isEmptyParamValue(item.value) ? null : (item.value as string | number);
+        if (value === null && relatedValueByName) {
+            const related = relatedValueByName.get(item.name);
+            if (!isEmptyParamValue(related)) {
+                value = related as string | number;
+            }
+        }
+    } else {
+        value = item.value ?? '--';
+    }
 
     return {
         key: `${keyPrefix}-${item.database_id ?? ''}-${item.name}`,
         name: item.name,
         label: getParamLabel(item.name),
-        value: item.value ?? '--',
+        value,
         unit: getParamUnit(item.name),
         type: item.type,
         dispatchable,
@@ -184,11 +207,16 @@ function mapToCard(item: StationParam | DynParam, keyPrefix: string, dispatchabl
     };
 }
 
-function classifyParam(item: StationParam | DynParam, keyPrefix: string, groups: {
-    controlAdjust: ParamCardItem[];
-    telemetry: ParamCardItem[];
-    stationParams: ParamCardItem[];
-}) {
+function classifyParam(
+    item: StationParam | DynParam,
+    keyPrefix: string,
+    groups: {
+        controlAdjust: ParamCardItem[];
+        telemetry: ParamCardItem[];
+        stationParams: ParamCardItem[];
+    },
+    relatedValueByName: Map<string, string | number>,
+) {
     if (item.type === 'ATTRIBUTE') {
         return;
     }
@@ -197,7 +225,7 @@ function classifyParam(item: StationParam | DynParam, keyPrefix: string, groups:
         return;
     }
     if (item.type === 'CONTROL' || item.type === 'REGULATE') {
-        groups.controlAdjust.push(mapToCard(item, keyPrefix, true));
+        groups.controlAdjust.push(mapToCard(item, keyPrefix, true, relatedValueByName));
         return;
     }
     if (item.type === 'DIGITAL' || item.type === 'ANALOG') {
@@ -214,11 +242,25 @@ export function buildParamCardGroups(para: StationParam[], dynPara: DynParam[]):
         stationParams: [] as ParamCardItem[],
     };
 
+    // 同名遥信/遥测作为遥控遥调的关联展示值（dyn_para 优先）
+    const relatedValueByName = new Map<string, string | number>();
+    const collectRelated = (item: StationParam | DynParam) => {
+        if ((item.type === 'DIGITAL' || item.type === 'ANALOG') && !isEmptyParamValue(item.value)) {
+            relatedValueByName.set(item.name, item.value as string | number);
+        }
+    };
     for (const item of para) {
-        classifyParam(item, 'para', groups);
+        collectRelated(item);
     }
     for (const item of dynPara) {
-        classifyParam(item, 'dyn', groups);
+        collectRelated(item);
+    }
+
+    for (const item of para) {
+        classifyParam(item, 'para', groups, relatedValueByName);
+    }
+    for (const item of dynPara) {
+        classifyParam(item, 'dyn', groups, relatedValueByName);
     }
 
     return [
@@ -249,8 +291,9 @@ export function buildParamCards(para: StationParam[], dynPara: DynParam[]): Para
 }
 
 export function formatParamCardValue(item: ParamCardItem): string {
-    if (item.value === null || item.value === undefined || item.value === '') {
-        return '--';
+    if (isEmptyParamValue(item.value)) {
+        // 遥控遥调无关联值时不展示占位 "--"
+        return item.dispatchable ? '' : '--';
     }
     const unit = item.unit ? item.unit : '';
     return `${item.value}${unit}`;

@@ -69,7 +69,12 @@
                                     <span
                                         v-for="item in Object.keys(row.table)"
                                         :key="item"
-                                        :style="`color:${row.table[item].split('_')[1] || '#000'}`"
+                                        :style="{
+                                            color: row.table[item].split('_')[1] || '#000',
+                                            backgroundColor: row.bg_color?.[item] || 'transparent',
+                                            padding: '0 4px',
+                                            borderRadius: '2px',
+                                        }"
                                     >
                                         {{ item }}：{{ row.table[item].split('_')[0] || '#000' }}
                                     </span>
@@ -192,6 +197,7 @@ interface EnumItem {
     key: number;
     number: string;
     color: string;
+    bgColor: string;
     value: string;
 }
 
@@ -241,12 +247,18 @@ const submit = (
 ) => {
     const {no, show_name, type, oid, show_value, show_unit, enumList} = poinInfo;
     const table: Record<string, string> = {};
+    const bg_color: Record<string, string> = {};
     enumList.forEach(item => {
-        if (item.number != '' && item.value != '') {
-            table[item.number] = item.value + '_' + item.color;
+        if (item.number !== '' && item.number != null && item.value != '') {
+            const key = String(item.number);
+            table[key] = item.value + '_' + (item.color || '#000000');
+            bg_color[key] = item.bgColor || '#ffffff';
         }
     });
+    const originRow =
+        submitType == 'edit' ? configData.value[modelType.value]?.[poinInfo.no - 1] ?? {} : {};
     const data = {
+        ...originRow,
         no: no,
         type: type,
         oid: oid,
@@ -254,6 +266,7 @@ const submit = (
         show_name: show_name,
         show_unit: show_unit,
         table: JSON.stringify(table) === '{}' ? null : table,
+        bg_color: JSON.stringify(bg_color) === '{}' ? null : bg_color,
     };
     if (submitType == 'edit') {
         const index = poinInfo.no - 1;

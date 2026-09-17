@@ -35,7 +35,7 @@
                     <div class="baseInfo-content" v-if="configData">
                         <div class="baseInfo-content-item" v-for="item, index in configData.basic_info" :key="index">
                             <div class="item-name">{{ getDisplayName(item) }}</div>
-                            <div class="item-value" :style="`color:${item.color}`">{{ item.show_text }}</div>
+                            <div class="item-value" :style="{ color: item.color }">{{ item.show_text }}</div>
                         </div>
                     </div>
                 </div>
@@ -46,9 +46,14 @@
                 </div>
                 <div class="card-contain__body ">
                     <div class="realtimeData-content" v-if="configData">
-                        <div class="realtimeData-content-item" v-for="item, index in configData.realtime" :key="index">
+                        <div
+                            class="realtimeData-content-item"
+                            v-for="item, index in configData.realtime"
+                            :key="index"
+                            :style="item.current_bg_color ? { backgroundColor: item.current_bg_color } : undefined"
+                        >
                             <div class="item-name">{{ getDisplayName(item) }}</div>
-                            <div class="item-value" :style="`color:${item.color}`">{{ item.show_text }}</div>
+                            <div class="item-value" :style="{ color: item.color }">{{ item.show_text }}</div>
                         </div>
                     </div>
                 </div>
@@ -125,7 +130,7 @@ const getRealTime = async () => {
             "ids": [n.oid],
             "start_time": moment(realTimeDate.value).startOf('day'),
             "end_time": moment(realTimeDate.value).startOf('day').add(1, 'day'),
-            "interval": 3600
+            "interval": 900
         };
         switch (n.oid.split("-")[2]) {
             case '101':
@@ -220,8 +225,17 @@ function onMessage(data: any) {
                     })
                     if (info) {
                         if (n1.type == 2) {//枚举值
-                            configData.value[item][i1].show_text = n1.table[info.value].split("_")[0]
-                            configData.value[item][i1].color = n1.table[info.value].split("_")[1]
+                            const enumKey = String(info.value);
+                            configData.value[item][i1].show_text = n1.table[info.value]?.split("_")[0]
+                                ?? n1.table[enumKey]?.split("_")[0]
+                                ?? '--';
+                            configData.value[item][i1].color = n1.table[info.value]?.split("_")[1]
+                                ?? n1.table[enumKey]?.split("_")[1]
+                                ?? '#000';
+                            // bg_color 为值->背景色映射，解析到 current_bg_color，勿覆盖原对象
+                            configData.value[item][i1].current_bg_color = n1.bg_color?.[info.value]
+                                ?? n1.bg_color?.[enumKey]
+                                ?? '';
                         } else {//实时值
                             configData.value[item][i1].show_text = info.value + " " + n1.show_unit;
                         }

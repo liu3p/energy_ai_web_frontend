@@ -1,7 +1,7 @@
 <template>
     <cv-dialog
         v-model="visible"
-        width="700"
+        width="860"
         :title="dialogType == 'add' ? t('fw.common.add') : t('fw.common.edit')"
         :draggable="true"
         :z-index="1000"
@@ -63,7 +63,28 @@
                             :placeholder="t('fw.common.pleaseInput')"
                         />
                     </cv-form-item>
-                    <el-color-picker v-model="domain.color" size="default" :predefine="predefineColors" />
+                    <cv-form-item
+                        class="enum-list__color"
+                        :label="t('fw.dashboardManagement.fontColor')"
+                        label-width="60px"
+                    >
+                        <el-color-picker
+                            v-model="formData.enumList[index].color"
+                            size="default"
+                            :predefine="predefineColors"
+                        />
+                    </cv-form-item>
+                    <cv-form-item
+                        class="enum-list__color"
+                        :label="t('fw.dashboardManagement.bgColor')"
+                        label-width="60px"
+                    >
+                        <el-color-picker
+                            v-model="formData.enumList[index].bgColor"
+                            size="default"
+                            :predefine="predefineColors"
+                        />
+                    </cv-form-item>
                     <el-button class="enum-btn" @click="addEnum">＋</el-button>
                     <el-button class="enum-btn" v-if="formData.enumList.length != 1" @click="removeEnum(domain)">
                         —
@@ -143,6 +164,7 @@ interface EnumItem {
     key: number;
     number: string;
     color: string;
+    bgColor: string;
     value: string;
 }
 const formData = ref<{
@@ -164,6 +186,7 @@ const formData = ref<{
         {
             key: Date.now(),
             color: '#000000',
+            bgColor: '#ffffff',
             number: '',
             value: '',
         },
@@ -182,14 +205,22 @@ const addEnum = () => {
         key: Date.now(),
         number: '',
         color: '#000000',
+        bgColor: '#ffffff',
         value: '',
     });
+};
+
+const resolveBgColor = (bgColorMap: Record<string, string> | null | undefined, key: string) => {
+    if (!bgColorMap || typeof bgColorMap !== 'object') {
+        return '#ffffff';
+    }
+    return bgColorMap[key] ?? bgColorMap[String(Number(key))] ?? '#ffffff';
 };
 
 const open = (data: any) => {
     if (data) {
         dialogType.value = 'edit';
-        const {no, type, show_name, oid, show_unit, show_value, table} = data;
+        const {no, type, show_name, oid, show_unit, show_value, table, bg_color} = data;
         formData.value = {
             no: no,
             type: type,
@@ -198,20 +229,23 @@ const open = (data: any) => {
             show_unit: show_unit,
             show_value: show_value,
             enumList: table
-                ? Object.keys(table).map(item => {
+                ? Object.keys(table).map((item, index) => {
+                      const parts = String(table[item] ?? '').split('_');
                       return {
-                          key: Date.now(),
-                          color: table[item].split('_')[1],
+                          key: `${item}_${index}_${Date.now()}`,
+                          color: parts[1] || '#000000',
+                          bgColor: resolveBgColor(bg_color, item),
                           number: item,
-                          value: table[item].split('_')[0],
+                          value: parts[0] || '',
                       };
                   })
                 : [
                       {
-                          key: Date.now(),
+                          key: `empty_${Date.now()}`,
                           number: '',
                           value: '',
                           color: '#000000',
+                          bgColor: '#ffffff',
                       },
                   ],
         };
@@ -229,6 +263,7 @@ const selectChange = () => {
             key: Date.now(),
             number: '',
             color: '#000000',
+            bgColor: '#ffffff',
             value: '',
         },
     ];
@@ -261,6 +296,7 @@ const cancel = () => {
                 key: Date.now(),
                 number: '',
                 color: '#000000',
+                bgColor: '#ffffff',
                 value: '',
             },
         ],
@@ -311,7 +347,7 @@ defineExpose({
         display: inline-flex;
         align-items: center;
         height: 32px;
-        margin-left: 8px;
+        margin-left: 0;
         flex-shrink: 0;
     }
 
@@ -342,6 +378,16 @@ defineExpose({
 
 .enum-list__name-input {
     width: 170px;
+}
+
+.enum-list__color {
+    flex: 0 0 auto;
+
+    :deep(.el-form-item__label),
+    :deep(.cv-form-item__label) {
+        justify-content: flex-end;
+        text-align: right;
+    }
 }
 
 .enum-btn {

@@ -103,14 +103,17 @@
                 <el-radio-button value="chart">{{ t('fw.monitor.chart') }}</el-radio-button>
                 <el-radio-button value="table">{{ t('fw.monitor.data') }}</el-radio-button>
             </el-radio-group>
-            <el-date-picker
-                v-model="historyDate"
-                @change="getHistory"
-                type="date"
-                :editable="false"
-                :clearable="false"
-                style="width: 120px"
-            />
+            <div class="history-header-right">
+                <el-date-picker
+                    v-model="historyDate"
+                    @change="getHistory"
+                    type="date"
+                    :editable="false"
+                    :clearable="false"
+                    style="width: 120px"
+                />
+                <el-button type="primary" @click="exportHistoryCsv">{{ t('fw.monitor.exportCsv') }}</el-button>
+            </div>
         </div>
         <div class="history-container">
             <charts v-show="tabPosition == 'chart'" style="height: 300px" :data="historyChartData" />
@@ -144,6 +147,7 @@ type chartParams = {
     xAxis: (number | string)[];
     data: {name: string; type: 'line' | 'bar'; color?: string; data: (number | string)[]}[];
     unit?: string;
+    xAxisLabelHourly?: boolean;
 };
 
 const {t} = useLocale();
@@ -229,6 +233,7 @@ const getHistory = () => {
         xAxis: [],
         data: [],
         unit: '',
+        xAxisLabelHourly: true,
     };
     historyTableData.value = [];
     const params = {
@@ -236,7 +241,7 @@ const getHistory = () => {
         ids: [oid],
         start_time: moment(historyDate.value).startOf('day'),
         end_time: moment(historyDate.value).startOf('day').add(1, 'day'),
-        interval: 3600,
+        interval: 900,
     };
     switch (oid.split('-')[2]) {
         case '101':
@@ -261,7 +266,8 @@ const getHistory = () => {
                     return n.data[oid];
                 }),
             });
-            historyChartData.value.unit = selectNode.value.unit;
+            historyChartData.value.unit = '';
+            historyChartData.value.xAxisLabelHourly = true;
             historyChartData.value = JSON.parse(JSON.stringify(historyChartData.value));
             res.data.data.forEach(n => {
                 const json: Record<string, unknown> = {
@@ -272,6 +278,37 @@ const getHistory = () => {
             });
         }
     });
+};
+
+/** 按天导出当前弹框已加载的历史数据为 CSV（暂无后端导出接口，前端本地生成） */
+const exportHistoryCsv = () => {
+    if (!historyTableData.value?.length) {
+        CvMessage.warning(t('fw.common.noData'));
+        return;
+    }
+    const pointName = selectNode.value?.name || 'point';
+    const dateStr = moment(historyDate.value).format('YYYY-MM-DD');
+    const headers = [t('fw.monitor.time'), pointName];
+    const escapeCsv = (val: unknown) => {
+        const text = val == null ? '' : String(val);
+        if (/[",\n\r]/.test(text)) {
+            return `"${text.replace(/"/g, '""')}"`;
+        }
+        return text;
+    };
+    const rows = historyTableData.value.map((row: Record<string, unknown>) =>
+        [escapeCsv(row.time), escapeCsv(row[pointName])].join(',')
+    );
+    const csvContent = `\uFEFF${[headers.map(escapeCsv).join(','), ...rows].join('\n')}`;
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${pointName}_${dateStr}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 };
 
 const handleCurrentChange = (val: number) => {
@@ -340,6 +377,12 @@ defineExpose({
 .history-header {
     display: flex;
     justify-content: space-between;
+}
+
+.history-header-right {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .dialog-form {
