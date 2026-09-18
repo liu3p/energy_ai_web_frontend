@@ -112,7 +112,17 @@
                     :clearable="false"
                     style="width: 120px"
                 />
-                <el-button type="primary" @click="exportHistoryCsv">{{ t('fw.monitor.exportCsv') }}</el-button>
+                <el-select v-model="historyInterval" style="width: 110px" @change="getHistory">
+                    <el-option
+                        v-for="item in intervalOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+                <el-button type="primary" :loading="exporting" @click="exportHistoryCsv">
+                    {{ t('fw.monitor.exportCsv') }}
+                </el-button>
             </div>
         </div>
         <div class="history-container">
@@ -138,6 +148,7 @@
 <script setup lang="ts">
 import {computed, reactive, toRefs, ref} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
+import {currentLocale} from '@/common/locale';
 import {monitorControl, monitorRegulate} from '@/modules/main/capture/monitor/monitor.service';
 import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
 import charts from '@/modules/main/dashboard/charts.vue';
@@ -189,6 +200,14 @@ const {currentPage, pageSize} = toRefs(pages);
 const visible = ref(false);
 const historyVisible = ref(false);
 const historyDate = ref(new Date());
+const historyInterval = ref(900);
+const exporting = ref(false);
+const intervalOptions = computed(() =>
+    [1, 5, 10, 15].map(count => ({
+        value: count * 60,
+        label: currentLocale.value.startsWith('zh-') ? `${count}分钟` : `${count} min`,
+    })),
+);
 const selectNode = ref();
 const tabPosition = ref<string>('chart');
 const historyChartData = ref<chartParams>({
@@ -225,6 +244,7 @@ const history = (records: any) => {
     selectNode.value = records;
     historyVisible.value = true;
     historyDate.value = new Date();
+    historyInterval.value = 900;
     getHistory();
 };
 const getHistory = () => {
@@ -241,7 +261,7 @@ const getHistory = () => {
         ids: [oid],
         start_time: moment(historyDate.value).startOf('day'),
         end_time: moment(historyDate.value).startOf('day').add(1, 'day'),
-        interval: 900,
+        interval: historyInterval.value,
     };
     switch (oid.split('-')[2]) {
         case '101':
@@ -280,35 +300,49 @@ const getHistory = () => {
     });
 };
 
-/** 按天导出当前弹框已加载的历史数据为 CSV（暂无后端导出接口，前端本地生成） */
-const exportHistoryCsv = () => {
-    if (!historyTableData.value?.length) {
-        CvMessage.warning(t('fw.common.noData'));
+/** 按天调用导出接口下载 CSV */
+const exportHistoryCsv = async () => {
+    const oid = selectNode.value?.pointID;
+    if (!oid) {
         return;
     }
     const pointName = selectNode.value?.name || 'point';
     const dateStr = moment(historyDate.value).format('YYYY-MM-DD');
-    const headers = [t('fw.monitor.time'), pointName];
-    const escapeCsv = (val: unknown) => {
-        const text = val == null ? '' : String(val);
-        if (/[",\n\r]/.test(text)) {
-            return `"${text.replace(/"/g, '""')}"`;
+    exporting.value = true;
+    try {
+        const res = await dashboardServiceApi.exportHistory({
+            id: oid,
+            start_time: moment(historyDate.value).startOf('day').toISOString(),
+            end_time: moment(historyDate.value).startOf('day').add(1, 'day').toISOString(),
+        });
+        const blob = res.data as Blob;
+        if (blob.type?.includes('json')) {
+            const text = await blob.text();
+            let message = t('fw.systemPages.exportFailed');
+            try {
+                message = JSON.parse(text)?.msg || message;
+            } catch {
+                /* 非 JSON 错误体时沿用默认文案 */
+            }
+            CvMessage.error(message);
+            return;
         }
-        return text;
-    };
-    const rows = historyTableData.value.map((row: Record<string, unknown>) =>
-        [escapeCsv(row.time), escapeCsv(row[pointName])].join(',')
-    );
-    const csvContent = `\uFEFF${[headers.map(escapeCsv).join(','), ...rows].join('\n')}`;
-    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${pointName}_${dateStr}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+        const disposition = res.headers?.['content-disposition'] as string | undefined;
+        const fileName =
+            disposition?.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i)?.[1] || `${pointName}_${dateStr}.csv`;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = decodeURIComponent(fileName.replace(/"/g, ''));
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch {
+        CvMessage.error(t('fw.systemPages.exportFailed'));
+    } finally {
+        exporting.value = false;
+    }
 };
 
 const handleCurrentChange = (val: number) => {

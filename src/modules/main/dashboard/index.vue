@@ -52,7 +52,7 @@
                             :key="index"
                             :style="item.current_bg_color ? { backgroundColor: item.current_bg_color } : undefined"
                         >
-                            <div class="item-name">{{ getDisplayName(item) }}</div>
+                            <div class="item-name" :style="{ color: item.color }">{{ getDisplayName(item) }}</div>
                             <div class="item-value" :style="{ color: item.color }">{{ item.show_text }}</div>
                         </div>
                     </div>
