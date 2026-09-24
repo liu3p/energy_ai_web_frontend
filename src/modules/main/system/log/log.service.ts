@@ -17,10 +17,15 @@ export const initWebsocket = (processId: string) => {
         baseUrl = `${getConfig('SOCKET_API_URL')}`;
     }
     baseUrl += `/log/system/process/${processId}/logdump`;
-    return new WebsocketClass(baseUrl, refreshToken, () => {
-        return {
-            token: Token.token,
-            tokenType: Token.tokenType,
-        };
-    });
+    return new WebsocketClass(
+        baseUrl,
+        refreshToken,
+        () => {
+            return {
+                token: Token.token,
+                tokenType: Token.tokenType,
+            };
+        },
+        {autoReconnect: false},
+    );
 };
