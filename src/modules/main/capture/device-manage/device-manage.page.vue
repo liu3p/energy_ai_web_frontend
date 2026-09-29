@@ -39,7 +39,7 @@ import {nextTick, onMounted, onUnmounted, ref} from 'vue';
 import Empty from '@/common/empty.vue';
 import DeviceDetail from './device-detail.vue';
 import DispatchDialog from './dispatch-dialog.vue';
-import type {DeviceTreeNode, ParamCardItem} from './device-manage.types';
+import type {DeviceTreeNode, DynParam, ParamCardItem, ParamType, StationParam} from './device-manage.types';
 import {fetchStationModel} from './device-manage.service';
 import {findFirstLeafNode, findNodeByKey} from './station-model.util';
 
@@ -53,6 +53,45 @@ const dispatchDialogRef = ref<InstanceType<typeof DispatchDialog>>();
 const treeRef = ref();
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let loadingTree = false;
+
+/** 下发成功后的本地展示值：接口未回写前避免被轮询空值冲掉 */
+const localDispatchValues = new Map<string, string | number>();
+
+function dispatchValueKey(databaseId: string | undefined, nodeKey: string, name: string) {
+    return databaseId || `${nodeKey}:${name}`;
+}
+
+function isEmptyDispatchValue(value: unknown) {
+    return value === null || value === undefined || value === '' || value === '--';
+}
+
+function isDispatchParamType(type: ParamType) {
+    return type === 'CONTROL' || type === 'REGULATE';
+}
+
+function applyLocalDispatchValues(node: DeviceTreeNode) {
+    const applyList = (list: Array<StationParam | DynParam>) => {
+        for (const item of list) {
+            if (!isDispatchParamType(item.type)) {
+                continue;
+            }
+            const key = dispatchValueKey(item.database_id, node.key, item.name);
+            const local = localDispatchValues.get(key);
+            if (local === undefined) {
+                continue;
+            }
+            if (isEmptyDispatchValue(item.value)) {
+                item.value = local;
+            } else {
+                // 接口已有回写值，清除本地覆盖
+                localDispatchValues.delete(key);
+            }
+        }
+    };
+    applyList(node.para);
+    applyList(node.dyn_para);
+    node.children.forEach(applyLocalDispatchValues);
+}
 
 function findInForest(nodes: DeviceTreeNode[], key: string): DeviceTreeNode | null {
     for (const node of nodes) {
@@ -89,6 +128,8 @@ async function loadTree(preserveSelection = false) {
             }
             return;
         }
+
+        applyLocalDispatchValues(root);
 
         // 树从厂站 STATION 根节点开始展示
         treeData.value = [root];
@@ -135,19 +176,33 @@ function handleDispatch(param: ParamCardItem) {
     dispatchDialogRef.value?.open(param);
 }
 
-function handleDispatchSuccess(paramName: string, value: string | number) {
+function findDispatchParam(list: Array<StationParam | DynParam>, param: ParamCardItem) {
+    if (param.database_id) {
+        const byId = list.find(
+            item => isDispatchParamType(item.type) && item.database_id === param.database_id,
+        );
+        if (byId) {
+            return byId;
+        }
+    }
+    return list.find(item => isDispatchParamType(item.type) && item.name === param.name);
+}
+
+function handleDispatchSuccess(param: ParamCardItem, value: string | number) {
     if (!currentNode.value) {
         return;
     }
-    const target = currentNode.value.para.find(item => item.name === paramName);
-    if (target) {
-        target.value = value;
+    const target =
+        findDispatchParam(currentNode.value.para, param) ??
+        findDispatchParam(currentNode.value.dyn_para, param);
+    if (!target) {
         return;
     }
-    const dynTarget = currentNode.value.dyn_para.find(item => item.name === paramName);
-    if (dynTarget) {
-        dynTarget.value = value;
-    }
+    target.value = value;
+    localDispatchValues.set(
+        dispatchValueKey(target.database_id, currentNode.value.key, target.name),
+        value,
+    );
 }
 
 onMounted(() => {

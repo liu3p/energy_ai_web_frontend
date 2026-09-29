@@ -174,23 +174,12 @@ function mapToCard(
     item: StationParam | DynParam,
     keyPrefix: string,
     dispatchable: boolean,
-    relatedValueByName?: Map<string, string | number>,
 ): ParamCardItem {
     const dispatchMode = dispatchable ? getDispatchMode(item.type) : undefined;
-    let value: string | number | null;
-
-    if (dispatchable) {
-        // 遥控/遥调：空值不落 "--"，优先展示同名遥信/遥测关联值
-        value = isEmptyParamValue(item.value) ? null : (item.value as string | number);
-        if (value === null && relatedValueByName) {
-            const related = relatedValueByName.get(item.name);
-            if (!isEmptyParamValue(related)) {
-                value = related as string | number;
-            }
-        }
-    } else {
-        value = item.value ?? '--';
-    }
+    // 遥控/遥调只展示自身值（含下发后的本地覆盖），不借用同名遥信/遥测
+    const value = dispatchable
+        ? (isEmptyParamValue(item.value) ? null : (item.value as string | number))
+        : (item.value ?? '--');
 
     return {
         key: `${keyPrefix}-${item.database_id ?? ''}-${item.name}`,
@@ -215,7 +204,6 @@ function classifyParam(
         telemetry: ParamCardItem[];
         stationParams: ParamCardItem[];
     },
-    relatedValueByName: Map<string, string | number>,
 ) {
     if (item.type === 'ATTRIBUTE') {
         return;
@@ -225,7 +213,7 @@ function classifyParam(
         return;
     }
     if (item.type === 'CONTROL' || item.type === 'REGULATE') {
-        groups.controlAdjust.push(mapToCard(item, keyPrefix, true, relatedValueByName));
+        groups.controlAdjust.push(mapToCard(item, keyPrefix, true));
         return;
     }
     if (item.type === 'DIGITAL' || item.type === 'ANALOG') {
@@ -242,25 +230,11 @@ export function buildParamCardGroups(para: StationParam[], dynPara: DynParam[]):
         stationParams: [] as ParamCardItem[],
     };
 
-    // 同名遥信/遥测作为遥控遥调的关联展示值（dyn_para 优先）
-    const relatedValueByName = new Map<string, string | number>();
-    const collectRelated = (item: StationParam | DynParam) => {
-        if ((item.type === 'DIGITAL' || item.type === 'ANALOG') && !isEmptyParamValue(item.value)) {
-            relatedValueByName.set(item.name, item.value as string | number);
-        }
-    };
     for (const item of para) {
-        collectRelated(item);
+        classifyParam(item, 'para', groups);
     }
     for (const item of dynPara) {
-        collectRelated(item);
-    }
-
-    for (const item of para) {
-        classifyParam(item, 'para', groups, relatedValueByName);
-    }
-    for (const item of dynPara) {
-        classifyParam(item, 'dyn', groups, relatedValueByName);
+        classifyParam(item, 'dyn', groups);
     }
 
     return [
@@ -272,7 +246,7 @@ export function buildParamCardGroups(para: StationParam[], dynPara: DynParam[]):
 
 export function parseMonitorPointRef(
     databaseId: string,
-): {rid: string; did: string; pointType: string; pid: string} | null {
+): {rid: string; did: string; pointType: string; pid: string; pointId: string} | null {
     const pointId = databaseId.split('$')[0];
     const parts = pointId.split('-').filter(Boolean);
     if (parts.length < 4) {
@@ -283,6 +257,8 @@ export function parseMonitorPointRef(
         did: parts[1],
         pointType: parts[2],
         pid: parts[3],
+        /** 完整测点 ID，下发接口 /point/{pointId}/ 使用整段 database_id */
+        pointId,
     };
 }
 

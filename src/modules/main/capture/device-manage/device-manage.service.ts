@@ -67,8 +67,8 @@ export async function dispatchDeviceParam(
     try {
         const res =
             dispatchMode === 'control'
-                ? await monitorControl(pointRef.rid, pointRef.did, pointRef.pid, payload)
-                : await monitorRegulate(pointRef.rid, pointRef.did, pointRef.pid, payload);
+                ? await monitorControl(pointRef.rid, pointRef.did, pointRef.pointId, payload)
+                : await monitorRegulate(pointRef.rid, pointRef.did, pointRef.pointId, payload);
 
         return {
             state: !!res.state,

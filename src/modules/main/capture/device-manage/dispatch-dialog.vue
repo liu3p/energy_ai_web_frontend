@@ -60,7 +60,7 @@ import {dispatchDeviceParam} from './device-manage.service';
 
 const {t} = useLocale();
 const emit = defineEmits<{
-    success: [paramName: string, value: string | number];
+    success: [param: ParamCardItem, value: string | number];
 }>();
 
 const visible = defineModel<boolean>({default: false});
@@ -128,7 +128,7 @@ async function handleSubmit() {
 
     if (res.state) {
         CvMessage.success(t('fw.deviceManage.dispatch.dispatchSuccess'));
-        emit('success', currentParam.value.name, formData.value);
+        emit('success', currentParam.value, formData.value);
         handleClose();
     } else {
         CvMessage.error(res.message ?? t('fw.deviceManage.dispatch.dispatchFailed'));

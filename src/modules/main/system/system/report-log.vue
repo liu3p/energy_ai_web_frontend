@@ -2,7 +2,7 @@
     <div class="device-param">
         <div class="device-param__header">
             <span>{{ t('fw.systemPages.softwareVersion') }}</span>
-            <span>
+            <span class="device-param__header-action">
                        <cv-upload
                            ref="uploadRef"
                            v-loading="loading"
@@ -10,13 +10,13 @@
                            :show-file-list="false"
                            :http-request="uploadFile"
                            :on-exceed="handleExceed"
-                           style="width: 100px;"
+                           class="upload-pkg"
                        >
-                       <span style="font-weight: normal;">{{ t('fw.updateMng.uploadPkg') }}</span>
+                       <cv-button>{{ t('fw.updateMng.uploadPkg') }}</cv-button>
                     </cv-upload>
                     <cv-progress
                         v-if="fileName"
-                        style="width: 300px"
+                        class="upload-progress"
                         :percentage="percentage"
                         :status="status"
                     ></cv-progress>
@@ -151,6 +151,14 @@ function handleExceed(files: any) {
         align-items: center;
         justify-content: space-between;
         border-bottom: 1px solid #EBEBEB;
+        gap: 12px;
+    }
+
+    &__header-action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
     }
 
     &__contain {
@@ -200,5 +208,20 @@ function handleExceed(files: any) {
     &-info {
         margin-bottom: 16px;
     }
+}
+
+.upload-pkg {
+    width: auto;
+    flex-shrink: 0;
+
+    :deep(.el-upload) {
+        display: inline-flex;
+        white-space: nowrap;
+    }
+}
+
+.upload-progress {
+    width: 300px;
+    max-width: 40vw;
 }
 </style>
