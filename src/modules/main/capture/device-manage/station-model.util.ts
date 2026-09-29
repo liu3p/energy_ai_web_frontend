@@ -271,6 +271,16 @@ export function formatParamCardValue(item: ParamCardItem): string {
         // 遥控遥调无关联值时不展示占位 "--"
         return item.dispatchable ? '' : '--';
     }
+    // 遥信 DIGITAL：0/1 统一展示为 false/true
+    if (item.type === 'DIGITAL') {
+        const normalized = String(item.value).trim().toLowerCase();
+        if (normalized === '1' || normalized === 'true') {
+            return 'true';
+        }
+        if (normalized === '0' || normalized === 'false') {
+            return 'false';
+        }
+    }
     const unit = item.unit ? item.unit : '';
     return `${item.value}${unit}`;
 }
