@@ -57,7 +57,7 @@
                 <cv-input v-model="form.channel.name" disabled></cv-input>
               </cv-form-item>
               <cv-form-item :label="t('fw.capturePoint.channelId')">
-                <cv-input :model-value="form.channelgroupid" disabled></cv-input>
+                <cv-input :model-value="form.channel?.servergroup" disabled></cv-input>
               </cv-form-item>
               <div>
                 <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
