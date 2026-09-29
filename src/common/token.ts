@@ -1,4 +1,5 @@
 import {TokenModel} from './token.model';
+import {License} from './license';
 
 export class Token {
     static _token: string | null = null;
@@ -13,6 +14,7 @@ export class Token {
         sessionStorage.setItem('token', data.access_token || '');
         sessionStorage.setItem('refreshToken', data.refresh_token || '');
         sessionStorage.setItem('tokenType', data.token_type || '');
+        License.setFromLogin(data.license);
     }
 
     static get token(): string | null {
@@ -35,5 +37,6 @@ export class Token {
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('tokenType');
+        License.clear();
     }
 }

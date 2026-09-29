@@ -36,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <div class="device-param__log">
+        <!-- <div class="device-param__log">
             <div class="label">{{ t('fw.systemPages.changelog') }}</div>
             <div class="log-monitor">
                 <cv-scrollbar class="log-console-box">
@@ -44,7 +44,7 @@
                     {{ log }}
                 </cv-scrollbar>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 <script setup lang="ts">

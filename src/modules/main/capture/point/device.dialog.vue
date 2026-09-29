@@ -28,7 +28,7 @@
                     @input="(value: any) => (formData.devaddr = value.replace(/[^\d]/g, '') + '')"
                 />
             </cv-form-item>
-            <cv-form-item label="MqttDeviceId" prop="mqttkey">
+            <cv-form-item label="MqttDeviceID" prop="mqttkey">
                 <cv-input
                     v-model.trim="formData.mqttkey"
                     :placeholder="t('fw.common.pleaseInput')"

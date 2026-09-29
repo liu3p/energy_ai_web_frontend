@@ -10,8 +10,8 @@
                             <div>{{ t('fw.systemPages.hostname') }}</div>
                             <div class="bold-text">{{ systemInfo?.sn ?? '-' }}</div>
                             <div>{{ t('fw.systemPages.serialNumber') }}</div>
-                            <div class="bold-text">{{ systemInfo?.modelnum ?? '-' }}</div>
-                            <div>{{ t('fw.systemPages.deviceModel') }}</div>
+                            <!-- <div class="bold-text">{{ systemInfo?.modelnum ?? '-' }}</div> -->
+                            <!-- <div>{{ t('fw.systemPages.deviceModel') }}</div> -->
                             <div class="bold-text">{{ systemInfo?.version ?? '-' }}</div>
                             <div>{{ t('fw.systemPages.softwareVersionNo') }}</div>
                         </cv-scrollbar>

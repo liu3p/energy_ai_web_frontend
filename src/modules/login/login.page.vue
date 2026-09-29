@@ -118,7 +118,12 @@ const submit = async () => {
                 const resData = await res.json();
                 if (res.ok) {
                     Token.setLocalToken(resData);
-                    router.replace('/main');
+                    // license.is_valid 为 false 时进入注册激活页
+                    if (resData?.license?.is_valid === false) {
+                        router.replace('/register');
+                    } else {
+                        router.replace('/main');
+                    }
                 } else {
                     switch (res.status) {
                         case 409:

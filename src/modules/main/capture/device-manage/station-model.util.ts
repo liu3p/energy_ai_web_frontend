@@ -61,9 +61,9 @@ function getDispatchMode(type: string): DispatchMode | undefined {
 const TYPE_ICON_MAP: Record<string, string> = {
     CHARGER: iconCharging,
     PVPCS: iconSolar,
-    INLINE: iconSolar,
-    STATION: iconSolar,
-    TRANSFORMER: iconSolar,
+    INLINE: iconGrid,
+    STATION: iconGrid,
+    TRANSFORMER: iconGrid,
     LIQUIDCOOL: iconAc,
     AIRCOOL: iconAc,
     LOAD: iconAc,

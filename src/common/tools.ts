@@ -1,10 +1,14 @@
 import {TokenModel} from './token.model';
+import {License} from './license';
 
 export const TokenUtils = {
     setLocalToken(data: TokenModel): void {
         sessionStorage.setItem('token', data.access_token);
         sessionStorage.setItem('refreshToken', data.refresh_token);
         sessionStorage.setItem('tokenType', data.token_type);
+        if (data.license) {
+            License.setFromLogin(data.license);
+        }
     },
     getLocalToken(): string | null {
         return sessionStorage.getItem('token');
@@ -19,5 +23,6 @@ export const TokenUtils = {
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('tokenType');
+        License.clear();
     },
 };

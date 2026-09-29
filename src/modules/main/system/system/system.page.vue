@@ -16,12 +16,12 @@
                         <cv-input v-model="formData.sn" :disabled="disabled" />
                     </div>
                 </div>
-                <div class="form-item">
+                <!-- <div class="form-item">
                     <div class="label">{{ t('fw.systemPages.deviceModel') }}</div>
                     <div class="form-wrap">
                         <cv-input v-model="formData.modelnum" :disabled="disabled" />
                     </div>
-                </div>
+                </div> -->
                 <div class="form-item">
                     <div class="label">{{ t('fw.systemPages.hostname') }}</div>
                     <div class="form-wrap">

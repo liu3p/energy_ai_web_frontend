@@ -3,16 +3,19 @@ import Page403 from './modules/error-page/403.page.vue';
 import Page404 from './modules/error-page/404.page.vue';
 import Main from './modules/main/main.page.vue';
 import Login from './modules/login/login.page.vue';
+import Register from './modules/login/register.page.vue';
 import { Token } from './common/token';
+import { License } from './common/license';
 import { IconCollect, IconAgc, IconSystem, IconAccount } from '@/icons';
 
-const skipPath = ['/login', '/403', '/404'];
+const skipPath = ['/login', '/register', '/403', '/404'];
 import { clearUserInfo, initUserInfo, userInfo, userMenuList } from './common/user';
 import authService from '@/common/auth.service';
 
 export const constantRoutes = [
     { path: '', redirect: '/main/dashboard/index' },
     { path: '/login', component: Login },
+    { path: '/register', component: Register },
     { path: '/403', component: Page403 },
     { path: '/404', component: Page404 },
 ];
@@ -208,7 +211,20 @@ router.beforeEach(async (to, from, next) => {
         return;
     }
     if (token && to.path === '/login') {
+        next(License.isValid ? '/' : '/register');
+        return;
+    }
+    // 未激活：仅允许停留在注册页
+    if (token && !License.isValid && to.path !== '/register') {
+        next('/register');
+        return;
+    }
+    if (token && License.isValid && to.path === '/register') {
         next('/');
+        return;
+    }
+    if (token && to.path === '/register') {
+        next();
         return;
     }
     if (token && userStore?.usertype) {

@@ -7,9 +7,17 @@
                     v-model="formData.value"
                     style="width: 100%"
                 />
-                <cv-select v-else-if="currentParam?.dispatchMode === 'control'" v-model="formData.value">
-                    <cv-option :value="1">{{ t('fw.deviceManage.dispatch.controlClose') }}</cv-option>
-                    <cv-option :value="0">{{ t('fw.deviceManage.dispatch.controlOpen') }}</cv-option>
+                <cv-select
+                    v-else-if="currentParam?.dispatchMode === 'control'"
+                    v-model="formData.value"
+                    style="width: 100%"
+                >
+                    <cv-option
+                        v-for="item in controlOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
                 </cv-select>
                 <cv-input
                     v-else
@@ -45,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, reactive, ref, watch} from 'vue';
+import {computed, nextTick, reactive, ref, watch} from 'vue';
 import {CvMessage, useLocale} from 'cloudview.ui-next';
 import type {ParamCardItem} from './device-manage.types';
 import {dispatchDeviceParam} from './device-manage.service';
@@ -71,6 +79,12 @@ const formData = reactive<{
 
 const paramLabel = computed(() => currentParam.value?.label ?? '');
 
+/** 控合 / 控分；下发框默认展示第一项文案，不展示 0/1 */
+const controlOptions = computed(() => [
+    {label: t('fw.deviceManage.dispatch.controlClose'), value: 1},
+    {label: t('fw.deviceManage.dispatch.controlOpen'), value: 0},
+]);
+
 const rules = computed(() => ({
     value: [{required: true, message: t('fw.deviceManage.dispatch.pleaseInputDispatchValue'), trigger: 'blur'}],
     checkpwd: [{required: true, message: t('fw.deviceManage.dispatch.pleaseInputLoginPwd'), trigger: 'blur'}],
@@ -84,15 +98,17 @@ watch(visible, val => {
     }
 });
 
-function open(param: ParamCardItem) {
+async function open(param: ParamCardItem) {
     currentParam.value = param;
+    formData.checkpwd = '';
+    visible.value = true;
+    await nextTick();
     if (param.dispatchMode === 'control') {
-        formData.value = Number(param.value) === 1 ? 1 : 0;
+        // 默认选中下拉第一项（控合），保证输入框显示文案而非 0/1
+        formData.value = controlOptions.value[0].value;
     } else {
         formData.value = param.value ?? '';
     }
-    formData.checkpwd = '';
-    visible.value = true;
 }
 
 function handleClose() {
