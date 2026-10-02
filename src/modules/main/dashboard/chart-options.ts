@@ -15,6 +15,8 @@ export const initOptions = (options?: chartParams): LineOption & {
         data: [],
         unit: ""
     };
+    const hasBar = propsData.data.some(item => item.type === 'bar');
+    const categoryCount = propsData.xAxis.length;
     const legendData: any = [];
     const colorList: string[] = [];
     const series: echarts.SeriesOption[] = propsData.data.map((item) => {
@@ -38,16 +40,20 @@ export const initOptions = (options?: chartParams): LineOption & {
             lineStyle: {
                 width: 2,
             },
-            barWidth: 20,
+            // 类目较少时加宽柱体，避免两侧空旷
+            barWidth: hasBar && categoryCount <= 7 ? 28 : 20,
+            barMaxWidth: 36,
+            barGap: '30%',
+            barCategoryGap: hasBar && categoryCount <= 7 ? '50%' : '35%',
             barBorderRadius: 6,
             symbol: 'circle',
             symbolSize: 6,
             showSymbol: false,
             smooth: false,
             data: item.data,
-            areaStyle: {
+            areaStyle: item.type === 'line' ? {
                 color: '#1DA5000A',
-            },
+            } : undefined,
             itemStyle: {
                 barBorderRadius: [6, 6, 0, 0]
             }
@@ -78,7 +84,8 @@ export const initOptions = (options?: chartParams): LineOption & {
         },
         xAxis: {
             type: 'category',
-            boundaryGap: false,
+            // 折线贴边；柱状保留类目间距，少量数据不会贴死左右两端
+            boundaryGap: hasBar,
             axisLine: {
                 lineStyle: {
                     color: '#000000',
@@ -100,7 +107,7 @@ export const initOptions = (options?: chartParams): LineOption & {
         },
         yAxis: [
             {
-                name: propsData.unit ?? "kW",
+                name: propsData.unit ?? '',
                 type: 'value',
                 boundaryGap: [0, 0.1],
                 axisLabel: {

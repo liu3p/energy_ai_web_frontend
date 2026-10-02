@@ -3,8 +3,8 @@
         <div class="main-contain">
             <div class="process-contain">
                 <div class="form-wrapper">
-                    <div>
-                        <span>{{ t('fw.monitor.search') }}{{ t('fw.common.colon') }} </span>
+                    <div class="search-field">
+                        <span class="search-field__label">{{ t('fw.monitor.search') }}{{ t('fw.common.colon') }}</span>
                         <cv-input v-model="filter.keywords" :placeholder="t('fw.systemPages.pleaseInputProcessName')" style="width: 200px" />
                     </div>
                     <cv-button type="primary" @click="reset(t('fw.systemPages.deviceRestart'))">{{ t('fw.systemPages.deviceRestart') }}</cv-button>
@@ -162,6 +162,17 @@ $gap: 24px;
     height: 48px;
     padding: 4px 16px;
     margin-top: 10px;
+}
+
+.search-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &__label {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
 }
 
 .table-container {

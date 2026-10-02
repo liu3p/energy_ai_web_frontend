@@ -91,9 +91,6 @@
                         >
                             <template #default="scope">
                                 <div class="table-actions">
-                                    <cv-button text type="danger" @click="delect(scope.row)">
-                                        {{ t('fw.common.delete') }}
-                                    </cv-button>
                                     <cv-button text type="primary" @click="modelManageRef.open(scope.row)">
                                         {{ t('fw.common.edit') }}
                                     </cv-button>
@@ -112,6 +109,9 @@
                                         @click="move(scope.row, 0)"
                                     >
                                         {{ t('fw.dashboardManagement.moveDown') }}
+                                    </cv-button>
+                                    <cv-button text type="danger" @click="delect(scope.row)">
+                                        {{ t('fw.common.delete') }}
                                     </cv-button>
                                 </div>
                             </template>

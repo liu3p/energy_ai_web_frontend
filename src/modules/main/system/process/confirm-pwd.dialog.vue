@@ -74,14 +74,10 @@ defineExpose({
 </script>
 <style scoped lang="scss">
 .tips {
-    display: flex;
     width: 100%;
-    height: 50px;
-    justify-content: center;
-    align-items: center;
     margin-bottom: 20px;
-    background-color: rgba(235, 157, 66, 0.2);
-    border: 1px solid #eb9d42;
-    border-radius: 5px;
+    text-align: left;
+    line-height: 22px;
+    color: #35353e;
 }
 </style>

@@ -8,7 +8,7 @@
         align-center
         @close="close"
     >
-        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="120px" class="dialog-form">
+        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="140px" class="dialog-form">
             <cv-form-item v-if="isEdit" :label="t('fw.capturePoint.deviceId')" prop="id">
                 <cv-input v-model.trim="formData.id" disabled class="w-full" />
             </cv-form-item>
@@ -197,6 +197,7 @@ defineExpose({
 
     :deep(.el-form-item__label) {
         color: #1a2233;
+        white-space: nowrap;
     }
 
     :deep(.el-input__wrapper),

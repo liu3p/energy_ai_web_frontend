@@ -1,13 +1,13 @@
 <template>
     <cv-dialog
         v-model="visible"
-        width="860"
+        width="980"
         :title="dialogType == 'add' ? t('fw.common.add') : t('fw.common.edit')"
         :draggable="true"
         :z-index="1000"
         @close="cancel"
     >
-        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="80px" class="dialog-form">
+        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="130px" class="dialog-form">
             <cv-form-item :label="t('fw.dashboardManagement.showName')" prop="show_name">
                 <cv-input v-model="formData.show_name" :placeholder="t('fw.common.pleaseInput')" />
             </cv-form-item>
@@ -41,7 +41,7 @@
                     <cv-form-item
                         class="enum-list__number"
                         :label="t('fw.dashboardManagement.numberValue')"
-                        label-width="80px"
+                        label-width="72px"
                         :prop="'enumList.' + index + '.number'"
                     >
                         <cv-input
@@ -54,7 +54,7 @@
                     <cv-form-item
                         class="enum-list__name"
                         :label="t('fw.dashboardManagement.valueName')"
-                        label-width="70px"
+                        label-width="100px"
                         :prop="'enumList.' + index + '.value'"
                     >
                         <cv-input
@@ -64,9 +64,9 @@
                         />
                     </cv-form-item>
                     <cv-form-item
-                        class="enum-list__color"
+                        class="enum-list__color enum-list__color--font"
                         :label="t('fw.dashboardManagement.fontColor')"
-                        label-width="60px"
+                        label-width="90px"
                     >
                         <el-color-picker
                             v-model="formData.enumList[index].color"
@@ -75,9 +75,9 @@
                         />
                     </cv-form-item>
                     <cv-form-item
-                        class="enum-list__color"
+                        class="enum-list__color enum-list__color--bg"
                         :label="t('fw.dashboardManagement.bgColor')"
-                        label-width="60px"
+                        label-width="100px"
                     >
                         <el-color-picker
                             v-model="formData.enumList[index].bgColor"
@@ -311,29 +311,42 @@ defineExpose({
 
 <style lang="scss" scoped>
 .dialog-form {
-    padding: 0 40px;
+    padding: 0 24px;
+
+    > :deep(.el-form-item > .el-form-item__label),
+    > :deep(.cv-form-item > .cv-form-item__label) {
+        white-space: nowrap;
+    }
 }
 
 .enum-list {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    gap: 4px;
+    gap: 12px;
     margin-bottom: 18px;
 
     :deep(.el-form-item),
     :deep(.cv-form-item) {
         margin-bottom: 0;
         margin-right: 0;
-        display: flex;
+        display: inline-flex;
         align-items: center;
+        flex: 0 0 auto;
     }
 
     :deep(.el-form-item__label),
     :deep(.cv-form-item__label) {
+        position: static !important;
+        width: auto !important;
+        min-width: 0 !important;
         height: 32px;
         line-height: 32px;
-        padding-bottom: 0;
+        padding: 0 8px 0 0 !important;
+        white-space: nowrap;
+        justify-content: flex-start;
+        text-align: left;
+        flex-shrink: 0;
     }
 
     :deep(.el-form-item__content),
@@ -341,6 +354,8 @@ defineExpose({
         display: flex;
         align-items: center;
         line-height: 32px;
+        margin-left: 0 !important;
+        flex: 0 0 auto;
     }
 
     :deep(.el-color-picker) {
@@ -358,36 +373,24 @@ defineExpose({
     }
 }
 
+// Number 标签占满与上方表单项相同的 130px，使第一列输入与上方输入左对齐
 .enum-list__number {
-    flex: 0 0 auto;
-
     :deep(.el-form-item__label),
     :deep(.cv-form-item__label) {
+        width: 130px !important;
         justify-content: flex-end;
         text-align: right;
+        padding-right: 12px !important;
+        box-sizing: border-box;
     }
 }
 
 .enum-list__number-input {
-    width: 90px;
-}
-
-.enum-list__name {
-    flex: 0 0 auto;
+    width: 72px;
 }
 
 .enum-list__name-input {
-    width: 170px;
-}
-
-.enum-list__color {
-    flex: 0 0 auto;
-
-    :deep(.el-form-item__label),
-    :deep(.cv-form-item__label) {
-        justify-content: flex-end;
-        text-align: right;
-    }
+    width: 140px;
 }
 
 .enum-btn {

@@ -21,8 +21,9 @@
             </div>
             <div class="content-report">
                 <div class="content-report__header">
-                    {{ t('fw.monitor.channelStatus') }}{{ t('fw.common.colon') }} <span v-if="connected" style="color: #1da500">{{ t('fw.monitor.connected') }}</span>
-                    <span v-else style="color: #ff4d4f">{{ t('fw.monitor.disconnected') }}</span>
+                    <span class="content-report__label">{{ t('fw.monitor.channelStatus') }}{{ t('fw.common.colon') }}</span>
+                    <span v-if="connected" class="content-report__status is-connected">{{ t('fw.monitor.connected') }}</span>
+                    <span v-else class="content-report__status is-disconnected">{{ t('fw.monitor.disconnected') }}</span>
                 </div>
                 <div class="content-report__content">
                     <cv-scrollbar id="scroll_id" ref="scrollerRef" height="100%">
@@ -188,12 +189,28 @@ onUnmounted(() => {
     &__header {
         display: flex;
         align-items: center;
+        gap: 8px;
         height: 40px;
         padding: 12px 16px;
         background: #f3f3f5;
         border-radius: 8px 8px 0 0;
         border: 1px solid #d6d6d6;
         font-weight: bold;
+    }
+
+    &__label {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    &__status {
+        &.is-connected {
+            color: #1da500;
+        }
+
+        &.is-disconnected {
+            color: #ff4d4f;
+        }
     }
 
     &__content {

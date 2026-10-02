@@ -294,7 +294,7 @@ export default {
             paramGroup: {
                 controlAdjust: '遥控遥调',
                 telemetry: '遥信遥测',
-                stationParams: '厂站参数',
+                stationParams: '静态参数',
             },
             error: {
                 noDatabaseId: '参数未绑定点位，无法下发',

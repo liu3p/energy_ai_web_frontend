@@ -41,7 +41,7 @@ import DeviceDetail from './device-detail.vue';
 import DispatchDialog from './dispatch-dialog.vue';
 import type {DeviceTreeNode, DynParam, ParamCardItem, ParamType, StationParam} from './device-manage.types';
 import {fetchStationModel} from './device-manage.service';
-import {findFirstLeafNode, findNodeByKey} from './station-model.util';
+import {findNodeByKey} from './station-model.util';
 
 const POLL_INTERVAL_MS = 3000;
 
@@ -103,16 +103,6 @@ function findInForest(nodes: DeviceTreeNode[], key: string): DeviceTreeNode | nu
     return null;
 }
 
-function findFirstLeafInForest(nodes: DeviceTreeNode[]): DeviceTreeNode | null {
-    for (const node of nodes) {
-        const leaf = findFirstLeafNode(node);
-        if (leaf) {
-            return leaf;
-        }
-    }
-    return nodes[0] ?? null;
-}
-
 async function loadTree(preserveSelection = false) {
     if (loadingTree) {
         return;
@@ -134,9 +124,11 @@ async function loadTree(preserveSelection = false) {
         // 树从厂站 STATION 根节点开始展示
         treeData.value = [root];
         const previousKey = preserveSelection ? currentKey.value : '';
+        // 进入页面默认定位厂站根节点 station，轮询时保留当前选中
         const targetNode =
             (previousKey ? findInForest(treeData.value, previousKey) : null) ??
-            findFirstLeafInForest(treeData.value);
+            treeData.value[0] ??
+            null;
 
         if (!targetNode) {
             currentNode.value = null;

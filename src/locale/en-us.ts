@@ -293,7 +293,7 @@ export default {
             paramGroup: {
                 controlAdjust: 'Remote Control/Adjust',
                 telemetry: 'Signaling/Telemetry',
-                stationParams: 'Station Parameters',
+                stationParams: 'Static Parameters',
             },
             error: {
                 noDatabaseId: 'Parameter is not bound to a point and cannot be dispatched',
@@ -306,7 +306,7 @@ export default {
             pleaseInputParamName: 'Please enter parameter name',
             paramName: 'Parameter Name',
             rawValue: 'Raw Value',
-            currentValue: 'Current Value',
+            currentValue: 'Processed Data',
             dead: 'Deadband',
             quality: 'Quality',
             refreshTime: 'Refresh Time',

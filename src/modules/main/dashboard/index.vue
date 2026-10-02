@@ -171,11 +171,13 @@ const getPowerLevel = async () => {
     let dataList = configData.value.power_level;
     let requistList: any[] = [];
     dataList.forEach((n, i) => {
+        // 取每天 23:55 的点作为当日累计值（与后端约定：按自然日 23:55Z）
+        const monthMoment = moment(powerLevelDate.value);
         const params = {
             "type": "analog",
             "ids": [n.oid],
-            "start_time": moment(powerLevelDate.value).startOf('month'),
-            "end_time": moment(powerLevelDate.value).startOf('month').add(1, 'month'),
+            "start_time": monthMoment.clone().startOf('month').format('YYYY-MM-DD[T]23:55:00.000[Z]'),
+            "end_time": monthMoment.clone().endOf('month').format('YYYY-MM-DD[T]23:55:00.000[Z]'),
             "interval": 86400
         };
         switch (n.oid.split("-")[2]) {
@@ -192,17 +194,24 @@ const getPowerLevel = async () => {
         requistList.push(dashboardServiceApi.getHistory(params))
     })
     const result = await Promise.all(requistList)
+    const daysInMonth = moment(powerLevelDate.value).daysInMonth();
+    const monthAxis = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
+
     dataList.forEach((n1, i1) => {
         if (result[i1].state) {
+            // 按当月完整日期对齐，缺测点补空，避免仅两天时柱子被拉到两侧
+            const valueByDay = new Map<string, number | string | null>();
+            (result[i1].data.data ?? []).forEach((n3: { time: string; data: Record<string, number | string> }) => {
+                // 与请求的 23:55Z 自然日对齐，用 UTC 日期归类
+                valueByDay.set(moment.utc(n3.time).format('D'), n3.data[n1.oid] ?? null);
+            });
             if (powerLevelData.value.xAxis.length == 0) {
-                powerLevelData.value.xAxis = result[i1].data.data.map((n2, i2) => {
-                    return moment(n2.time).format("D")
-                });
+                powerLevelData.value.xAxis = monthAxis;
             }
             powerLevelData.value.data.push({
                 name: getDisplayName(n1),
                 type: "bar",
-                data: result[i1].data.data.map((n3) => { return n3.data[n1.oid] }),
+                data: monthAxis.map(day => valueByDay.get(day) ?? null),
             })
         }
     })
