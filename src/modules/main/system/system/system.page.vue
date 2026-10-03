@@ -61,7 +61,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from 'vue';
+defineOptions({name: 'SystemConfig'});
+import {onMounted, onUnmounted, onDeactivated, ref} from 'vue';
 import {zoneOptions} from '@/modules/main/system/system/zone';
 import ReportLog from '@/modules/main/system/system/report-log.vue';
 import {getSystemInfo, updateSystemInfo} from '@/modules/main/system/system/system.service';
@@ -116,6 +117,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    clearInterval(timer);
+});
+onDeactivated(() => {
     clearInterval(timer);
 });
 

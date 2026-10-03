@@ -18,7 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from 'vue';
+defineOptions({name: 'OperationStrategy'});
+import {onActivated, onDeactivated, onMounted, onUnmounted, ref} from 'vue';
 import Empty from '@/common/empty.vue';
 import StrategySectionPanel from './strategy-section-panel.vue';
 import DispatchControlDialog from './dispatch-control-dialog.vue';
@@ -74,6 +75,14 @@ function handleDispatchSuccess(target: DispatchTarget, value: string) {
 onMounted(() => {
     void loadSections();
     startPolling();
+});
+
+onActivated(() => {
+    startPolling();
+});
+
+onDeactivated(() => {
+    stopPolling();
 });
 
 onUnmounted(() => {

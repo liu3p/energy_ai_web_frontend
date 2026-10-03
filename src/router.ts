@@ -34,6 +34,7 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'index',
+                        name: 'DashboardIndex',
                         component: () => import('./modules/main/dashboard/index.vue'),
                         meta: { title: '看板' },
                     },
@@ -46,26 +47,31 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'monitor',
+                        name: 'CaptureMonitor',
                         component: () => import('./modules/main/capture/monitor/monitor.page.vue'),
                         meta: { title: '设备监控' },
                     },
                     {
                         path: 'device-manage',
+                        name: 'DeviceManage',
                         component: () => import('./modules/main/capture/device-manage/device-manage.page.vue'),
                         meta: { title: '设备管理' },
                     },
                     {
                         path: 'operation-strategy',
+                        name: 'OperationStrategy',
                         component: () => import('./modules/main/capture/operation-strategy/operation-strategy.page.vue'),
                         meta: { title: '运行策略' },
                     },
                     {
                         path: 'point',
+                        name: 'CapturePoint',
                         component: () => import('./modules/main/capture/point/point.page.vue'),
                         meta: { title: '点表配置' },
                     },
                     {
                         path: 'channel',
+                        name: 'CaptureChannel',
                         component: () => import('./modules/main/capture/channel/channel.page.vue'),
                         meta: { title: '通道配置' },
                     },
@@ -78,16 +84,19 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'strategy',
+                        name: 'StrategyShow',
                         component: () => import('./modules/main/agc/strategy/strategic-management.page.vue'),
                         meta: { title: '策略展示' },
                     },
                     {
                         path: 'strategy-config',
+                        name: 'StrategyConfig',
                         component: () => import('./modules/main/agc/strategy/strategic-management.page.vue'),
                         meta: { title: '策略配置' },
                     },
                     {
                         path: 'model',
+                        name: 'ModelConfig',
                         component: () => import('./modules/main/agc/model-management/model-management.page.vue'),
                         meta: { title: '模型配置' },
                     },
@@ -100,11 +109,13 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'collection',
+                        name: 'DataCollection',
                         component: () => import('./modules/main/data/data-collection.page.vue'),
                         meta: { title: '数据采集' },
                     },
                     {
                         path: 'channel-message',
+                        name: 'ChannelMessage',
                         component: () => import('./modules/main/data/channel-message.page.vue'),
                         meta: { title: '通道报文' },
                     },
@@ -117,6 +128,7 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'manage',
+                        name: 'AlarmManage',
                         component: () => import('./modules/main/layout/placeholder.page.vue'),
                         meta: { title: 'fw.sidebar.alarmManage' },
                         props: () => ({ titleKey: 'fw.sidebar.alarmManage' }),
@@ -130,6 +142,7 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'display',
+                        name: 'DisplayConfig',
                         component: () => import('./modules/main/agc/dashboard-management/dashboard-management.page.vue'),
                         meta: { title: 'fw.sidebar.displayConfig' },
                         props: () => ({ titleKey: 'fw.sidebar.displayConfig' }),
@@ -143,26 +156,31 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'monitor',
+                        name: 'PerfMonitor',
                         component: () => import('./modules/main/system/monitor/monitor.page.vue'),
                         meta: { title: '性能监控' },
                     },
                     {
                         path: 'system',
+                        name: 'SystemConfig',
                         component: () => import('./modules/main/system/system/system.page.vue'),
                         meta: { title: '系统配置' },
                     },
                     {
                         path: 'network',
+                        name: 'NetworkConfig',
                         component: () => import('./modules/main/system/network/network.page.vue'),
                         meta: { title: '网络配置' },
                     },
                     {
                         path: 'log',
+                        name: 'LogMonitor',
                         component: () => import('./modules/main/system/log/log.page.vue'),
                         meta: { title: '日志监控' },
                     },
                     {
                         path: 'process',
+                        name: 'ProcessManage',
                         component: () => import('./modules/main/system/process/process.page.vue'),
                         meta: { title: '进程管理' },
                     },
@@ -175,6 +193,7 @@ export const asyncRoutes = [
                 children: [
                     {
                         path: 'account',
+                        name: 'AccountManage',
                         component: () => import('./modules/main/account/account-manage.page.vue'),
                         meta: { title: '账号管理', permission: 'admin' },
                     },

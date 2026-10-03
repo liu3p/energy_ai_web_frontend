@@ -96,7 +96,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue';
+defineOptions({name: 'CapturePoint'});
+import {nextTick, onMounted, ref, watch} from 'vue';
 import RtuPage from '@/modules/main/capture/point/rtu-page.vue';
 import ImportPoint from '@/modules/main/capture/point/import-point.vue';
 import AcgImportPoint from '@/modules/main/capture/point/acg/acg-import-point.vue';
@@ -150,6 +151,19 @@ const initRtuList = () => {
                     key: dev.name + dev.id,
                 })),
             }));
+            if (!currentKey.value) {
+                const firstRoot = treeData.value[0];
+                if (firstRoot) {
+                    currentKey.value = firstRoot.key;
+                    nextTick(() => {
+                        const node = treeRef.value?.getNode?.(firstRoot.key);
+                        if (node) {
+                            currentNode.value = node;
+                            treeRef.value?.setCurrentKey?.(firstRoot.key);
+                        }
+                    });
+                }
+            }
         }
     });
 };

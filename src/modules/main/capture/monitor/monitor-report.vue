@@ -56,7 +56,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useLocale } from 'cloudview.ui-next';
 import { WebsocketClass } from '@/common/websocket/websocket.class';
 import {
@@ -242,6 +242,10 @@ onMounted(() => {
 
 onUnmounted(() => {
     close();
+});
+onDeactivated(() => {
+    stop();
+    closeSocket();
 });
 </script>
 <style scoped lang="scss">

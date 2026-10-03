@@ -35,9 +35,10 @@
     </div>
 </template>
 <script setup lang="ts">
+defineOptions({name: 'LogMonitor'});
 import {initWebsocket} from '@/modules/main/system/log/log.service';
 import {initWebsocket as initProcessWebsocket} from '@/modules/main/system/process/process.service';
-import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {onMounted, onUnmounted, onDeactivated, ref, watch} from 'vue';
 import {WebsocketClass} from '@/common/websocket/websocket.class';
 import {useLocale} from 'cloudview.ui-next';
 
@@ -145,6 +146,9 @@ onMounted(async () => {
 onUnmounted(() => {
     closeSocket();
     closeProcessSocket();
+});
+onDeactivated(() => {
+    closeSocket();
 });
 </script>
 <style scoped lang="scss">

@@ -4,15 +4,30 @@
         <div class="main-layout__content">
             <main-header class="main-layout__header" />
             <div class="main-layout__container">
-                <router-view />
+                <router-view v-slot="{Component}">
+                    <keep-alive :include="cachedTabNames">
+                        <component :is="Component" :key="route.path" />
+                    </keep-alive>
+                </router-view>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import {computed} from 'vue';
+import {useRoute} from 'vue-router';
 import AppSidebar from '@/modules/main/layout/app-sidebar.vue';
 import MainHeader from '@/modules/main/main-header.vue';
+import {useVisitedTabs} from '@/modules/main/layout/visited-tabs';
+
+const route = useRoute();
+const {tabs} = useVisitedTabs();
+const cachedTabNames = computed(() =>
+    tabs.value
+        .map(item => item.componentName)
+        .filter((name): name is string => Boolean(name)),
+);
 </script>
 
 <style lang="scss" scoped>

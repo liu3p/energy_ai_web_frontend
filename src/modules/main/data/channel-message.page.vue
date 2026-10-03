@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({name: 'ChannelMessage'});
 import MonitorReport from '@/modules/main/capture/monitor/monitor-report.vue';
 </script>
 

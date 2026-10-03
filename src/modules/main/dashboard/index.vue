@@ -76,7 +76,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onUnmounted, onMounted } from 'vue';
+defineOptions({name: 'DashboardIndex'});
+import { ref, computed, onUnmounted, onMounted, onActivated, onDeactivated } from 'vue';
 import { useLocale } from 'cloudview.ui-next';
 import { currentLocale } from '@/common/locale';
 import dashboardServiceApi from '@/modules/main/dashboard/dashboard.service';
@@ -288,7 +289,17 @@ const initData = () => {
 onMounted(async () => {
     initData();
 });
+onActivated(() => {
+    if (configData.value) {
+        webSocket.offMessage(onMessage);
+        webSocket.onMessage(onMessage);
+    }
+});
+onDeactivated(() => {
+    webSocket.offMessage(onMessage);
+});
 onUnmounted(() => {
+    webSocket.offMessage(onMessage);
 });
 
 </script>

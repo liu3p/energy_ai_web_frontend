@@ -35,7 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import {nextTick, onMounted, onUnmounted, ref} from 'vue';
+defineOptions({name: 'DeviceManage'});
+import {nextTick, onActivated, onDeactivated, onMounted, onUnmounted, ref} from 'vue';
 import Empty from '@/common/empty.vue';
 import DeviceDetail from './device-detail.vue';
 import DispatchDialog from './dispatch-dialog.vue';
@@ -200,6 +201,14 @@ function handleDispatchSuccess(param: ParamCardItem, value: string | number) {
 onMounted(() => {
     void loadTree(false);
     startPolling();
+});
+
+onActivated(() => {
+    startPolling();
+});
+
+onDeactivated(() => {
+    stopPolling();
 });
 
 onUnmounted(() => {

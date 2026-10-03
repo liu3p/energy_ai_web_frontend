@@ -64,6 +64,7 @@
     </div>
 </template>
 <script setup lang="ts">
+defineOptions({name: 'CaptureChannel'});
 import {ref, computed, onMounted} from 'vue';
 import CollapseSlider from '@/common/collapse-slider.vue';
 import Empty from '@/common/empty.vue';

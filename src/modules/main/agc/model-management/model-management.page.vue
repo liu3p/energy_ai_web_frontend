@@ -158,7 +158,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from 'vue';
+defineOptions({name: 'ModelConfig'});
+import {computed, nextTick, onMounted, ref, watch} from 'vue';
 import {CvMessageBox, useLocale} from 'cloudview.ui-next';
 import ModelManagementDialog from './model-management.dialog.vue';
 import ModelManagementServiceApi from '@/modules/main/agc/model-management/model-management.service';
@@ -218,6 +219,18 @@ const queryTreeData = () => {
         if (res.state) {
             if (Object.keys(res.data).length) {
                 treeData.value = [].concat(convertToChildren(res.data));
+                if (!currentKey.value) {
+                    const firstRoot = treeData.value[0];
+                    if (firstRoot?.name) {
+                        nextTick(() => {
+                            const node = treeRef.value?.getNode?.(firstRoot.name);
+                            if (node) {
+                                handleNodeClick(firstRoot, node);
+                                treeRef.value?.setCurrentKey?.(firstRoot.name);
+                            }
+                        });
+                    }
+                }
             } else {
                 treeData.value = [];
             }

@@ -6,6 +6,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({name: 'AlarmManage'});
 import {computed} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
 

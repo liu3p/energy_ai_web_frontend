@@ -1,6 +1,6 @@
 <template>
     <div class="main-header">
-        <div class="main-header__title">{{ pageTitle }}</div>
+        <visited-tabs class="main-header__tabs" />
         <div class="main-header__right">
             <cv-dropdown
                 trigger="click"
@@ -65,33 +65,22 @@
 
 <script lang="ts" setup>
 import {computed, ref} from 'vue';
-import {useRoute} from 'vue-router';
 import {useLocale} from 'cloudview.ui-next';
 import {currentLocale, Locale} from '@/common/locale';
 import router from '@/router';
 import {clearUserInfo, userInfo} from '@/common/user';
 import {Token} from '@/common/token';
 import authService from '@/common/auth.service';
-import {findMenuTitleKeyByPath} from '@/modules/main/layout/sidebar-menu';
+import VisitedTabs from '@/modules/main/layout/visited-tabs.vue';
+import {clearVisitedTabs} from '@/modules/main/layout/visited-tabs';
 import languageIcon from '@/assets/header-icons/ic_language.svg';
 import languageHoverIcon from '@/assets/header-icons/ic_language_hover.svg';
 import logoutIcon from '@/assets/header-icons/ic_log_out.svg';
 
 const {t} = useLocale();
-const route = useRoute();
 const userDropdownRef = ref();
 const langOpen = ref(false);
 const langHover = ref(false);
-
-const pageTitle = computed(() => {
-    const menuTitleKey = findMenuTitleKeyByPath(route.path);
-    const metaTitle = route.meta.title as string | undefined;
-    const titleKey = menuTitleKey || (metaTitle?.startsWith('fw.') ? metaTitle : '');
-    if (titleKey) {
-        return t(titleKey);
-    }
-    return metaTitle || t('fw.common.home');
-});
 
 const displayName = computed(() => userInfo.value?.username || userInfo.value?.usertype || '');
 
@@ -118,6 +107,7 @@ function handleLogout() {
     authService.logout().then(() => {
         clearUserInfo();
         Token.clearLocalToken();
+        clearVisitedTabs();
         router.push('/login');
     });
     userDropdownRef.value?.handleClose?.();
@@ -132,11 +122,11 @@ function handleLogout() {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
 
-    &__title {
-        font-size: 18px;
-        font-weight: 700;
-        color: #35353e;
+    &__tabs {
+        flex: 1;
+        min-width: 0;
     }
 
     &__right {

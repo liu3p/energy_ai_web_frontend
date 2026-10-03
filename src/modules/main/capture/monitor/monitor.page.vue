@@ -28,6 +28,7 @@
     </div>
 </template>
 <script setup lang="ts">
+defineOptions({name: 'CaptureMonitor'});
 import {nextTick, onMounted, ref} from 'vue';
 import {queryRtuListExceptPoints} from '@/modules/main/capture/point/point.service';
 import MonitorPoint from '@/modules/main/capture/monitor/monitor-point.vue';
@@ -50,14 +51,14 @@ const initRtuList = () => {
                 })),
             }));
 
-            const firstDevice = treeData.value.find(rtu => rtu.device?.length)?.device?.[0];
-            if (firstDevice) {
-                currentKey.value = firstDevice.key;
+            const firstRoot = treeData.value[0];
+            if (firstRoot) {
+                currentKey.value = firstRoot.key;
                 nextTick(() => {
-                    const node = treeRef.value?.getNode?.(firstDevice.key);
+                    const node = treeRef.value?.getNode?.(firstRoot.key);
                     if (node) {
                         currentNode.value = node;
-                        treeRef.value?.setCurrentKey?.(firstDevice.key);
+                        treeRef.value?.setCurrentKey?.(firstRoot.key);
                     }
                 });
             }
@@ -66,7 +67,9 @@ const initRtuList = () => {
 };
 
 onMounted(() => {
-    initRtuList();
+    if (!treeData.value.length) {
+        initRtuList();
+    }
 });
 
 const handleNodeClick = (_data: any, node: any) => {

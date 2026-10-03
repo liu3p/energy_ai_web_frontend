@@ -37,7 +37,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import {computed, nextTick, onUnmounted, ref, watch} from 'vue';
+import { computed, nextTick, onActivated, onDeactivated, onUnmounted, ref, watch } from 'vue';
 import {useLocale} from 'cloudview.ui-next';
 import Points from '@/modules/main/capture/monitor/points.page.vue';
 import {pointType} from '@/modules/main/capture/point/point.model';
@@ -82,9 +82,17 @@ const handleChange = async () => {
     init();
 };
 watch(
-    () => props.node.data.id,
-    value => {
-        activeName.value = 'analog';
+    () => props.node?.data?.id,
+    (value, oldValue) => {
+        if (!value) {
+            return;
+        }
+        if (value === oldValue) {
+            return;
+        }
+        if (oldValue) {
+            activeName.value = 'analog';
+        }
         socket && closeSocket();
         init();
     },
@@ -150,6 +158,15 @@ const handleSearch = () => {
         getPointList(true);
     }, 1000);
 };
+onDeactivated(() => {
+    closeSocket();
+});
+onActivated(() => {
+    if (props.node?.data?.id && !socket.value) {
+        init();
+    }
+});
+
 onUnmounted(() => {
     closeSocket();
     if (searchTimer) {

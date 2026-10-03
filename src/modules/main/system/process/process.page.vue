@@ -51,7 +51,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref, computed, reactive} from 'vue';
+defineOptions({name: 'ProcessManage'});
+import {onActivated, onDeactivated, onMounted, onUnmounted, ref, computed, reactive} from 'vue';
 import {initWebsocket, resetProcess, resetReboot} from '@/modules/main/system/process/process.service';
 import {WebsocketClass} from '@/common/websocket/websocket.class';
 import ConfirmPwdDialog from '@/modules/main/system/process/confirm-pwd.dialog.vue';
@@ -125,7 +126,17 @@ onMounted(async () => {
     socket.value.connect();
     socket.value.onMessage(onMessage);
 });
-
+onActivated(async () => {
+    if (socket.value) {
+        return;
+    }
+    socket.value = await initWebsocket();
+    socket.value.connect();
+    socket.value.onMessage(onMessage);
+});
+onDeactivated(() => {
+    closeSocket();
+});
 onUnmounted(() => {
     closeSocket();
 });

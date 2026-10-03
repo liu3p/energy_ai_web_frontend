@@ -43,6 +43,7 @@
     </div>
 </template>
 <script setup lang="ts">
+defineOptions({name: 'NetworkConfig'});
 import {useLocale} from 'cloudview.ui-next';
 
 const {t} = useLocale();

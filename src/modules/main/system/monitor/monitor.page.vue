@@ -113,7 +113,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import {ref, onUnmounted, onMounted} from 'vue';
+defineOptions({name: 'PerfMonitor'});
+import {ref, onUnmounted, onMounted, onActivated, onDeactivated} from 'vue';
 import {IconNetwork, IconWifi, IconSignal} from '@/icons';
 import {CvIconDown, CvIconUp} from 'cloudview.ui-next-icon';
 import LineCharts from '@/modules/main/system/monitor/line-charts.vue';
@@ -241,6 +242,21 @@ onMounted(async () => {
     socket.value = await initWebsocket();
     socket.value.connect();
     socket.value.onMessage(onMessage);
+});
+onActivated(async () => {
+    if (socket.value || deviceSocket.value) {
+        return;
+    }
+    init();
+    deviceSocket.value = await initDeviceWebsocket();
+    deviceSocket.value.connect();
+    deviceSocket.value.onMessage(onDeviceMessage);
+    socket.value = await initWebsocket();
+    socket.value.connect();
+    socket.value.onMessage(onMessage);
+});
+onDeactivated(() => {
+    closeSocket();
 });
 onUnmounted(() => {
     closeSocket();

@@ -40,7 +40,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from 'vue';
+import {onActivated, onDeactivated, onMounted, onUnmounted, ref} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
 import {WebsocketClass} from '@/common/websocket/websocket.class';
 import {initDeviceWebsocket} from '@/modules/main/system/monitor/monitor.service';

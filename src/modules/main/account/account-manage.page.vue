@@ -47,6 +47,7 @@
     </div>
 </template>
 <script setup lang="ts">
+defineOptions({name: 'AccountManage'});
 import {useLocale} from 'cloudview.ui-next';
 import AccountManageApi from './account-manage.service';
 import {h, ref} from 'vue';

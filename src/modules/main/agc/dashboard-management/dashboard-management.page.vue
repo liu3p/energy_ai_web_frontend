@@ -139,6 +139,7 @@
     </div>
 </template>
 <script setup lang="ts">
+defineOptions({name: 'DisplayConfig'});
 import {computed, onMounted, ref} from 'vue';
 import dashboardManagementServiceApi from '@/modules/main/agc/dashboard-management/dashboard-management.service';
 import dashboardManagementDialog from '@/modules/main/agc/dashboard-management/dashboard-management.dialog.vue';

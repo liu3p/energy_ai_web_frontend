@@ -48,6 +48,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({name: 'StrategyPage'});
 import {IconSubmit} from '@/icons';
 import {CvMessageBox, useLocale} from 'cloudview.ui-next';
 import StrategicManagementDialog from '@/modules/main/agc/strategy/strategic-management-dialog.vue';
