@@ -126,41 +126,42 @@ const getRealTime = async () => {
     }
     let requistList: any[] = [];
     dataList.forEach((n, i) => {
-        const params = {
-            "type": "analog",
-            "ids": [n.oid],
-            "start_time": moment(realTimeDate.value).startOf('day'),
-            "end_time": moment(realTimeDate.value).startOf('day').add(1, 'day'),
-            "interval": 900
+        const dayMoment = moment(realTimeDate.value);
+        const params: Record<string, unknown> = {
+            type: 'analog',
+            ids: [n.oid],
+            start_time: dayMoment.clone().startOf('day').format('YYYY-MM-DD[T]00:00:00+08:00'),
+            end_time: dayMoment.clone().format('YYYY-MM-DD[T]23:55:00+08:00'),
+            interval: 900,
         };
-        switch (n.oid.split("-")[2]) {
+        switch (n.oid.split('-')[2]) {
             case '101':
-                params.type = "digital";
+                params.type = 'digital';
                 break;
             case '102':
-                params.type = "analog";
+                params.type = 'analog';
                 break;
             case '105':
-                params.type = "pulse";
+                params.type = 'pulse';
                 break;
         }
-        requistList.push(dashboardServiceApi.getHistory(params))
-    })
-    const result = await Promise.all(requistList)
+        requistList.push(dashboardServiceApi.getHistory(params));
+    });
+    const result = await Promise.all(requistList);
     dataList.forEach((n1, i1) => {
         if (result[i1].state) {
             if (realTimeData.value.xAxis.length == 0) {
-                realTimeData.value.xAxis = result[i1].data.data.map((n2, i2) => {
-                    return moment(n2.time).format("HH:mm")
+                realTimeData.value.xAxis = result[i1].data.data.map((n2) => {
+                    return moment.parseZone(n2.time).utcOffset(8).format('HH:mm');
                 });
             }
             realTimeData.value.data.push({
                 name: getDisplayName(n1),
-                type: "line",
-                data: result[i1].data.data.map((n3) => { return n3.data[n1.oid] }),
-            })
+                type: 'line',
+                data: result[i1].data.data.map((n3) => n3.data[n1.oid]),
+            });
         }
-    })
+    });
     realTimeData.value = JSON.parse(JSON.stringify(realTimeData.value))
 }
 
@@ -172,51 +173,63 @@ const getPowerLevel = async () => {
     let dataList = configData.value.power_level;
     let requistList: any[] = [];
     dataList.forEach((n, i) => {
-        // 取每天 23:55 的点作为当日累计值（与后端约定：按自然日 23:55Z）
+        // 从「上个月最后一天 23:55」起查，配合 diff 得到当月每日增量
         const monthMoment = moment(powerLevelDate.value);
-        const params = {
-            "type": "analog",
-            "ids": [n.oid],
-            "start_time": monthMoment.clone().startOf('month').format('YYYY-MM-DD[T]23:55:00.000[Z]'),
-            "end_time": monthMoment.clone().endOf('month').format('YYYY-MM-DD[T]23:55:00.000[Z]'),
-            "interval": 86400
+        const params: Record<string, unknown> = {
+            type: 'analog',
+            ids: [n.oid],
+            start_time: monthMoment.clone().subtract(1, 'month').endOf('month').format('YYYY-MM-DD[T]23:55:00+08:00'),
+            end_time: monthMoment.clone().endOf('month').format('YYYY-MM-DD[T]23:55:00+08:00'),
+            interval: 86400,
+            diff: true,
         };
-        switch (n.oid.split("-")[2]) {
+        switch (n.oid.split('-')[2]) {
             case '101':
-                params.type = "digital";
+                params.type = 'digital';
                 break;
             case '102':
-                params.type = "analog";
+                params.type = 'analog';
                 break;
             case '105':
-                params.type = "pulse";
+                params.type = 'pulse';
                 break;
         }
-        requistList.push(dashboardServiceApi.getHistory(params))
-    })
-    const result = await Promise.all(requistList)
+        requistList.push(dashboardServiceApi.getHistory(params));
+    });
+    const result = await Promise.all(requistList);
     const daysInMonth = moment(powerLevelDate.value).daysInMonth();
-    const monthAxis = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
+    const monthAxis = Array.from({length: daysInMonth}, (_, i) => String(i + 1));
+    const selectedMonth = moment(powerLevelDate.value).format('YYYY-MM');
 
     dataList.forEach((n1, i1) => {
         if (result[i1].state) {
-            // 按当月完整日期对齐，缺测点补空，避免仅两天时柱子被拉到两侧
             const valueByDay = new Map<string, number | string | null>();
-            (result[i1].data.data ?? []).forEach((n3: { time: string; data: Record<string, number | string> }) => {
-                // 与请求的 23:55Z 自然日对齐，用 UTC 日期归类
-                valueByDay.set(moment.utc(n3.time).format('D'), n3.data[n1.oid] ?? null);
-            });
+            (result[i1].data.data ?? []).forEach(
+                (n3: {
+                    time: string;
+                    data?: Record<string, number | string>;
+                    diff?: Record<string, number | string>;
+                }) => {
+                    const pointTime = moment.parseZone(n3.time);
+                    if (pointTime.clone().utcOffset(8).format('YYYY-MM') !== selectedMonth) {
+                        return;
+                    }
+                    const rawValue = n3.diff?.[n1.oid] ?? n3.data?.[n1.oid];
+                    valueByDay.set(pointTime.clone().utcOffset(8).format('D'), rawValue ?? null);
+                    valueByDay.set(pointTime.format('D'), rawValue ?? null);
+                },
+            );
             if (powerLevelData.value.xAxis.length == 0) {
                 powerLevelData.value.xAxis = monthAxis;
             }
             powerLevelData.value.data.push({
                 name: getDisplayName(n1),
-                type: "bar",
+                type: 'bar',
                 data: monthAxis.map(day => valueByDay.get(day) ?? null),
-            })
+            });
         }
-    })
-    powerLevelData.value = JSON.parse(JSON.stringify(powerLevelData.value))
+    });
+    powerLevelData.value = JSON.parse(JSON.stringify(powerLevelData.value));
 }
 
 function onMessage(data: any) {

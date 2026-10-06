@@ -34,6 +34,20 @@ export const initOptions = (options?: chartParams): LineOption & {
         if (item.color) {
             colorList.push(item.color);
         }
+        const seriesData =
+            item.type === 'bar'
+                ? item.data.map(value => {
+                      const numeric = typeof value === 'number' ? value : Number(value);
+                      const isNegative = !Number.isNaN(numeric) && numeric < 0;
+                      return {
+                          value,
+                          itemStyle: {
+                              // 正数圆上角，负数圆下角
+                              borderRadius: isNegative ? [0, 0, 6, 6] : [6, 6, 0, 0],
+                          },
+                      };
+                  })
+                : item.data;
         return {
             name: item.name,
             type: item.type,
@@ -45,18 +59,19 @@ export const initOptions = (options?: chartParams): LineOption & {
             barMaxWidth: 36,
             barGap: '30%',
             barCategoryGap: hasBar && categoryCount <= 7 ? '50%' : '35%',
-            barBorderRadius: 6,
             symbol: 'circle',
             symbolSize: 6,
             showSymbol: false,
             smooth: false,
-            data: item.data,
+            data: seriesData,
             areaStyle: item.type === 'line' ? {
                 color: '#1DA5000A',
             } : undefined,
-            itemStyle: {
-                barBorderRadius: [6, 6, 0, 0]
-            }
+            itemStyle: item.type === 'bar'
+                ? undefined
+                : {
+                      barBorderRadius: [6, 6, 0, 0],
+                  },
         };
     })
 
