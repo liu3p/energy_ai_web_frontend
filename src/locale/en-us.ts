@@ -460,15 +460,13 @@ export default {
                 '0': 'Collect',
                 '500': 'Forward',
                 '700': 'agc',
-                '800': 'System Monitor',
                 '900': 'Calculated',
             },
-            // Add RTU dialog options (API type field 1–5)
+            // Add RTU dialog options (API type field 1/2/3/5)
             rtuAddTypeOption: {
                 '1': 'Collect',
                 '2': 'Forward',
                 '3': 'agc',
-                '4': 'System Monitor',
                 '5': 'Calculated',
             },
             col: {

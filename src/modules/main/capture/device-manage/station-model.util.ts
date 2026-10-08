@@ -28,7 +28,7 @@ const CHILD_KEYS = [
 const PARAM_UNITS: Record<string, string> = {
     SOCHigh: '%',
     SOCLow: '%',
-    Capacity: 'kWh',
+    Capacity: 'kW',
 };
 
 function translateDeviceManage(path: string, fallback: string): string {
