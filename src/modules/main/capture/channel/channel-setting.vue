@@ -22,83 +22,71 @@
                             <cv-input v-model="form.id" disabled></cv-input>
                         </cv-form-item>
                     </div>
-                    <div>
-                        <cv-form-item label="应用层协议">
-                            <cv-select v-model="form.appPluginId" filterable @change="handleAppChange" clearable>
-                                <cv-option
-                                    v-for="item in appPluginOptions"
-                                    :key="item.id"
-                                    :label="item.name"
-                                    :value="item.id"
-                                />
-                            </cv-select>
-                        </cv-form-item>
-                    </div>
-                    <div>
-                        <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
-                            <cv-table-column type="index" label="序号" width="80" />
-                            <cv-table-column prop="name" label="参数" />
-                            <cv-table-column label="数据类型" />
-                            <cv-table-column prop="value" label="值">
-                                <template #default="{row}">
-                                    <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
-                                    <cv-select v-else size="default" v-model="row.value">
-                                        <cv-option
-                                            v-for="item in row.valuelist.split(' ')"
-                                            :key="item"
-                                            :label="item"
-                                            :value="item"
-                                        />
-                                    </cv-select>
-                                </template>
-                            </cv-table-column>
-                            <cv-table-column label="取值范围" />
-                            <cv-table-column label="备注" />
-                        </cv-table>
-                    </div>
-                    <div>
-                        <cv-form-item label="链路层协议" style="margin-top: 16px">
-                            <cv-select v-model="form.linkPluginId" filterable @change="handleLinkChange" clearable>
-                                <cv-option
-                                    v-for="item in linkPluginOptions"
-                                    :key="item.id"
-                                    :label="item.name"
-                                    :value="item.id"
-                                />
-                            </cv-select>
-                        </cv-form-item>
-                    </div>
-                    <div>
-                        <cv-table :data="linkPluginTable?.parameters ?? []" style="width: 100%">
-                            <cv-table-column type="index" label="序号" width="80" />
-                            <cv-table-column prop="name" label="参数" />
-                            <cv-table-column label="数据类型" />
-                            <cv-table-column prop="value" label="值">
-                                <template #default="{row}">
-                                    <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
-                                    <cv-select v-else size="default" v-model="row.value">
-                                        <cv-option
-                                            v-for="item in row.valuelist.split(' ')"
-                                            :key="item"
-                                            :label="item"
-                                            :value="item"
-                                        />
-                                    </cv-select>
-                                </template>
-                            </cv-table-column>
-                            <cv-table-column label="取值范围" />
-                            <cv-table-column label="备注" />
-                        </cv-table>
-                    </div>
+                    <template v-for="(layer, index) in layerStates" :key="layer.type">
+                        <div>
+                            <cv-form-item
+                                :label="layerLabel(layer.type)"
+                                :style="index === 0 ? undefined : {marginTop: '16px'}"
+                            >
+                                <cv-select
+                                    :model-value="layer.selectedId"
+                                    filterable
+                                    clearable
+                                    @change="(id: string | number) => handleLayerChange(layer.type, id)"
+                                >
+                                    <cv-option
+                                        v-for="item in layer.options"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.id"
+                                    />
+                                </cv-select>
+                            </cv-form-item>
+                        </div>
+                        <div class="protocol-layer-table">
+                            <cv-table :data="layer.selected?.parameters ?? []" style="width: 100%">
+                                <cv-table-column type="index" label="序号" width="80" />
+                                <cv-table-column prop="name" label="参数" />
+                                <cv-table-column label="数据类型" />
+                                <cv-table-column prop="value" label="值">
+                                    <template #default="{row}">
+                                        <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
+                                        <cv-select v-else size="default" v-model="row.value">
+                                            <cv-option
+                                                v-for="item in row.valuelist.split(' ')"
+                                                :key="item"
+                                                :label="item"
+                                                :value="item"
+                                            />
+                                        </cv-select>
+                                    </template>
+                                </cv-table-column>
+                                <cv-table-column label="取值范围" />
+                                <cv-table-column label="备注" />
+                            </cv-table>
+                        </div>
+                    </template>
                 </cv-scrollbar>
             </div>
         </cv-form>
     </div>
 </template>
 <script setup lang="ts">
-import {ref, reactive, watch, onMounted, computed} from 'vue';
+import {ref, reactive, watch, onMounted} from 'vue';
 import _ from 'lodash';
+import {useLocale} from 'cloudview.ui-next';
 import {getPlugins, notifyReload} from '@/modules/main/capture/channel/channel.service';
+import {
+    buildLayerStates,
+    buildPluginsPayload,
+    getProtocolLayerLabelKey,
+    normalizePluginLayers,
+    selectLayerPlugin,
+    type LayerState,
+    type ProtocolLayer,
+} from '@/modules/main/capture/channel/protocol-layers';
+
+const {t} = useLocale();
 
 const emit = defineEmits(['submit']);
 const props = defineProps<{
@@ -118,37 +106,23 @@ const rules = reactive({
 const form = ref<any>({
     name: '',
     id: '',
-    appPluginId: '',
-    linkPluginId: '',
 });
-const appPluginOptions = ref();
-const linkPluginOptions = ref();
-const appPluginTable = ref();
-const linkPluginTable = ref();
-const handleAppChange = (id: string) => {
-    appPluginTable.value = appPluginOptions.value?.find((item: any) => item.id === id);
-};
-const formatAppValueList = () => {
-    const sourceAppPlugin = appPluginOptions.value?.find((opt: any) => opt.id === appPluginTable.value.id);
-    if (sourceAppPlugin?.parameters && appPluginTable.value?.parameters) {
-        const paramMap = new Map(sourceAppPlugin.parameters.map((p: any) => [p.name, p.valuelist]));
-        appPluginTable.value.parameters.forEach((param: any) => {
-            param.valuelist = paramMap.get(param.name);
-        });
-    }
+
+const catalogLayers = ref<ProtocolLayer[]>([]);
+const layerStates = ref<LayerState[]>([]);
+const pendingSavedPlugins = ref<any[] | null>(null);
+
+const layerLabel = (type: string) =>
+    t(`fw.capturePoint.${getProtocolLayerLabelKey(type)}`).replace('{n}', type);
+
+const applyLayerStates = (savedPlugins: any[] = []) => {
+    layerStates.value = buildLayerStates(catalogLayers.value, savedPlugins);
 };
 
-const handleLinkChange = (id: string) => {
-    linkPluginTable.value = linkPluginOptions.value?.find((item: any) => item.id === id);
-};
-const formatLinkValueList = () => {
-    const sourceLinkPlugin = linkPluginOptions.value?.find((opt: any) => opt.id === linkPluginTable.value.id);
-    if (sourceLinkPlugin?.parameters && linkPluginTable.value?.parameters) {
-        const paramMap = new Map(sourceLinkPlugin.parameters.map((p: any) => [p.name, p.valuelist]));
-        linkPluginTable.value.parameters.forEach((param: any) => {
-            param.valuelist = paramMap.get(param.name);
-        });
-    }
+const handleLayerChange = (type: string, id: string | number | '') => {
+    layerStates.value = layerStates.value.map(layer =>
+        layer.type === type ? selectLayerPlugin(layer, id) : layer
+    );
 };
 
 const publicNotify = () => {
@@ -158,14 +132,13 @@ const publicNotify = () => {
         } else CvMessage.error(res.data.msg);
     });
 };
+
 onMounted(() => {
     getPlugins().then(res => {
         if (res.state) {
-            const {appplugin, linkplugin} = res.data;
-            appPluginOptions.value = appplugin;
-            formatAppValueList();
-            linkPluginOptions.value = linkplugin;
-            formatLinkValueList();
+            catalogLayers.value = normalizePluginLayers(res.data);
+            applyLayerStates(pendingSavedPlugins.value ?? (form.value as any)?.plugins ?? []);
+            pendingSavedPlugins.value = null;
         }
     });
 });
@@ -173,67 +146,34 @@ onMounted(() => {
 const save = () => {
     ruleFormRef.value.validate((valid: any) => {
         if (valid) {
-            const {
-                comment,
-                id,
-                name,
-                onduty,
-                servergroup,
-                possibleowner: {id: possibleownerid},
-            } = form.value;
-            const appplugin =
-                appPluginTable.value?.id || appPluginTable.value?.id === 0
-                    ? {
-                          id: appPluginTable.value.id,
-                          name: appPluginTable.value.name,
-                          type: 'APP',
-                          parameters: appPluginTable.value.parameters,
-                      }
-                    : null;
-            const linkplugin =
-                linkPluginTable.value?.id || linkPluginTable.value?.id === 0
-                    ? {
-                          id: linkPluginTable.value.id,
-                          name: linkPluginTable.value.name,
-                          type: 'LINK',
-                          parameters: linkPluginTable.value.parameters,
-                      }
-                    : null;
+            // POST|PUT /fecfg/cgroup/:cgid/channel[/:cid] 改动后：
+            // { name, possibleownerid, plugins: [{id, parameters}] }，不再传 appplugin/linkplugin
+            const possibleownerid = form.value?.possibleowner?.id ?? form.value?.possibleownerid;
             emit('submit', {
-                comment,
-                id,
-                name,
-                onduty,
-                servergroup,
+                name: form.value.name,
                 possibleownerid,
-                appplugin,
-                linkplugin,
+                plugins: buildPluginsPayload(layerStates.value),
             });
         }
     });
 };
 
+const resolveSavedPlugins = (values: any) => {
+    if (Array.isArray(values?.plugins)) return values.plugins;
+    // 兼容旧读法：顶层 appplugin / linkplugin
+    return [values?.linkplugin, values?.appplugin].filter(Boolean);
+};
+
 watch(
     () => props.data,
     (values: any) => {
-        const plugins = values.plugins ?? [];
+        const plugins = resolveSavedPlugins(values);
         form.value = _.cloneDeep(values);
-        appPluginTable.value = {};
-        linkPluginTable.value = {};
-        plugins.forEach((item: any) => {
-            if (item.type === 'APP') {
-                form.value.appPluginId = item.id;
-                appPluginTable.value = item;
-                formatAppValueList();
-            } else if (item.type === 'LINK') {
-                form.value.linkPluginId = item.id;
-                linkPluginTable.value = item;
-                formatLinkValueList();
-            } else {
-                appPluginTable.value = item;
-                linkPluginTable.value = {};
-            }
-        });
+        if (catalogLayers.value.length) {
+            applyLayerStates(plugins);
+        } else {
+            pendingSavedPlugins.value = plugins;
+        }
     },
     {immediate: true}
 );
@@ -270,5 +210,11 @@ watch(
 .bold-text {
     color: #35353e;
     font-weight: bold;
+}
+
+.protocol-layer-table {
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 </style>

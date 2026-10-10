@@ -375,6 +375,7 @@ export default {
             valueRange: '取值范围',
             remark: '备注',
             linkProtocol: '链路层协议',
+            protocolLayerN: '第{n}层协议',
             addRtu: '新增RTU',
             editDevice: '编辑设备',
             deviceId: '设备ID',

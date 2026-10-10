@@ -374,6 +374,7 @@ export default {
             valueRange: 'Value Range',
             remark: 'Remark',
             linkProtocol: 'Link Protocol',
+            protocolLayerN: 'Layer {n} Protocol',
             addRtu: 'Add RTU',
             editDevice: 'Edit Device',
             deviceId: 'Device ID',

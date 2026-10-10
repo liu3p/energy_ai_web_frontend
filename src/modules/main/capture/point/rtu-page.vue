@@ -21,15 +21,6 @@
           <cv-form-item :label="t('fw.capturePoint.rtuAddr')" prop="rtuaddr">
             <cv-input v-model.trim="form.rtuaddr" disabled/>
           </cv-form-item>
-          <!-- <cv-form-item :label="t('fw.capturePoint.memofcabinet')" prop="memofcabinet">
-            <cv-input v-model.trim="form.memofcabinet" :controls="false" class="w-cm"/>
-          </cv-form-item> -->
-          <!-- <cv-form-item :label="t('fw.capturePoint.channelGroupId')" prop="channelgroupid">
-            <cv-input v-model.trim="form.channelgroupid" disabled/>
-          </cv-form-item>
-          <cv-form-item :label="t('fw.capturePoint.channelGroupName')" prop="channelgroupname">
-            <cv-input v-model.trim="form.channelgroupname" disabled/>
-          </cv-form-item> -->
           <cv-form-item :label="t('fw.capturePoint.forTransfer')" prop="for_transfer">
             <cv-switch v-model="form.for_transfer" active-value="1" inactive-value="0"
                        style="width: 100px;" disabled/>
@@ -39,85 +30,57 @@
           </div>
           <div class="rtu-contain__center">
             <cv-scrollbar height="100%">
-              <cv-form-item :label="t('fw.capturePoint.appProtocol')">
-                <cv-select
-                    v-model="form.appPluginId"
-                    filterable
-                    @change="handleAppChange"
-                >
-                  <cv-option
-                      v-for="item in appPluginOptions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                  />
-                </cv-select>
-              </cv-form-item>
-              <cv-form-item :label="t('fw.capturePoint.channelName')" prop="channel.name">
-                <cv-input v-model="form.channel.name" disabled></cv-input>
-              </cv-form-item>
-              <cv-form-item :label="t('fw.capturePoint.channelId')">
-                <cv-input :model-value="form.channel?.servergroup" disabled></cv-input>
-              </cv-form-item>
-              <div>
-                <cv-table :data="appPluginTable?.parameters ?? []" style="width: 100%">
-                  <cv-table-column type="index" :label="t('fw.common.number')" width="80"/>
-                  <cv-table-column prop="name" :label="t('fw.capturePoint.param')"/>
-                  <cv-table-column :label="t('fw.capturePoint.dataType')"/>
-                  <cv-table-column prop="value" :label="t('fw.capturePoint.value')">
-                    <template #default="{row}">
-                      <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
-                      <cv-select v-else size="default" v-model="row.value">
-                        <cv-option
-                            v-for="item in row.valuelist.split(' ')"
-                            :key="item"
-                            :label="item"
-                            :value="item"
-                        />
-                      </cv-select>
-                    </template>
-                  </cv-table-column>
-                  <cv-table-column :label="t('fw.capturePoint.valueRange')"/>
-                  <cv-table-column :label="t('fw.capturePoint.remark')"/>
-                </cv-table>
+              <div class="channel-meta-row">
+                <cv-form-item :label="t('fw.capturePoint.channelName')" prop="channel.name">
+                  <cv-input v-model="form.channel.name" disabled></cv-input>
+                </cv-form-item>
+                <cv-form-item :label="t('fw.capturePoint.channelId')">
+                  <cv-input :model-value="form.channel?.servergroup" disabled></cv-input>
+                </cv-form-item>
               </div>
-              <div>
-                <cv-form-item :label="t('fw.capturePoint.linkProtocol')" style="margin-top: 16px ;">
+              <div
+                  v-for="(layer, index) in layerStates"
+                  :key="layer.type"
+                  class="protocol-layer-block"
+                  :class="{'is-first': index === 0}"
+              >
+                <cv-form-item :label="layerLabel(layer.type)">
                   <cv-select
-                      v-model="form.linkPluginId"
+                      :model-value="layer.selectedId"
                       filterable
-                      @change="handleLinkChange"
+                      clearable
+                      @change="(id: string | number) => handleLayerChange(layer.type, id)"
                   >
                     <cv-option
-                        v-for="item in linkPluginOptions"
+                        v-for="item in layer.options"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id"
                     />
                   </cv-select>
                 </cv-form-item>
-              </div>
-              <div>
-                <cv-table :data="linkPluginTable?.parameters ?? []" style="width: 100%">
-                  <cv-table-column type="index" :label="t('fw.common.number')" width="80"/>
-                  <cv-table-column prop="name" :label="t('fw.capturePoint.param')"/>
-                  <cv-table-column :label="t('fw.capturePoint.dataType')"/>
-                  <cv-table-column prop="value" :label="t('fw.capturePoint.value')">
-                    <template #default="{row}">
-                      <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
-                      <cv-select v-else size="default" v-model="row.value">
-                        <cv-option
-                            v-for="item in row.valuelist.split(' ')"
-                            :key="item"
-                            :label="item"
-                            :value="item"
-                        />
-                      </cv-select>
-                    </template>
-                  </cv-table-column>
-                  <cv-table-column :label="t('fw.capturePoint.valueRange')"/>
-                  <cv-table-column :label="t('fw.capturePoint.remark')"/>
-                </cv-table>
+                <div class="protocol-layer-table">
+                  <cv-table :data="layer.selected?.parameters ?? []" style="width: 100%">
+                    <cv-table-column type="index" :label="t('fw.common.number')" width="80"/>
+                    <cv-table-column prop="name" :label="t('fw.capturePoint.param')"/>
+                    <cv-table-column :label="t('fw.capturePoint.dataType')"/>
+                    <cv-table-column prop="value" :label="t('fw.capturePoint.value')">
+                      <template #default="{row}">
+                        <cv-input v-if="!row.valuelist" size="default" v-model="row.value"></cv-input>
+                        <cv-select v-else size="default" v-model="row.value">
+                          <cv-option
+                              v-for="item in row.valuelist.split(' ')"
+                              :key="item"
+                              :label="item"
+                              :value="item"
+                          />
+                        </cv-select>
+                      </template>
+                    </cv-table-column>
+                    <cv-table-column :label="t('fw.capturePoint.valueRange')"/>
+                    <cv-table-column :label="t('fw.capturePoint.remark')"/>
+                  </cv-table>
+                </div>
               </div>
             </cv-scrollbar>
           </div>
@@ -133,18 +96,25 @@ import _ from 'lodash';
 import {useLocale} from 'cloudview.ui-next';
 import {getRtuTypeById} from '@/modules/main/capture/point/point.model';
 import {normalizePossibleOwnerIds} from '@/modules/main/capture/point/point.service';
-import {getPlugins,} from '@/modules/main/capture/channel/channel.service';
+import {getPlugins} from '@/modules/main/capture/channel/channel.service';
+import {
+  buildLayerStates,
+  buildPluginsPayload,
+  getProtocolLayerLabelKey,
+  normalizePluginLayers,
+  selectLayerPlugin,
+  type LayerState,
+  type ProtocolLayer,
+} from '@/modules/main/capture/channel/protocol-layers';
 
 const {t} = useLocale();
 
 const emit = defineEmits(['submit']);
 const props = defineProps<{
-  // data: { name: string, type: string, id: string, memofcabinet: string, rtuaddr: string }
   data: any;
 }>();
 
 const rtuTypeLabel = computed(() => {
-  // 仅按 RTU id 判定，不用接口 type 字段（type=2 不等于转发，id 在 0-499 仍为采集）
   const matched = getRtuTypeById(form.value?.id);
   return matched ? t(`fw.capturePoint.rtuTypeOption.${matched.value}`) : '';
 });
@@ -172,25 +142,29 @@ const form = ref<any>({
   id: '',
   memofcabinet: '',
   rtuaddr: '',
-  appPluginId: '',
-  linkPluginId: '',
   channel: {
     name: '',
     id: '',
   },
 });
 
-const appPluginOptions = ref();
-const linkPluginOptions = ref();
-const appPluginTable = ref();
-const linkPluginTable = ref();
+const catalogLayers = ref<ProtocolLayer[]>([]);
+const layerStates = ref<LayerState[]>([]);
+const pendingSavedPlugins = ref<any[] | null>(null);
+
+const layerLabel = (type: string) =>
+  t(`fw.capturePoint.${getProtocolLayerLabelKey(type)}`).replace('{n}', type);
+
+const applyLayerStates = (savedPlugins: any[] = []) => {
+  layerStates.value = buildLayerStates(catalogLayers.value, savedPlugins);
+};
 
 onMounted(() => {
   getPlugins().then(res => {
     if (res.state) {
-      const {appplugin, linkplugin} = res.data;
-      appPluginOptions.value = appplugin;
-      linkPluginOptions.value = linkplugin;
+      catalogLayers.value = normalizePluginLayers(res.data);
+      applyLayerStates(pendingSavedPlugins.value ?? form.value?.channel?.plugins ?? []);
+      pendingSavedPlugins.value = null;
     }
   });
 });
@@ -199,64 +173,29 @@ const save = () => {
   ruleFormRef.value.validate((valid: any) => {
     if (valid) {
       const {channel, ...restForm} = form.value;
-      const {plugins, ...restChannel} = channel ?? {};
-      const appplugin =
-          appPluginTable.value?.id || appPluginTable.value?.id === 0
-              ? {
-                id: appPluginTable.value.id,
-                name: appPluginTable.value.name,
-                type: 'APP',
-                parameters: appPluginTable.value.parameters,
-              }
-              : null;
-      const linkplugin =
-          linkPluginTable.value?.id || linkPluginTable.value?.id === 0
-              ? {
-                id: linkPluginTable.value.id,
-                name: linkPluginTable.value.name,
-                type: 'LINK',
-                parameters: linkPluginTable.value.parameters,
-              }
-              : null;
+      const {
+        plugins: _oldPlugins,
+        appplugin: _app,
+        linkplugin: _link,
+        ...restChannel
+      } = channel ?? {};
+      // 按接口文档改动后：channel.plugins 仅 {id, parameters}，按层升序
       emit('submit', {
         ...restForm,
         channel: {
           ...restChannel,
           possibleowner: normalizePossibleOwnerIds(restChannel?.possibleowner),
-          // 与 except_points 一致：只提交实际存在的插件，避免塞入 null
-          plugins: [appplugin, linkplugin].filter((plugin): plugin is NonNullable<typeof plugin> => plugin != null),
+          plugins: buildPluginsPayload(layerStates.value),
         },
       });
     }
   });
 };
 
-const formatAppValueList = () => {
-  const sourceAppPlugin = appPluginOptions.value?.find((opt: any) => opt.id === appPluginTable.value.id);
-  if (sourceAppPlugin?.parameters && appPluginTable.value?.parameters) {
-    const paramMap = new Map(sourceAppPlugin.parameters.map((p: any) => [p.name, p.valuelist]));
-    appPluginTable.value.parameters.forEach((param: any) => {
-      param.valuelist = paramMap.get(param.name);
-    });
-  }
-};
-
-const formatLinkValueList = () => {
-  const sourceLinkPlugin = linkPluginOptions.value?.find((opt: any) => opt.id === linkPluginTable.value.id);
-  if (sourceLinkPlugin?.parameters && linkPluginTable.value?.parameters) {
-    const paramMap = new Map(sourceLinkPlugin.parameters.map((p: any) => [p.name, p.valuelist]));
-    linkPluginTable.value.parameters.forEach((param: any) => {
-      param.valuelist = paramMap.get(param.name);
-    });
-  }
-};
-
-const handleLinkChange = (id: string) => {
-  linkPluginTable.value = linkPluginOptions.value?.find((item: any) => item.id === id);
-};
-
-const handleAppChange = (id: string) => {
-  appPluginTable.value = appPluginOptions.value?.find((item: any) => item.id === id);
+const handleLayerChange = (type: string, id: string | number | '') => {
+  layerStates.value = layerStates.value.map(layer =>
+      layer.type === type ? selectLayerPlugin(layer, id) : layer
+  );
 };
 
 watch(() => props.data, (values) => {
@@ -266,14 +205,10 @@ watch(() => props.data, (values) => {
     id: '',
     memofcabinet: '',
     rtuaddr: '',
-    appPluginId: '',
-    linkPluginId: '',
   };
   form.value = {
     ...cloned,
-    // 保留原始 type，展示时用字符串匹配，避免 number/string 不一致
     type: cloned?.type ?? '',
-    // 计算量等 RTU 可能没有 channel，避免访问 form.channel.name 报错
     channel: {
       name: '',
       id: '',
@@ -281,22 +216,11 @@ watch(() => props.data, (values) => {
     },
   };
   const plugins = values?.channel?.plugins ?? [];
-  appPluginTable.value = {};
-  linkPluginTable.value = {};
-  plugins.forEach((item: any) => {
-    if (item.type === 'APP') {
-      form.value.appPluginId = item.id;
-      appPluginTable.value = item;
-      formatAppValueList();
-    } else if (item.type === 'LINK') {
-      form.value.linkPluginId = item.id;
-      linkPluginTable.value = item;
-      formatLinkValueList();
-    } else {
-      appPluginTable.value = item;
-      linkPluginTable.value = {};
-    }
-  });
+  if (catalogLayers.value.length) {
+    applyLayerStates(plugins);
+  } else {
+    pendingSavedPlugins.value = plugins;
+  }
 }, {immediate: true});
 </script>
 <style scoped lang="scss">
@@ -343,6 +267,27 @@ watch(() => props.data, (values) => {
 .bold-text {
   color: #35353E;
   font-weight: bold;
+}
+
+.channel-meta-row {
+  display: block;
+  width: 100%;
+}
+
+.protocol-layer-block {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+
+  &.is-first {
+    margin-top: 0;
+  }
+}
+
+.protocol-layer-table {
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 </style>
