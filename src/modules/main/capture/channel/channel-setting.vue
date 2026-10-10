@@ -109,7 +109,7 @@ const form = ref<any>({
 });
 
 const catalogLayers = ref<ProtocolLayer[]>([]);
-const layerStates = ref<LayerState[]>([]);
+const layerStates = ref<LayerState[]>(buildLayerStates([], []));
 const pendingSavedPlugins = ref<any[] | null>(null);
 
 const layerLabel = (type: string) =>

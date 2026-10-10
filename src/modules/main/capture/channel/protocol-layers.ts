@@ -88,7 +88,8 @@ export function normalizePluginLayers(data: unknown): ProtocolLayer[] {
         }
     }
 
-    return LAYER_TYPES.filter(t => (buckets.get(t)?.length ?? 0) > 0).map(t => ({
+    // 三层始终返回（无插件时 options 为空，UI 仍展示标题与下拉）
+    return LAYER_TYPES.map(t => ({
         type: t,
         plugins: buckets.get(t)!,
     }));
@@ -141,7 +142,7 @@ export function mergePluginWithCatalog(
     };
 }
 
-/** 根据目录层与已存 plugins 初始化各层状态（展示序：降序，最多三层） */
+/** 根据目录层与已存 plugins 初始化各层状态；第1–3层始终展示（无选项时下拉为空） */
 export function buildLayerStates(
     catalogLayers: ProtocolLayer[],
     savedPlugins: ProtocolPlugin[] = []
@@ -152,17 +153,16 @@ export function buildLayerStates(
         if (t) savedByType.set(t, p);
     }
 
-    const displayLayers = sortLayersForDisplay(catalogLayers).filter(l =>
-        LAYER_TYPES.includes(l.type as (typeof LAYER_TYPES)[number])
-    );
-    return displayLayers.map(layer => {
-        const saved = savedByType.get(layer.type);
+    const catalogByType = new Map(catalogLayers.map(l => [l.type, l]));
+    return LAYER_TYPES.map(type => {
+        const layer = catalogByType.get(type) ?? {type, plugins: []};
+        const saved = savedByType.get(type);
         const catalogPlugin = saved
             ? layer.plugins.find(p => String(p.id) === String(saved.id))
             : undefined;
         const selected = mergePluginWithCatalog(saved, catalogPlugin ?? undefined);
         return {
-            type: layer.type,
+            type,
             options: layer.plugins,
             selectedId: selected?.id ?? '',
             selected,
