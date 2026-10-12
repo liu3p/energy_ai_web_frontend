@@ -186,12 +186,8 @@ const handleLayerToggle = (type: string) => {
   if (action === 'plus' && visibleLayerCount.value < 3) {
     visibleLayerCount.value += 1;
   } else if (action === 'minus') {
-    // 收起：只保留到当前层，更高层不再展示并清空其选择
-    const keep = Number(type);
-    visibleLayerCount.value = keep;
-    layerStates.value = layerStates.value.map(layer =>
-      Number(layer.type) > keep ? selectLayerPlugin(layer, '') : layer
-    );
+    // 收起：只隐藏更高层，保留其已选内容，再次展开可恢复
+    visibleLayerCount.value = Number(type);
   }
 };
 
