@@ -95,9 +95,25 @@ export function normalizePluginLayers(data: unknown): ProtocolLayer[] {
     }));
 }
 
-/** 展示用：第1层在上，第3层在下（1→2→3） */
+/** 展示用：第3层在上，第1层在下（3→2→1） */
 export function sortLayersForDisplay(layers: ProtocolLayer[]): ProtocolLayer[] {
-    return [...layers].sort((a, b) => Number(a.type) - Number(b.type));
+    return [...layers].sort((a, b) => Number(b.type) - Number(a.type));
+}
+
+/** 按已展开层数过滤展示（默认只看第1层；count=2 显示 1+2；count=3 显示全部） */
+export function filterVisibleLayerStates(states: LayerState[], visibleCount: number): LayerState[] {
+    const count = Math.min(3, Math.max(1, visibleCount));
+    return states.filter(s => Number(s.type) <= count);
+}
+
+/** 根据已选插件推断需要展开到第几层（至少 1，最多 3） */
+export function getRequiredVisibleLayerCount(savedPlugins: ProtocolPlugin[] = []): number {
+    let max = 1;
+    for (const p of savedPlugins) {
+        const t = Number(getLayerTypeByPluginId(p?.id) || clampLayerType(p?.type) || 0);
+        if (t > max) max = t;
+    }
+    return Math.min(3, Math.max(1, max));
 }
 
 /** 层标题文案模板 key（相对 fw.capturePoint），统一为「第N层协议」 */
@@ -142,7 +158,7 @@ export function mergePluginWithCatalog(
     };
 }
 
-/** 根据目录层与已存 plugins 初始化各层状态；第1–3层始终展示（无选项时下拉为空） */
+/** 根据目录层与已存 plugins 初始化各层状态；始终展示三层，展示序 3→2→1 */
 export function buildLayerStates(
     catalogLayers: ProtocolLayer[],
     savedPlugins: ProtocolPlugin[] = []
@@ -154,7 +170,9 @@ export function buildLayerStates(
     }
 
     const catalogByType = new Map(catalogLayers.map(l => [l.type, l]));
-    return LAYER_TYPES.map(type => {
+    // 展示：第3层在上，第1层在下；保存仍按 type 升序
+    const displayTypes = [...LAYER_TYPES].reverse();
+    return displayTypes.map(type => {
         const layer = catalogByType.get(type) ?? {type, plugins: []};
         const saved = savedByType.get(type);
         const catalogPlugin = saved

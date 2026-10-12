@@ -39,26 +39,36 @@
                 </cv-form-item>
               </div>
               <div
-                  v-for="(layer, index) in layerStates"
+                  v-for="(layer, index) in visibleLayerStates"
                   :key="layer.type"
                   class="protocol-layer-block"
                   :class="{'is-first': index === 0}"
               >
-                <cv-form-item :label="layerLabel(layer.type)">
-                  <cv-select
-                      :model-value="layer.selectedId"
-                      filterable
-                      clearable
-                      @change="(id: string | number) => handleLayerChange(layer.type, id)"
+                <div class="protocol-layer-header">
+                  <cv-form-item :label="layerLabel(layer.type)">
+                    <cv-select
+                        :model-value="layer.selectedId"
+                        filterable
+                        clearable
+                        @change="(id: string | number) => handleLayerChange(layer.type, id)"
+                    >
+                      <cv-option
+                          v-for="item in layer.options"
+                          :key="item.id"
+                          :label="item.name"
+                          :value="item.id"
+                      />
+                    </cv-select>
+                  </cv-form-item>
+                  <button
+                      type="button"
+                      class="protocol-layer-add"
+                      :class="{'is-noop': Number(layer.type) >= 3}"
+                      @click="handleLayerToggle(layer.type)"
                   >
-                    <cv-option
-                        v-for="item in layer.options"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                    />
-                  </cv-select>
-                </cv-form-item>
+                    {{ getLayerToggle(layer.type) === 'minus' ? '−' : '+' }}
+                  </button>
+                </div>
                 <div class="protocol-layer-table">
                   <cv-table :data="layer.selected?.parameters ?? []" style="width: 100%">
                     <cv-table-column type="index" :label="t('fw.common.number')" width="80"/>
@@ -100,6 +110,7 @@ import {getPlugins} from '@/modules/main/capture/channel/channel.service';
 import {
   buildLayerStates,
   buildPluginsPayload,
+  filterVisibleLayerStates,
   getProtocolLayerLabelKey,
   normalizePluginLayers,
   selectLayerPlugin,
@@ -151,12 +162,43 @@ const form = ref<any>({
 const catalogLayers = ref<ProtocolLayer[]>([]);
 const layerStates = ref<LayerState[]>(buildLayerStates([], []));
 const pendingSavedPlugins = ref<any[] | null>(null);
+/** 已展开到第几层：默认只展示第1层，最多 3 */
+const visibleLayerCount = ref(1);
+
+const visibleLayerStates = computed(() =>
+  filterVisibleLayerStates(layerStates.value, visibleLayerCount.value)
+);
 
 const layerLabel = (type: string) =>
   t(`fw.capturePoint.${getProtocolLayerLabelKey(type)}`).replace('{n}', type);
 
+/** 未展开更高层 → +；已展开更高层 → −；第3层始终显示 +（点击无效果） */
+const getLayerToggle = (type: string): 'plus' | 'minus' => {
+  const t = Number(type);
+  if (t < visibleLayerCount.value) return 'minus';
+  return 'plus';
+};
+
+const handleLayerToggle = (type: string) => {
+  const action = getLayerToggle(type);
+  // 第3层按钮仅展示，点击无反应
+  if (Number(type) >= 3) return;
+  if (action === 'plus' && visibleLayerCount.value < 3) {
+    visibleLayerCount.value += 1;
+  } else if (action === 'minus') {
+    // 收起：只保留到当前层，更高层不再展示并清空其选择
+    const keep = Number(type);
+    visibleLayerCount.value = keep;
+    layerStates.value = layerStates.value.map(layer =>
+      Number(layer.type) > keep ? selectLayerPlugin(layer, '') : layer
+    );
+  }
+};
+
 const applyLayerStates = (savedPlugins: any[] = []) => {
   layerStates.value = buildLayerStates(catalogLayers.value, savedPlugins);
+  // 默认只展示第1层，需点击「+」再逐层展开
+  visibleLayerCount.value = 1;
 };
 
 onMounted(() => {
@@ -185,7 +227,9 @@ const save = () => {
         channel: {
           ...restChannel,
           possibleowner: normalizePossibleOwnerIds(restChannel?.possibleowner),
-          plugins: buildPluginsPayload(layerStates.value),
+          plugins: buildPluginsPayload(
+            filterVisibleLayerStates(layerStates.value, visibleLayerCount.value)
+          ),
         },
       });
     }
@@ -281,6 +325,38 @@ watch(() => props.data, (values) => {
 
   &.is-first {
     margin-top: 0;
+  }
+}
+
+.protocol-layer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.protocol-layer-add {
+  flex-shrink: 0;
+  margin-top: 4px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #fff;
+  color: #3162e1;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #3162e1;
+    background: #f0f5ff;
+  }
+
+  &.is-noop {
+    cursor: default;
   }
 }
 
