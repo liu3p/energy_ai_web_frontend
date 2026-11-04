@@ -1,5 +1,6 @@
 import {Http, Response} from 'cloudview.ui-next';
 import {TokenUtils} from './tools';
+import {Token} from './token';
 import authService from './auth.service';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 
@@ -37,14 +38,16 @@ export const refreshToken = async (): Promise<void> => {
     try {
         const res = await authService.refreshToken();
         if (res.ok) {
-            TokenUtils.setLocalToken(await res.json());
+            // 必须写 Token 内存缓存：WebSocket 从 Token.token 取令牌；
+            // 只写 TokenUtils/sessionStorage 时，重连仍会用旧 token，握手 401 → 1006「连接中断」
+            Token.setLocalToken(await res.json());
             execQueue();
         } else {
-            TokenUtils.clearLocalToken();
+            Token.clearLocalToken();
             authService.redirectLogin();
         }
     } catch {
-        TokenUtils.clearLocalToken();
+        Token.clearLocalToken();
         authService.redirectLogin();
     } finally {
         callbackQueue.length = 0;

@@ -55,6 +55,30 @@ export function getLayerTypeByPluginId(id: number | string | null | undefined): 
     return clampLayerType(Math.floor(n / 1000) + 1);
 }
 
+/** 从 getPlugins 响应收集 id → name（含第 1–3 层以外的插件） */
+export function collectPluginNameMap(data: unknown): Map<string, string> {
+    const map = new Map<string, string>();
+    const add = (plugin: ProtocolPlugin | undefined) => {
+        if (plugin?.id === undefined || plugin?.id === null || plugin.id === '') return;
+        const name = String(plugin.name ?? '').trim();
+        if (name) map.set(String(plugin.id), name);
+    };
+    if (Array.isArray(data)) {
+        for (const item of data as any[]) {
+            if (Array.isArray(item?.plugins)) {
+                item.plugins.forEach(add);
+            } else {
+                add(item);
+            }
+        }
+    } else if (data && typeof data === 'object') {
+        const legacy = data as {appplugin?: ProtocolPlugin[]; linkplugin?: ProtocolPlugin[]};
+        (legacy.appplugin ?? []).forEach(add);
+        (legacy.linkplugin ?? []).forEach(add);
+    }
+    return map;
+}
+
 /** 规范化 getPlugins：按 id 归入最多三层 */
 export function normalizePluginLayers(data: unknown): ProtocolLayer[] {
     const buckets = new Map<string, ProtocolPlugin[]>();

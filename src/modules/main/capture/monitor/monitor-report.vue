@@ -10,7 +10,7 @@
                 </cv-form-item>
                 <cv-form-item :label="t('fw.monitor.protocol') + t('fw.common.colon')" prop="plugin">
                     <cv-select v-model="formData.plugin" style="width: 240px" size="large" @change="changePlugin">
-                        <cv-option v-for="item in pluginOptions" :key="item.id" :label="item.name" :value="item.id" />
+                        <cv-option v-for="item in pluginOptions" :key="item.id" :label="pluginLabel(item)" :value="item.id" />
                     </cv-select>
                 </cv-form-item>
                 <cv-form-item>
@@ -68,6 +68,8 @@ import {
 } from '@/modules/main/capture/monitor/monitor.service';
 import DeviceStats from '@/modules/main/capture/monitor/device-stats.vue';
 import {CvMessage, CvMessageBox} from 'cloudview.ui-next';
+import {getPlugins} from '@/modules/main/capture/channel/channel.service';
+import {collectPluginNameMap} from '@/modules/main/capture/channel/protocol-layers';
 
 const { t } = useLocale();
 const props = defineProps<{ rid: string; node: any }>();
@@ -98,6 +100,13 @@ const formData = ref<{
 }>({ channelgroup: '', plugin: '' });
 const channelOptions = ref<{ id: string; name: string; channelgroupid: string; plugins: any[] }[]>();
 const pluginOptions = ref<{ name: string; id: string; plugins: any[] }[]>();
+const pluginNameMap = ref(new Map<string, string>());
+
+const pluginLabel = (item: {id?: string | number; name?: string}) => {
+    const fromChannel = String(item?.name ?? '').trim();
+    if (fromChannel) return fromChannel;
+    return pluginNameMap.value.get(String(item?.id ?? '')) || String(item?.id ?? '');
+};
 const connected = ref(false);
 const reportConnected = ref(false);
 const dataSource = ref<string[]>([]);
@@ -109,6 +118,11 @@ function initChannelList() {
     getAllChannel().then(res => {
         if (res.state) {
             channelOptions.value = res.data;
+        }
+    });
+    getPlugins().then(res => {
+        if (res.state) {
+            pluginNameMap.value = collectPluginNameMap(res.data);
         }
     });
 }
