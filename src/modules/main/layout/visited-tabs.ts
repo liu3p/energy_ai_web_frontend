@@ -1,4 +1,4 @@
-import {computed, ref, watch} from 'vue';
+import {computed, nextTick, ref, watch} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {findMenuTitleKeyByPath} from './sidebar-menu';
 
@@ -12,6 +12,9 @@ export interface VisitedTab {
 
 const HOME_PATH = '/main/dashboard/index';
 const STORAGE_KEY = 'ems-visited-tabs';
+/** 刷新时临时移出 keep-alive，强制当前页重新挂载 */
+const bypassCacheNames = ref<string[]>([]);
+const viewKeys = ref<Record<string, number>>({});
 
 const PATH_COMPONENT_NAME: Record<string, string> = {
     '/main/dashboard/index': 'DashboardIndex',
@@ -66,6 +69,8 @@ function loadStoredTabs(): VisitedTab[] {
             if (!item.componentName) {
                 item.componentName = pathToComponentName(item.path);
             }
+            // 首页也允许关闭；兼容旧缓存里 closable=false
+            item.closable = true;
             return true;
         });
     } catch {
@@ -96,7 +101,7 @@ function upsertTab(path: string, metaTitle?: unknown) {
         path,
         titleKey,
         titleFallback,
-        closable: path !== HOME_PATH,
+        closable: true,
         componentName: pathToComponentName(path),
     });
 }
@@ -141,17 +146,41 @@ export function useVisitedTabs() {
     }
 
     function closeOthers(path: string) {
-        tabs.value = tabs.value.filter(item => !item.closable || item.path === path);
+        tabs.value = tabs.value.filter(item => item.path === path);
         if (route.path !== path) {
             void router.push(path);
         }
     }
 
+    const viewKey = computed(() => {
+        const path = route.path;
+        return `${path}__${viewKeys.value[path] || 0}`;
+    });
+
+    const cachedExcludeNames = computed(() => bypassCacheNames.value);
+
+    async function refreshCurrent() {
+        const path = route.path;
+        const name = tabs.value.find(item => item.path === path)?.componentName;
+        if (name) {
+            bypassCacheNames.value = [...bypassCacheNames.value, name];
+            await nextTick();
+            bypassCacheNames.value = bypassCacheNames.value.filter(item => item !== name);
+        }
+        viewKeys.value = {
+            ...viewKeys.value,
+            [path]: (viewKeys.value[path] || 0) + 1,
+        };
+    }
+
     return {
         tabs,
         activePath,
+        viewKey,
+        cachedExcludeNames,
         openTab,
         closeTab,
         closeOthers,
+        refreshCurrent,
     };
 }

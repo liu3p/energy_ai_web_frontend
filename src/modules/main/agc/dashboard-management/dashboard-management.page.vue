@@ -144,6 +144,10 @@ import {computed, onMounted, ref} from 'vue';
 import dashboardManagementServiceApi from '@/modules/main/agc/dashboard-management/dashboard-management.service';
 import dashboardManagementDialog from '@/modules/main/agc/dashboard-management/dashboard-management.dialog.vue';
 import ReplyPointDialog from '@/modules/main/agc/dashboard-management/reply-point-dialog.vue';
+import {
+    validateHomepageConfigOids,
+    type HomepageOidIssue,
+} from '@/modules/main/agc/dashboard-management/homepage-oid';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
 
 const {t} = useLocale();
@@ -215,7 +219,8 @@ const delect = (row: any) => {
     )
         .then(async () => {
             data.splice(row.no - 1, 1);
-            saveConfig(data);
+            // 删除不引入新引用，跳过 OID 校验，便于清理已有无效配置
+            saveConfig(data, {skipOidValidate: true});
         })
         .catch(() => {});
 };
@@ -231,7 +236,8 @@ const move = async (row: any, type: number) => {
         dataList.splice(index, 1);
         dataList.splice(index + 1, 0, temp);
     }
-    saveConfig(dataList);
+    // 排序不改变引用，跳过 OID 校验
+    saveConfig(dataList, {skipOidValidate: true});
 };
 
 const submit = (
@@ -273,19 +279,54 @@ const submit = (
         const index = poinInfo.no - 1;
         configData.value[modelType.value].splice(index, 1);
         configData.value[modelType.value].splice(index, 0, data);
-        saveConfig(configData.value[modelType.value]);
+        // 仅校验本次编辑项，避免被同表其它历史无效 OID 误伤
+        saveConfig(configData.value[modelType.value], {validateItems: [data]});
     } else {
-        saveConfig([...(configData.value[modelType.value] ?? []), data]);
+        saveConfig([...(configData.value[modelType.value] ?? []), data], {validateItems: [data]});
     }
 };
 
-const saveConfig = async (data: any) => {
+const formatOidIssues = (issues: HomepageOidIssue[]) => {
+    const byReason = (reason: HomepageOidIssue['reason']) =>
+        issues.filter(item => item.reason === reason).map(item => item.oid);
+    const messages: string[] = [];
+    const format = byReason('format');
+    const missingRtu = byReason('rtu');
+    const missingDevice = byReason('device');
+    if (format.length) {
+        messages.push(t('fw.dashboardManagement.oidInvalidFormat').replace('{oids}', format.join('、')));
+    }
+    if (missingRtu.length) {
+        messages.push(t('fw.dashboardManagement.oidRtuMissing').replace('{oids}', missingRtu.join('、')));
+    }
+    if (missingDevice.length) {
+        messages.push(t('fw.dashboardManagement.oidDeviceMissing').replace('{oids}', missingDevice.join('、')));
+    }
+    return messages.join('；');
+};
+
+const saveConfig = async (
+    data: any,
+    options?: {skipOidValidate?: boolean; validateItems?: Array<{oid?: string; type?: string | number}>},
+) => {
     const saveData = data.map((item: any, index: number) => {
         return {
             ...item,
             no: index + 1,
         };
     });
+    if (!options?.skipOidValidate) {
+        try {
+            const issues = await validateHomepageConfigOids(options?.validateItems ?? saveData);
+            if (issues.length) {
+                CvMessage.error(formatOidIssues(issues));
+                return;
+            }
+        } catch {
+            CvMessage.error(t('fw.dashboardManagement.oidValidateFailed'));
+            return;
+        }
+    }
     let res: any;
     switch (modelType.value) {
         case 'basic_info':

@@ -27,6 +27,7 @@ export default {
             changePassword: 'Change Password',
             cancel: 'cancel',
             confirm: 'confirm',
+            refresh: 'Refresh',
             logout: 'Logout',
             sendCode: 'Send Verification Code',
             operateSuccess: 'Operate Successfully',
@@ -646,6 +647,10 @@ export default {
             device: 'Device',
             queryFailed: 'Query failed',
             totalCount: 'Total {total}',
+            oidInvalidFormat: 'Invalid OID format: {oids}',
+            oidRtuMissing: 'OID references a missing RTU: {oids}',
+            oidDeviceMissing: 'OID references a missing device: {oids}',
+            oidValidateFailed: 'Failed to validate point references. Please try again.',
         },
         systemPages: {
             deviceParams: 'Device Parameters',

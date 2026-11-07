@@ -66,16 +66,16 @@
 
 <script lang="ts" setup>
 import {Table} from 'ant-design-vue';
-import {useLocale} from 'cloudview.ui-next';
-import {computed, onMounted, ref} from 'vue';
+import {CvMessage, useLocale} from 'cloudview.ui-next';
+import {computed, ref} from 'vue';
 import dashboardManagementServiceApi from '@/modules/main/agc/dashboard-management/dashboard-management.service';
 import {queryRtuListExceptPoints} from '@/modules/main/capture/point/point.service';
 
 const {t} = useLocale();
 const emit = defineEmits(['refresh', 'selectPoint']);
 const activeName = ref('analog');
-const treeOptions = ref();
-const deviceList = ref([]);
+const treeOptions = ref<any[]>([]);
+const deviceList = ref<any[]>([]);
 const rtuId = ref();
 const deviceId = ref();
 const tableData = ref<any>([]);
@@ -110,26 +110,11 @@ const formData = ref({
     name: '',
 });
 
-const open = (no: number) => {
+const open = (no?: number) => {
     dataNo.value = no;
     visible.value = true;
+    void initRtuList();
 };
-
-function findTreeNodeById(tree: any, targetId: any, children: string) {
-    for (const node of tree) {
-        if (node.id === targetId) {
-            return node;
-        }
-        if (node[children] && node[children].length > 0) {
-            const found: any = findTreeNodeById(node[children], targetId, children);
-            if (found) {
-                return found;
-            }
-        }
-    }
-
-    return null;
-}
 
 const getTableData = async () => {
     const res = await dashboardManagementServiceApi.getPoints(rtuId.value, deviceId.value, activeName.value);
@@ -140,20 +125,22 @@ const getTableData = async () => {
     }
 };
 
-const handleRtuChange = (id: string) => {
-    const node = findTreeNodeById(treeOptions.value, id, 'device');
+/** RTU/设备 ID 编号空间重叠，只能在顶层 RTU 列表匹配，不能递归进 device */
+const handleRtuChange = (id: string | number) => {
+    const rtu = (treeOptions.value ?? []).find(item => String(item.id) === String(id));
     deviceId.value = null;
-    deviceList.value = node.device;
+    deviceList.value = rtu?.device ?? [];
 };
 
 const cancel = () => {
     visible.value = false;
     deviceId.value = null;
+    deviceList.value = [];
     tableData.value = [];
 };
 
 const initRtuList = () => {
-    queryRtuListExceptPoints().then(res => {
+    return queryRtuListExceptPoints().then(res => {
         if (res.state) {
             treeOptions.value = res.data.map(rtu => ({
                 ...rtu,
@@ -163,13 +150,12 @@ const initRtuList = () => {
                     key: dev.name + dev.id,
                 })),
             }));
+            if (rtuId.value != null && rtuId.value !== '') {
+                handleRtuChange(rtuId.value);
+            }
         }
     });
 };
-
-onMounted(() => {
-    initRtuList();
-});
 
 defineExpose({
     open,

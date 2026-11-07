@@ -28,6 +28,7 @@ export default {
             logout: '退出登录',
             cancel: '取消',
             confirm: '确认',
+            refresh: '刷新',
             sendCode: '发送验证码',
             operateSuccess: '操作成功',
             operateFail: '操作失败',
@@ -647,6 +648,10 @@ export default {
             device: '设备',
             queryFailed: '查询失败',
             totalCount: '共 {total} 条',
+            oidInvalidFormat: 'OID 格式无效：{oids}',
+            oidRtuMissing: 'OID 引用的 RTU 不存在：{oids}',
+            oidDeviceMissing: 'OID 引用的设备不存在：{oids}',
+            oidValidateFailed: '校验点位引用失败，请稍后重试',
         },
         systemPages: {
             deviceParams: '设备参数',
