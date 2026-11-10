@@ -297,6 +297,16 @@ const convertValueToString = (items: any[]) => {
     }));
 };
 
+/** 动态参数按名称首字母（不区分大小写）排序 */
+const sortDynParaByName = (items: any[] | undefined | null) => {
+    return [...(items ?? [])].sort((a, b) =>
+        String(a?.name ?? '').localeCompare(String(b?.name ?? ''), undefined, {
+            sensitivity: 'base',
+            numeric: true,
+        }),
+    );
+};
+
 const handleNodeClick = (data: any, node: any) => {
     if (node === currentNode.value) return;
     const {name, type, dyn_para, para} = data;
@@ -304,7 +314,7 @@ const handleNodeClick = (data: any, node: any) => {
     currentKey.value = name;
     modelName.value = name;
     renderCount.value = -1;
-    formData.value = _.cloneDeep({name, type, dyn_para, para});
+    formData.value = _.cloneDeep({name, type, dyn_para: sortDynParaByName(dyn_para), para});
 };
 
 const handleSubmit = async () => {
