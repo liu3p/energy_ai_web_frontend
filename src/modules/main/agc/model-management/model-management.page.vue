@@ -297,8 +297,8 @@ const convertValueToString = (items: any[]) => {
     }));
 };
 
-/** 动态参数按名称首字母（不区分大小写）排序 */
-const sortDynParaByName = (items: any[] | undefined | null) => {
+/** 参数列表按名称首字母（不区分大小写）排序 */
+const sortParamsByName = (items: any[] | undefined | null) => {
     return [...(items ?? [])].sort((a, b) =>
         String(a?.name ?? '').localeCompare(String(b?.name ?? ''), undefined, {
             sensitivity: 'base',
@@ -314,7 +314,12 @@ const handleNodeClick = (data: any, node: any) => {
     currentKey.value = name;
     modelName.value = name;
     renderCount.value = -1;
-    formData.value = _.cloneDeep({name, type, dyn_para: sortDynParaByName(dyn_para), para});
+    formData.value = _.cloneDeep({
+        name,
+        type,
+        dyn_para: sortParamsByName(dyn_para),
+        para: sortParamsByName(para),
+    });
 };
 
 const handleSubmit = async () => {
