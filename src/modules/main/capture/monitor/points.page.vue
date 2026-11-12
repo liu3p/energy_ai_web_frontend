@@ -58,12 +58,12 @@
     <cv-dialog
         v-model="visible"
         :title="title"
-        width="480px"
+        :width="dialogWidth"
         class="dispatch-dialog"
         align-center
         @close="cancel"
     >
-        <cv-form ref="formRef" :model="formData" :rules="rules" label-width="100px" class="dialog-form">
+        <cv-form ref="formRef" :model="formData" :rules="rules" :label-width="formLabelWidth" class="dialog-form">
             <cv-form-item :label="t('fw.monitor.deviceName')" prop="deviceName">
                 <cv-input disabled v-model="props.deviceName" />
             </cv-form-item>
@@ -228,6 +228,9 @@ const title = computed(() => {
     if (props.active === 'regulate') return t('fw.monitor.dispatchRegulate');
     else if (props.active === 'control') return t('fw.monitor.dispatchControl');
 });
+const isEn = computed(() => !currentLocale.value.startsWith('zh-'));
+const formLabelWidth = computed(() => (isEn.value ? '168px' : '100px'));
+const dialogWidth = computed(() => (isEn.value ? '540px' : '480px'));
 
 const monitor = (records: any) => {
     const {pointID, ctlvalue, name} = records;
@@ -427,7 +430,19 @@ defineExpose({
     }
 
     :deep(.el-form-item__label) {
+        position: relative;
         color: #1a2233;
+        white-space: nowrap;
+        text-align: left;
+        justify-content: flex-start;
+    }
+
+    :deep(.el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label::before) {
+        position: absolute;
+        left: -14px;
+        top: 0;
+        margin-right: 0;
+        line-height: inherit;
     }
 
     :deep(.el-input__wrapper),
