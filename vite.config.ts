@@ -2,8 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
-// @ts-ignore
-import { CloudViewResolver } from 'cloudview.ui-next/utils';
+import { CloudViewResolver } from './src/shims/cloudview-ui-next/utils';
 import { resolve } from 'path';
 import { writeFileSync, readFileSync } from 'fs';
 
@@ -49,11 +48,11 @@ export default defineConfig({
     ],
     server: {
         host: '0.0.0.0',
-        port: 5173,
+        port: 5174,
         proxy: {
             '/api': {
-                // target: 'http://127.0.0.1:38080',
-                target: 'http://47.103.143.170:38080',
+                // target: 'http://127.0.0.1:9000',
+                target: 'http://47.103.143.170:9000',
                 changeOrigin: true,
             },
         },
@@ -61,12 +60,11 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve('./src'),
-            // 'cloudview.ui-next/utils': resolve('./src/shims/cloudview-ui-next/utils.ts'),
-            // 'cloudview.ui-next/locale/lang/zh-cn': resolve('./src/shims/cloudview-ui-next/locale/zh-cn.ts'),
-            // 'cloudview.ui-next/locale/lang/en': resolve('./src/shims/cloudview-ui-next/locale/en.ts'),
-            // 'cloudview.ui-next/theme-chalk': resolve('./local-libs/cloudview.ui-next/dist/theme-chalk'),
-            // 'cloudview.ui-next': resolve('./src/shims/cloudview-ui-next/index.ts'),
-            // 'cloudview.ui-next-icon': resolve('./src/shims/cloudview-ui-next-icon/index.ts'),
+            'cloudview.ui-next/utils': resolve('./src/shims/cloudview-ui-next/utils.ts'),
+            'cloudview.ui-next/locale/lang/zh-cn': resolve('./src/shims/cloudview-ui-next/locale/zh-cn.ts'),
+            'cloudview.ui-next/locale/lang/en': resolve('./src/shims/cloudview-ui-next/locale/en.ts'),
+            'cloudview.ui-next': resolve('./src/shims/cloudview-ui-next/index.ts'),
+            'cloudview.ui-next-icon': resolve('./src/shims/cloudview-ui-next-icon/index.ts'),
         },
     },
     css: {

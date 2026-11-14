@@ -98,6 +98,14 @@ export const dataTypeDict = [
     { label: '高特BMS对时', value: '34' }
 ];
 
+/**
+ * 遥测专用数据类型：仅保留 modbus_general 读链实际处理的类型。
+ * 相对全量枚举去掉：SPECIAL、UINT_64 系、自研BMS升级、高特BMS对时（35 → 28）。
+ */
+export const analogDataTypeDict = dataTypeDict.filter(
+    item => !['0', '17', '18', '19', '20', '33', '34'].includes(String(item.value)),
+);
+
 export const ycsubtypeDict = [
     { label: '其它', value: '0' },
     { label: '电压', value: '1' },

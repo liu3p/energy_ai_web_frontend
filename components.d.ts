@@ -40,13 +40,11 @@ declare module '@vue/runtime-core' {
     CvTable: typeof import('cloudview.ui-next')['CvTable']
     CvTableColumn: typeof import('cloudview.ui-next')['CvTableColumn']
     CvTabs: typeof import('cloudview.ui-next')['CvTabs']
+    CvTag: typeof import('cloudview.ui-next')['CvTag']
     CvTooltip: typeof import('cloudview.ui-next')['CvTooltip']
     CvTree: typeof import('cloudview.ui-next')['CvTree']
     CvUpload: typeof import('cloudview.ui-next')['CvUpload']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('cloudview.ui-next')['CvLoadingDirective']
   }
 }

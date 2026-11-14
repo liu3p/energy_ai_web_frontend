@@ -1,5 +1,6 @@
 import {
     dataTypeDict,
+    analogDataTypeDict,
     ycsubtypeDict,
     yxsubtypeDict,
     ymsubtypeDict,
@@ -34,7 +35,7 @@ export const tableConfigs: Record<string, TableTypeConfig> = {
             {prop: 'aliasname', label: '别名', width: 160, type: 'text', condition: 'isTransfer'},
             {prop: 'subtype', label: '遥测子类型', width: 160, type: 'select', selectOptions: ycsubtypeDict},
             {prop: 'register', label: '原始地址', width: 160, type: 'text'},
-            {prop: 'datatype', label: '数据类型', width: 160, type: 'select', selectOptions: dataTypeDict.slice(0, -2)},
+            {prop: 'datatype', label: '数据类型', width: 160, type: 'select', selectOptions: analogDataTypeDict},
             {prop: 'code', label: '功能码', width: 160, type: 'text'},
             {prop: 'bitoffset', label: '位偏移', width: 160, type: 'text', condition: '!isTransfer'},
             {prop: 'coeff', label: '系数', width: 160, type: 'text'},
