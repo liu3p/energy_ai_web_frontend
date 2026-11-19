@@ -13,7 +13,7 @@
                 <div class="form-item">
                     <div class="label">{{ t('fw.systemPages.serialNumber') }}</div>
                     <div class="form-wrap">
-                        <cv-input v-model="formData.sn" :disabled="disabled" />
+                        <div class="plain-text">{{ formData.sn || '-' }}</div>
                     </div>
                 </div>
                 <!-- <div class="form-item">
@@ -161,6 +161,13 @@ onDeactivated(() => {
             font-size: 14px;
             font-weight: 700;
             margin-bottom: 4px;
+        }
+
+        .plain-text {
+            height: 32px;
+            line-height: 32px;
+            color: #1a1a1a;
+            font-size: 14px;
         }
     }
 }
