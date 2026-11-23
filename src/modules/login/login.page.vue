@@ -80,6 +80,7 @@ import {currentLocale, Locale} from '@/common/locale';
 import {IconInternational} from '@/icons/index';
 import router from '@/router';
 import {Token} from '@/common/token';
+import {refreshLicenseStatus} from '@/modules/login/license.service';
 import retrievePwd from './retrieve-pwd.vue';
 
 const {t} = useLocale();
@@ -112,19 +113,10 @@ const submit = async () => {
     ruleFormRef.value.validate(async (valid: boolean) => {
         if (valid) {
             loading.value = true;
-            const res = await authService.login(data.name, data.password);
-            loading.value = false;
             try {
+                const res = await authService.login(data.name, data.password);
                 const resData = await res.json();
-                if (res.ok) {
-                    Token.setLocalToken(resData);
-                    // license.is_valid 为 false 时进入注册激活页
-                    if (resData?.license?.is_valid === false) {
-                        router.replace('/register');
-                    } else {
-                        router.replace('/main');
-                    }
-                } else {
+                if (!res.ok) {
                     switch (res.status) {
                         case 409:
                             CvMessage.error(t('fw.login.error409'));
@@ -135,9 +127,30 @@ const submit = async () => {
                         default:
                             CvMessage.error(t('fw.common.operateFailed'));
                     }
+                    return;
                 }
+                Token.setLocalToken(resData);
+                let licenseValid = resData?.license?.is_valid;
+                if (typeof licenseValid !== 'boolean') {
+                    try {
+                        licenseValid = await refreshLicenseStatus();
+                    } catch (err) {
+                        const status = (err as {response?: {status?: number}})?.response?.status;
+                        if (status === 401) {
+                            Token.clearLocalToken();
+                            CvMessage.error(t('fw.common.operateFailed'));
+                            return;
+                        }
+                        CvMessage.error(t('fw.common.networkError'));
+                        router.replace('/main');
+                        return;
+                    }
+                }
+                router.replace(licenseValid === false ? '/register' : '/main');
             } catch (e) {
                 CvMessage.error(t('fw.common.operateFailed'));
+            } finally {
+                loading.value = false;
             }
         }
     });

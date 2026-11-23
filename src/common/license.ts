@@ -8,12 +8,13 @@ export interface LicenseInfo {
 
 const LICENSE_VALID_KEY = 'licenseValid';
 
-/** 许可证激活状态（登录返回 license.is_valid） */
+/** 许可证激活状态。sessionStorage 只做缓存，是否注册以 /license/status 为准。 */
 export class License {
     static setFromLogin(license?: LicenseInfo | null) {
-        // 仅当明确返回 is_valid === false 时未激活；无字段时兼容旧接口视为已激活
-        const valid = !(license && license.is_valid === false);
-        sessionStorage.setItem(LICENSE_VALID_KEY, valid ? '1' : '0');
+        if (typeof license?.is_valid !== 'boolean') {
+            return;
+        }
+        this.setValid(license.is_valid);
     }
 
     static setValid(valid: boolean) {

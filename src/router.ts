@@ -5,8 +5,10 @@ import Main from './modules/main/main.page.vue';
 import Login from './modules/login/login.page.vue';
 import Register from './modules/login/register.page.vue';
 import { Token } from './common/token';
-import { License } from './common/license';
 import { IconCollect, IconAgc, IconSystem, IconAccount } from '@/icons';
+import { CvMessage } from 'cloudview.ui-next';
+import { Locale } from './common/locale';
+import { refreshLicenseStatus } from '@/modules/login/license.service';
 
 const skipPath = ['/login', '/register', '/403', '/404'];
 import { clearUserInfo, initUserInfo, userInfo, userMenuList } from './common/user';
@@ -222,6 +224,17 @@ const router = createRouter({
     history: createWebHistory(),
     routes: constantRoutes,
 } as RouterOptions);
+function licenseErrorStatus(err: unknown): number | undefined {
+    if (!err || typeof err !== 'object') return undefined;
+    const error = err as {response?: {status?: number}; status?: number};
+    return error.response?.status ?? error.status;
+}
+
+function showLicenseNetworkError() {
+    const message = (Locale.locale as {fw?: {common?: {networkError?: string}}})?.fw?.common?.networkError;
+    CvMessage.error(message || '网络错误');
+}
+
 router.beforeEach(async (to, from, next) => {
     const userStore = userInfo.value;
     const token = Token.token;
@@ -229,18 +242,27 @@ router.beforeEach(async (to, from, next) => {
         next('/login');
         return;
     }
-    if (token && to.path === '/login') {
-        next(License.isValid ? '/' : '/register');
-        return;
-    }
-    // 未激活：仅允许停留在注册页
-    if (token && !License.isValid && to.path !== '/register') {
-        next('/register');
-        return;
-    }
-    if (token && License.isValid && to.path === '/register') {
-        next('/');
-        return;
+    if (token) {
+        try {
+            const valid = await refreshLicenseStatus();
+            if (!valid && to.path !== '/register') {
+                next('/register');
+                return;
+            }
+            if (valid && (to.path === '/register' || to.path === '/login')) {
+                next('/');
+                return;
+            }
+        } catch (err) {
+            if (licenseErrorStatus(err) === 401) {
+                clearUserInfo();
+                Token.clearLocalToken();
+                next('/login');
+                return;
+            }
+            // 网络错误、500、超时都不能当成未注册
+            showLicenseNetworkError();
+        }
     }
     if (token && to.path === '/register') {
         next();

@@ -64,6 +64,7 @@ defineOptions({name: 'SystemConfig'});
 import {onMounted, onUnmounted, onDeactivated, ref} from 'vue';
 import {zoneOptions} from '@/modules/main/system/system/zone';
 import {getSystemInfo, updateSystemInfo} from '@/modules/main/system/system/system.service';
+import {refreshLicenseStatus} from '@/modules/login/license.service';
 import moment from 'moment';
 import {useLocale} from 'cloudview.ui-next';
 
@@ -101,11 +102,16 @@ const init = () => {
     });
 };
 const save = () => {
-    updateSystemInfo(formData.value).then(res => {
+    updateSystemInfo(formData.value).then(async res => {
         if (res.state) {
             init();
             disabled.value = true;
             CvMessage.success(t('fw.common.operateSuccess'));
+            try {
+                await refreshLicenseStatus();
+            } catch {
+                CvMessage.error(t('fw.common.networkError'));
+            }
         } else CvMessage.error(res.data.msg);
     });
 };
