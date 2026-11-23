@@ -1,5 +1,6 @@
 {
   "globals": {
-    "CvMessage": true
+    "CvMessage": true,
+    "CvMessageBox": true
   }
 }
