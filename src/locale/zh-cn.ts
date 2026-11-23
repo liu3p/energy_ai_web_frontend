@@ -419,6 +419,7 @@ export default {
             formulaDesc: '公式描述',
             verifyFormula: '校验公式',
             formulaPlaceholder: '在此处输入公式，请输入变量和计算符号',
+            formulaRequired: '请先填写公式',
             mockCalc: '模拟计算',
             saveFormula: '保存公式',
             calcTypeRequired: '计算方式不能为空',

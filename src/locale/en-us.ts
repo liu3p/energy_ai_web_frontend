@@ -418,6 +418,7 @@ export default {
             formulaDesc: 'Formula Description',
             verifyFormula: 'Verify Formula',
             formulaPlaceholder: 'Enter formula here using variables and operators',
+            formulaRequired: 'Please enter a formula first',
             mockCalc: 'Simulate',
             saveFormula: 'Save Formula',
             calcTypeRequired: 'Calculation mode is required',

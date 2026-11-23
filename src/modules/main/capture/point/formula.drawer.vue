@@ -77,7 +77,7 @@
             />
             <div class="block-header">
                 <span>{{ t('fw.capturePoint.mockCalc') }}</span>
-                <cv-button>{{ t('fw.capturePoint.mockCalc') }}</cv-button>
+                <cv-button @click="simulate">{{ t('fw.capturePoint.mockCalc') }}</cv-button>
             </div>
             <cv-input
                 v-model="checkResult.result"
@@ -209,15 +209,34 @@ const delRow = (index: number) => {
     tableData.value.splice(index, 1);
 };
 
-const check = () => {
-    const params = {};
+const buildFormulaPayload = () => {
+    const params: Record<string, unknown> = {};
     tableData.value.forEach(item => {
+        if (!item.name) return;
         params[item.name] = item.mockValue ?? 0;
     });
-    checkFormula({
-        formula: formData.value.info,
+    return {
+        formula: formData.value.info ?? '',
         params,
-    }).then(res => {
+    };
+};
+
+const simulate = () => {
+    if (!formData.value.info?.trim()) {
+        CvMessage.warning(t('fw.capturePoint.formulaRequired'));
+        return;
+    }
+    checkFormula(buildFormulaPayload()).then(res => {
+        if (res.state && !res.data?.err) {
+            checkResult.value.result = res.data?.result ?? '';
+            return;
+        }
+        checkResult.value.result = res.data?.err || res.data?.msg || '';
+    });
+};
+
+const check = () => {
+    checkFormula(buildFormulaPayload()).then(res => {
         if (res.state) {
             if (!res.data.err) {
                 checkResult.value = {
