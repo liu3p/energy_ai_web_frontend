@@ -105,6 +105,7 @@ import {
 } from '@/modules/main/capture/point/point.service';
 // import {pointType} from '@/modules/main/capture/point/point.model';
 import {acgPointType, isAgcRtu, isTransferRtu} from '@/modules/main/capture/point/point.model';
+import {Locale} from '@/common/locale';
 import axios from 'axios';
 import _ from 'lodash';
 import {CvMessageBox, CvMessage, useLocale} from 'cloudview.ui-next';
@@ -298,6 +299,8 @@ const handleExport = () => {
     axios
         .get(`/api/v1/log/dbcfg/rtu/${rid}/device/${did}/excel`, {
             responseType: 'blob',
+            // 点表语言跟随界面当前语言：中文导中文点表，英文导英文点表
+            params: {lang: Locale.localeName.startsWith('zh-') ? 'zh-CN' : 'en-US'},
             headers: {
                 'Authorization': `${tokenType} ${token}`,
             },

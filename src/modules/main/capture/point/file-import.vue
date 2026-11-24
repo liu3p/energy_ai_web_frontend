@@ -32,6 +32,7 @@
 import {ref} from 'vue';
 import {useLocale} from 'cloudview.ui-next';
 import {getConfig} from '@/common/config_util';
+import {Locale} from '@/common/locale';
 
 const {t} = useLocale();
 const emits = defineEmits(['submit']);
@@ -63,7 +64,9 @@ const open = () => {
 };
 
 const downloadFile = () => {
-    window.open(getConfig('FILE_URL') + 'template.xlsx');
+    // 模版跟随界面当前语言：中文导中文模版，英文导英文模版
+    const tpl = Locale.localeName.startsWith('zh-') ? 'template.xlsx' : 'template_en.xlsx';
+    window.open(getConfig('FILE_URL') + tpl);
 };
 
 defineExpose({open});
