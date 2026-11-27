@@ -4,6 +4,7 @@
             ref="textRef"
             class="text-ellipsis"
             :class="{
+                'multi-line': maxLines > 1,
                 'color-error': props.colorType === ColorType.ERROR,
                 'color-normal': props.colorType === ColorType.NORMAL,
                 'color-success': props.colorType === ColorType.SUCCESS,
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {ColorType} from '@/common/dict';
 const props = defineProps({
     content: {type: String, default: ''},
@@ -35,6 +36,11 @@ const isOverflow = ref(false);
 // 溢出检测逻辑
 const checkOverflow = () => {
     if (!textRef.value) return;
+    // 单行省略是横向溢出，scrollHeight 恒等于一行高，必须比宽度
+    if (props.maxLines === 1) {
+        isOverflow.value = textRef.value.scrollWidth > textRef.value.clientWidth;
+        return;
+    }
     const lineHeight = parseInt(getComputedStyle(textRef.value).lineHeight);
     if (lineHeight) {
         isOverflow.value = textRef.value.scrollHeight > lineHeight * props.maxLines;
@@ -44,9 +50,13 @@ const checkOverflow = () => {
 };
 
 // 监听容器尺寸变化
+let observer: ResizeObserver | undefined;
 onMounted(() => {
-    const observer = new ResizeObserver(checkOverflow);
+    observer = new ResizeObserver(checkOverflow);
     observer.observe(textRef.value);
+});
+onBeforeUnmount(() => {
+    observer?.disconnect();
 });
 </script>
 
@@ -57,7 +67,7 @@ onMounted(() => {
 }
 
 /* 多行省略支持 */
-.text-ellipsis[style*='--max-lines'] {
+.text-ellipsis.multi-line {
     display: -webkit-box;
     -webkit-line-clamp: var(--max-lines);
     -webkit-box-orient: vertical;

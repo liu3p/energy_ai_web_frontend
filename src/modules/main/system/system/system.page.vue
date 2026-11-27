@@ -13,7 +13,9 @@
                 <div class="form-item">
                     <div class="label">{{ t('fw.systemPages.serialNumber') }}</div>
                     <div class="form-wrap">
-                        <div class="plain-text">{{ formData.sn || '-' }}</div>
+                        <div class="plain-text">
+                            <header-tooltip :content="formData.sn || '-'" :height="32" />
+                        </div>
                     </div>
                 </div>
                 <!-- <div class="form-item">
@@ -63,6 +65,7 @@
 defineOptions({name: 'SystemConfig'});
 import {onMounted, onUnmounted, onDeactivated, ref} from 'vue';
 import {zoneOptions} from '@/modules/main/system/system/zone';
+import HeaderTooltip from '@/common/header-tooltip.vue';
 import {getSystemInfo, updateSystemInfo} from '@/modules/main/system/system/system.service';
 import {refreshLicenseStatus} from '@/modules/login/license.service';
 import moment from 'moment';
@@ -159,7 +162,7 @@ onDeactivated(() => {
         padding: 16px;
         overflow: hidden;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 50px;
 
         .label {

@@ -2,5 +2,4 @@
 export {}
 declare global {
   const CvMessage: typeof import('cloudview.ui-next')['CvMessage']
-  const CvMessageBox: typeof import('cloudview.ui-next')['CvMessageBox']
 }
